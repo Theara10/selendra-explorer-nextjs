@@ -33,7 +33,7 @@ function Account() {
         </CardBody>
       </Card>
     </div>
-  );
+  );    
 }
 
 export default Account;

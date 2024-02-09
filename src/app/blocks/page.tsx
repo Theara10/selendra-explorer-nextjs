@@ -11,6 +11,7 @@ import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody, CardFooter, Pagination } from "@nextui-org/react";
 
 import { columns } from "../data/blocks";
+import { useExtrinsic } from "@/context/ExtrinsicsContext";
 
 const GET_LATEST_BLOCKS = gql`
   query GetLatestBlocks($limit: Int, $offset: Int) {
@@ -29,6 +30,7 @@ const GET_LATEST_BLOCKS = gql`
 function Blocks() {
   const PAGE_SiZE = useSearchParams().get("page") ?? "1";
   console.log("page sixe", PAGE_SiZE);
+  const { extrinsic } = useExtrinsic();
 
   const [currentPage, setCurrentPage] = useState(parseInt(PAGE_SiZE));
   const [blocks, setBLocks] = useState([]);
@@ -70,14 +72,12 @@ function Blocks() {
       setLoading(false);
     }, 1000);
     setCurrentPage(newPage);
-    // console.log("currentPage", currentPage);
-    // console.log("totalPage", totalPages);
   };
 
   return (
     <div className="px-4 sm:px-20 lg:px-80 mt-4">
       <div className="flex items-center justify-between mb-6">
-        <p className="text-2xl">Blocks</p>
+        <p className="text-2xl">Blocks {extrinsic}</p>
         <ExplorerHeader />
       </div>
       <Card>
@@ -90,7 +90,6 @@ function Blocks() {
             totalPages={totalPages}
             onPageChange={handlePageChange}
           />
-          {/* <Pagination total={10} color="primary" size="sm" /> */}
         </CardFooter>
       </Card>
     </div>

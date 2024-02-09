@@ -15,10 +15,16 @@ import {
   NavbarContent,
   NavbarItem,
   NavbarBrand,
+  NavbarMenuItem,
+  NavbarMenu,
+  NavbarMenuToggle,
+  NavbarProps,
+  Divider,
 } from "@nextui-org/react";
-import { ChevronDown, Menu, Search } from "lucide-react";
+import { ChevronDown, Menu, MoonIcon, Search } from "lucide-react";
 import { SideNavItem } from "@/types";
 import Image from "next/image";
+import { cn } from "./cn";
 
 const explorer_nav_items = [
   {
@@ -54,55 +60,228 @@ const explorer_nav_items = [
     ],
   },
 ];
-function ExplorerNav() {
+
+const menuItems = [
+  "About",
+  "Blog",
+  "Customers",
+  "Pricing",
+  "Enterprise",
+  "Changelog",
+  "Documentation",
+  "Contact Us",
+];
+
+function ExplorerNav(props: NavbarProps) {
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   return (
     <section>
       <div className="bg-image h-64 w-full flex items-center flex-col">
         <Navbar
+          {...props}
+          classNames={{
+            base: cn("border-default-100", {
+              "bg-default-200/50 dark:bg-default-100/50": isMenuOpen,
+            }),
+            wrapper: "w-full justify-center",
+            item: "hidden md:flex",
+          }}
+          className="bg-white"
+          height="60px"
+          isMenuOpen={isMenuOpen}
+          onMenuOpenChange={setIsMenuOpen}
+        >
+          {/* Left Content */}
+          <NavbarBrand>
+            <Image
+              width={24}
+              height={24}
+              src="/sel-logo-blue.png"
+              alt="sel-logo"
+              className="h-8 w-auto"
+            />
+            <span className="ml-2 text-medium font-medium">SELSCAN</span>
+          </NavbarBrand>
+
+          {/* Center Content */}
+          <NavbarContent justify="center">
+            <NavbarItem>
+              <Link className="text-medium text-gray-500" href="#" size="sm">
+                Home
+              </Link>
+            </NavbarItem>
+            {explorer_nav_items.map((data) => (
+              <NavbarItem key={data.id}>
+                <Link className="text-gray-500" href="#">
+                  <Dropdown placement="bottom-start">
+                    <DropdownTrigger>
+                      <p className="capitalize bg-transparent border-none text-medium text-gray-500 flex items-center gap-1">
+                        {data.name}
+                        <span>
+                          <ChevronDown size={16} />
+                        </span>
+                      </p>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                      aria-label="Single selection example"
+                      variant="flat"
+                      disallowEmptySelection
+                    >
+                      {data.dropdown.map((x) => (
+                        <DropdownItem key="text">
+                          <Link href={x.link} className="text-gray-500">
+                            {x.item}
+                          </Link>
+                        </DropdownItem>
+                      ))}
+                    </DropdownMenu>
+                  </Dropdown>
+                </Link>
+              </NavbarItem>
+            ))}
+          </NavbarContent>
+
+          {/* Right Content */}
+          <NavbarContent className="hidden md:flex" justify="end">
+            <NavbarItem className="ml-2 !flex gap-2">
+              <Button
+                isIconOnly
+                className=" border-gray-400 font-medium border-1"
+                color="secondary"
+                radius="md"
+                size="sm"
+                variant="bordered"
+              >
+                <MoonIcon className="w-4 h-4" color="gray" />
+              </Button>
+              <Button
+                className=" border-gray-400 text-gray-400 font-medium border-1"
+                color="secondary"
+                radius="md"
+                size="sm"
+                variant="bordered"
+                startContent={
+                  <Image
+                    width={24}
+                    height={24}
+                    src="/sel-logo-blue.png"
+                    alt="sel-logo"
+                    className="h-4 w-auto"
+                  />
+                }
+              >
+                Mainnet
+              </Button>
+            </NavbarItem>
+          </NavbarContent>
+
+          <NavbarMenuToggle className="text-default-400 md:hidden " />
+
+          <NavbarMenu
+            className="top-[calc(var(--navbar-height)_-_1px)] max-h-fit bg-white pb-6 pt-6 shadow-medium  "
+            motionProps={{
+              initial: { opacity: 0, y: -20 },
+              animate: { opacity: 1, y: 0 },
+              exit: { opacity: 0, y: -20 },
+              transition: {
+                ease: "easeInOut",
+                duration: 0.2,
+              },
+            }}
+          >
+            <NavbarMenuItem className="mb-4">
+              <Button
+                className=" border-gray-400 text-gray-400 font-medium border-1 w-full"
+                color="secondary"
+                radius="md"
+                size="sm"
+                variant="bordered"
+                startContent={
+                  <Image
+                    width={24}
+                    height={24}
+                    src="/sel-logo-blue.png"
+                    alt="sel-logo"
+                    className="h-4 w-auto"
+                  />
+                }
+              >
+                Mainnet
+              </Button>
+            </NavbarMenuItem>
+            <NavbarMenuItem>
+              <Link
+                className="text-medium text-gray-500 pl-[16px]"
+                href="#"
+                size="sm"
+              >
+                Home
+              </Link>
+            </NavbarMenuItem>
+            {explorer_nav_items.map((data) => (
+              <NavbarMenuItem key={data.id}>
+                <Link className="text-white" href="#">
+                  <Dropdown placement="bottom-start">
+                    <DropdownTrigger>
+                      <Button className="capitalize bg-transparent border-none text-medium text-gray-500">
+                        {data.name}
+                        <span>
+                          <ChevronDown />
+                        </span>
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                      aria-label="Single selection example"
+                      variant="flat"
+                      disallowEmptySelection
+                    >
+                      {data.dropdown.map((x) => (
+                        <DropdownItem key="text">
+                          <Link href={x.link} className="text-gray-500">
+                            {x.item}
+                          </Link>
+                        </DropdownItem>
+                      ))}
+                    </DropdownMenu>
+                  </Dropdown>
+                </Link>
+              </NavbarMenuItem>
+            ))}
+            {/* {menuItems.map((item, index) => (
+              <NavbarMenuItem key={`${item}-${index}`}>
+                <Link
+                  className="mb-2 w-full text-default-500"
+                  href="#"
+                  size="md"
+                >
+                  {item}
+                </Link>
+                {index < menuItems.length - 1 && (
+                  <Divider className="opacity-50" />
+                )}
+              </NavbarMenuItem>
+            ))} */}
+          </NavbarMenu>
+        </Navbar>
+        {/* <Navbar
           className="bg-transparent w-full px-4 flex items-center justify-evenly"
           isBlurred={false}
           classNames={{
             wrapper: " px-0",
           }}
-        >
-          {/* <div></div>
-          <NavbarContent className="flex sm:hidden " justify="center">
-            <NavbarItem>
-              <Dropdown placement="bottom-end">
-                <DropdownTrigger>
-                  <Link className="text-white border rounded-md p-1" href="#">
-                    <Menu size="20px" />
-                  </Link>
-                </DropdownTrigger>
-                <DropdownMenu
-                  variant="faded"
-                  aria-label="Dropdown menu with icons"
-                >
-                  <DropdownItem isReadOnly key="new" className="flex flex-col">
-                    {" "}
-                    <div className="flex flex-col space-y-2  md:px-6 ">
-                      {EXPLORERNAV_ITEMS.map((item, idx) => {
-                        return <MenuItem key={idx} item={item} />;
-                      })}
-                    </div>
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </NavbarItem>
-          </NavbarContent> */}
-
-          <NavbarBrand>
-            <Image
+        > */}
+        {/* <NavbarBrand> */}
+        {/* <Image
               src="/sel-logo-blue.png"
               width={500}
               height={500}
               alt="sel-logo"
               className="h-12 w-auto"
-            />
-            {/* <p className="font-bold text-inherit text-white"></p> */}
-          </NavbarBrand>
+            /> */}
+        {/* <p className="font-bold text-inherit text-white"></p> */}
+        {/* </NavbarBrand> */}
 
-          <NavbarContent className="hidden sm:flex " justify="center">
+        {/* <NavbarContent className="hidden sm:flex " justify="center">
             <NavbarItem>
               <Link className="text-white" href="#">
                 Home
@@ -124,9 +303,6 @@ function ExplorerNav() {
                       aria-label="Single selection example"
                       variant="flat"
                       disallowEmptySelection
-                      // selectionMode="single"
-                      // selectedKeys={selectedKeys}
-                      // onSelectionChange={setSelectedKeys}
                     >
                       {data.dropdown.map((x) => (
                         <DropdownItem key="text">
@@ -140,10 +316,10 @@ function ExplorerNav() {
                 </Link>
               </NavbarItem>
             ))}
-          </NavbarContent>
-        </Navbar>
+          </NavbarContent> */}
+        {/* </Navbar> */}
 
-        <h1 className="text-white text-3xl text-center md:text-4xl font-bold mt-4">
+        <h1 className="text-white text-3xl text-center md:text-4xl font-bold mt-8">
           Selendra Blockchain Explorer
         </h1>
 
@@ -156,7 +332,6 @@ function ExplorerNav() {
           className="mt-8 px-6 md:px-60 lg:px-[600px]"
           classNames={{
             input: [""],
-            // innerWrapper: ["px-0"],
             inputWrapper: ["px-0"],
           }}
           startContent={
@@ -174,9 +349,6 @@ function ExplorerNav() {
                   aria-label="Single selection example"
                   variant="flat"
                   disallowEmptySelection
-                  // selectionMode="single"
-                  // selectedKeys={selectedKeys}
-                  // onSelectionChange={setSelectedKeys}
                 >
                   <DropdownItem key="text">Addresses</DropdownItem>
                   <DropdownItem key="number">Tokens</DropdownItem>
@@ -188,17 +360,14 @@ function ExplorerNav() {
             </>
           }
           endContent={
-            // <div>
             <Button
               isIconOnly
               color="primary"
               aria-label="Like"
               className="mr-1"
             >
-              {/* <HeartIcon /> */}
               <Search />
             </Button>
-            // </div>
           }
         />
       </div>

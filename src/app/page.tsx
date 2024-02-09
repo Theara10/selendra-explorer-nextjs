@@ -40,6 +40,7 @@ import Link from "next/link";
 import ConvertBigNumber from "@/lib/ConvertBigNumber";
 import truncateMiddle from "@/lib/TruncateMiddle";
 import { gql, useQuery } from "@apollo/client";
+import { useExtrinsic } from "@/context/ExtrinsicsContext";
 
 const GET_LATEST_BLOCKS = gql`
   query GetLatestBlocks {
@@ -73,6 +74,8 @@ const GET_LATEST_TRANSACTIONS = gql`
 const Explorer = () => {
   const [totalBlock, setTotalBlock] = useState<number>(0);
   const [totalTokenTransfer, setTotalTokenTransfer] = useState<number>(0);
+  const { setExtrinsic } = useExtrinsic();
+  setExtrinsic("200000");
   const data1 = [
     {
       id: 1,

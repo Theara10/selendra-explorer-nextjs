@@ -10,10 +10,11 @@ import { Card, CardBody, CardFooter } from "@nextui-org/react";
 import { columns } from "../data/extrinsics";
 import PaginationControls from "@/components/PaginationControls";
 import { useSearchParams } from "next/navigation";
+import { useExtrinsic } from "@/context/ExtrinsicsContext";
 
 const GET_LATEST_EXTRINSICS = gql`
-  query MyQuery {
-    extrinsics(limit: 10) {
+  query GetLastestExtrinsics($limit: Int, $offset: Int) {
+    extrinsics(limit: $limit, offset: $offset, orderBy: block_timestamp_DESC) {
       id
       extrinsicHash
       timestamp
@@ -23,22 +24,38 @@ const GET_LATEST_EXTRINSICS = gql`
         height
         id
       }
+      blockNumber
     }
   }
 `;
-
+let signedExtrinsics = null;
 function Extrinsics() {
+  const { toggleExtrinsic } = useExtrinsic();
+  toggleExtrinsic("2000");
   const PAGE_SiZE = useSearchParams().get("page") ?? "1";
   const [currentPage, setCurrentPage] = useState(parseInt(PAGE_SiZE));
   const [loading, setLoading] = useState(false);
   const [extrinsics, setExtrinsics] = useState([]);
-  const { error, data, refetch } = useQuery(GET_LATEST_EXTRINSICS, {
+  const { data, refetch } = useQuery(GET_LATEST_EXTRINSICS, {
     variables: {
       limit: 20,
       offset: parseInt(PAGE_SiZE),
     },
   });
 
+  useEffect(() => {
+    if (!data) {
+      return;
+    }
+    setLoading(true);
+    const intervalId = setInterval(() => {
+      refetch();
+      setExtrinsics(data.extrinsics);
+      console.log("extr", data.extrinsics);
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [data, refetch]);
   // useEffect(() => {
   //   const intervalId = setInterval(() => {
   //     refetch();
@@ -50,18 +67,6 @@ function Extrinsics() {
   // if (loading) return <p>Loading...</p>;
   // if (error) return <p>Error: {error.message}</p>;
   // console.log("extrinsics", data.extrinsics);
-  useEffect(() => {
-    if (!data) {
-      return;
-    }
-    setLoading(true);
-    const intervalId = setInterval(() => {
-      refetch();
-      setExtrinsics(data.extrinsics);
-    }, 1000);
-
-    return () => clearInterval(intervalId);
-  }, [data, refetch]);
 
   const itemsPerPage = 20;
   const totalPages = Math.ceil(data?.extrinsics.length / itemsPerPage);
