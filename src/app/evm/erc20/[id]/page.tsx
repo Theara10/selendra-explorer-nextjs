@@ -1,30 +1,30 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-import Image from 'next/image';
+import Image from "next/image";
 
-import ExplorerHeader from '@/components/ExplorerHeader';
-import ExplorerTable from '@/components/ExplorerTable';
-import { Card, CardBody, Tab, Tabs } from '@nextui-org/react';
+import ExplorerHeader from "@/components/ExplorerHeader";
+import ExplorerTable from "@/components/ExplorerTable";
+import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
 
-import { columns, users } from '../../../../data/evm_contracts';
+import { columns, users } from "../../../data/evm_contracts";
 
 function page() {
   const accounts = [
     {
       id: 1,
-      title: 'Tbong Token',
-      value: '0xb28ed315d3272a998619932ef94e04a',
-      img: '/smart-contract-icon.png',
+      title: "Tbong Token",
+      value: "0xb28ed315d3272a998619932ef94e04a",
+      img: "/smart-contract-icon.png",
     },
   ];
 
   const tokenInfo = [
-    { id: 1, title: 'Symbol', value: 'TBT' },
-    { id: 2, title: 'Decimals', value: 23 },
-    { id: 3, title: 'Holder', value: 23525 },
-    {id: 4, title: 'Total Supply', value: 2325525 },
+    { id: 1, title: "Symbol", value: "TBT" },
+    { id: 2, title: "Decimals", value: 23 },
+    { id: 3, title: "Holder", value: 23525 },
+    { id: 4, title: "Total Supply", value: 2325525 },
   ];
   return (
     <div className="px-40 mt-6">
@@ -61,7 +61,7 @@ function page() {
                   </div>
                 </div>
               </div>
-              <div className='flex gap-12'>
+              <div className="flex gap-12">
                 {tokenInfo.map((data) => (
                   <div key={data.id}>
                     <p className="text-gray-400">{data.title}</p>
@@ -77,10 +77,10 @@ function page() {
         <CardBody>
           <Tabs aria-label="Options" variant="underlined" color="primary">
             <Tab key="contracts" title="Contracts">
-              <ExplorerTable users={users} columns={columns} />
+              {/* <ExplorerTable users={users} columns={columns} /> */}
             </Tab>
             <Tab key="verified" title="Verified Contracts">
-              <ExplorerTable users={users} columns={columns} />
+              {/* <ExplorerTable users={users} columns={columns} /> */}
             </Tab>
           </Tabs>
         </CardBody>

@@ -31,56 +31,48 @@ interface BlocksTableProps {
   columns: { uid: string; name: string }[];
 }
 
-export default function ExplorerTable({
-  users,
-  type,
-  columns,
-}: BlocksTableProps) {
-  const renderCell = React.useCallback(
-    (user: User, columnKey: React.Key) => {
-      console.log("usersss", users);
-      const cellValue = user[columnKey as keyof User];
+export default function ExplorerTable({ users, columns }: BlocksTableProps) {
+  const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
+    const cellValue = user[columnKey as keyof User];
 
-      switch (columnKey) {
-        case "contract":
-          return (
-            <div className="relative flex items-center flex-row text-sel_blue  gap-2">
-              <Link
-                href={`/evm/contracts/${user.id}`}
-                className="flex items-center justify-center"
-              >
-                <FileCode2 color="gray" size="16px" />
-                <p className="ml-1">{truncateMiddle(user.account, 20)}</p>
-              </Link>
-            </div>
-          );
+    switch (columnKey) {
+      case "contract":
+        return (
+          <div className="relative flex items-center flex-row text-sel_blue  gap-2">
+            <Link
+              href={`/evm/contracts/${user.id}`}
+              className="flex items-center justify-center"
+            >
+              <FileCode2 color="gray" size="16px" />
+              <p className="ml-1">{truncateMiddle(user.account, 20)}</p>
+            </Link>
+          </div>
+        );
 
-        case "name":
-          return (
-            <div className="relative flex items-center  gap-2">
-              <p>Unknown</p>
-            </div>
-          );
+      case "name":
+        return (
+          <div className="relative flex items-center  gap-2">
+            <p>Unknown</p>
+          </div>
+        );
 
-        case "verified_time":
-          return (
-            <div className="relative flex items-center justify-start gap-2">
-              <p>- </p>
-            </div>
-          );
-        case "extrinsichash":
-          return (
-            <div className="relative flex items-center justify-start gap-2">
-              <p>{truncateMiddle(user.extrinsicHash, 30)} </p>
-            </div>
-          );
+      case "verified_time":
+        return (
+          <div className="relative flex items-center justify-start gap-2">
+            <p>- </p>
+          </div>
+        );
+      case "extrinsichash":
+        return (
+          <div className="relative flex items-center justify-start gap-2">
+            <p>{truncateMiddle(user.extrinsicHash, 30)} </p>
+          </div>
+        );
 
-        default:
-          return cellValue;
-      }
-    },
-    [users]
-  );
+      default:
+        return cellValue;
+    }
+  }, []);
 
   return (
     <div>

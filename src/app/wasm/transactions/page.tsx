@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-import ExplorerHeader from '@/components/ExplorerHeader';
-import ExplorerTable from '@/components/ExplorerTable';
-import { Card, CardBody } from '@nextui-org/react';
+import ExplorerHeader from "@/components/ExplorerHeader";
+import ExplorerTable from "@/components/ExplorerTable";
+import { Card, CardBody } from "@nextui-org/react";
 
-import { columns, users } from '../../../data/evm_contracts';
+import { columns, users } from "../../data/evm_contracts";
 
 function page() {
   return (
@@ -17,7 +17,8 @@ function page() {
       </div>
       <Card>
         <CardBody>
-          <ExplorerTable users={users} columns={columns} />
+          <p>Coming Soon!</p>
+          {/* <ExplorerTable users={users} columns={columns} /> */}
         </CardBody>
       </Card>
     </div>

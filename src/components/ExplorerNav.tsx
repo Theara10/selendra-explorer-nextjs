@@ -46,7 +46,7 @@ const explorer_nav_items = [
       { item: "Transactions", link: "/evm/transactions" },
       { item: "Contracts", link: "/evm/contracts" },
       { item: "ERC-20 Tokens", link: "/evm/erc20" },
-      { item: "ERC-721 Tokens", link: "/evm/erc721" },
+      // { item: "ERC-721 Tokens", link: "/evm/erc721" },
     ],
   },
   {
@@ -54,9 +54,9 @@ const explorer_nav_items = [
     name: "WASM",
     dropdown: [
       { item: "Transactions", link: "/wasm/transactions" },
-      { item: "Contracts", link: "/wasm/contracts" },
-      { item: "ERC-20 Tokens", link: "/wasm/erc20" },
-      { item: "ERC-721 Tokens", link: "/wasm/erc721" },
+      // { item: "Contracts", link: "/wasm/contracts" },
+      // { item: "ERC-20 Tokens", link: "/wasm/erc20" },
+      // { item: "ERC-721 Tokens", link: "/wasm/erc721" },
     ],
   },
 ];

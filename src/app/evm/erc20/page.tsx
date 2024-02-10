@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-import ERC20TokensTable from '@/components/explorer/ERC20TokensTable';
-import ExplorerHeader from '@/components/ExplorerHeader';
-import { Card, CardBody } from '@nextui-org/react';
+// import ERC20TokensTable from '@/components/explorer/ERC20TokensTable';
+import ExplorerHeader from "@/components/ExplorerHeader";
+import { Card, CardBody } from "@nextui-org/react";
 
-import { columns, users } from '../../../data/evm_contracts';
+// import { columns, users } from '../../../data/evm_contracts';
 
 function ERC20Tokens() {
   return (
