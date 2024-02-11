@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 
 import AccountsTable from "@/components/AccountsTable";
 import ExplorerHeader from "@/components/ExplorerHeader";
@@ -107,4 +107,11 @@ function Accounts() {
   );
 }
 
-export default Accounts;
+export default function AccountSuspense() {
+  return (
+    // You could have a loading skeleton as the `fallback` too
+    <Suspense>
+      <Accounts />
+    </Suspense>
+  );
+}

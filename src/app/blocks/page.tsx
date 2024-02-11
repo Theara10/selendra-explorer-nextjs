@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 
 import { useSearchParams } from "next/navigation";
 
@@ -54,18 +54,10 @@ function Blocks() {
 
     return () => clearInterval(intervalId);
   }, [data, refetch]);
-  // if (loading) return <p>Loading...</p>;
-  // if (error) return <p>Error: {error.message}</p>;
 
   const itemsPerPage = 20;
   const totalPages = Math.ceil(data?.blocks.length / itemsPerPage);
   console.log("length", data?.blocks.length);
-
-  // const start = (currentPage - 1) * itemsPerPage;
-  // const end = start + itemsPerPage;
-
-  // const currentData = data.blocks.slice(start, end);
-
   const handlePageChange = (newPage: number) => {
     setLoading(true);
     setTimeout(() => {
@@ -96,4 +88,11 @@ function Blocks() {
   );
 }
 
-export default Blocks;
+export default function BlocksSuspense() {
+  return (
+    // You could have a loading skeleton as the `fallback` too
+    <Suspense>
+      <Blocks />
+    </Suspense>
+  );
+}

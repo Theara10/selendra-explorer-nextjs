@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 
 import ExplorerHeader from "@/components/ExplorerHeader";
 import ExtrinsicsTable from "@/components/ExtrinsicsTable";
@@ -102,4 +102,11 @@ function Extrinsics() {
   );
 }
 
-export default Extrinsics;
+export default function ExtrinsicSuspense() {
+  return (
+    // You could have a loading skeleton as the `fallback` too
+    <Suspense>
+      <Extrinsics />
+    </Suspense>
+  );
+}
