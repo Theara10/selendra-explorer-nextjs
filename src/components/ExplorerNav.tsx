@@ -94,13 +94,12 @@ function ExplorerNav(props: NavbarProps) {
           {/* Left Content */}
           <NavbarBrand>
             <Image
-              width={24}
-              height={24}
-              src="/sel-logo-blue.png"
+              width={500}
+              height={500}
+              src="/sel-logo-text.png"
               alt="sel-logo"
               className="h-8 w-auto"
             />
-            <span className="ml-2 text-medium font-medium">SELSCAN</span>
           </NavbarBrand>
 
           {/* Center Content */}
@@ -263,61 +262,6 @@ function ExplorerNav(props: NavbarProps) {
             ))} */}
           </NavbarMenu>
         </Navbar>
-        {/* <Navbar
-          className="bg-transparent w-full px-4 flex items-center justify-evenly"
-          isBlurred={false}
-          classNames={{
-            wrapper: " px-0",
-          }}
-        > */}
-        {/* <NavbarBrand> */}
-        {/* <Image
-              src="/sel-logo-blue.png"
-              width={500}
-              height={500}
-              alt="sel-logo"
-              className="h-12 w-auto"
-            /> */}
-        {/* <p className="font-bold text-inherit text-white"></p> */}
-        {/* </NavbarBrand> */}
-
-        {/* <NavbarContent className="hidden sm:flex " justify="center">
-            <NavbarItem>
-              <Link className="text-white" href="#">
-                Home
-              </Link>
-            </NavbarItem>
-            {explorer_nav_items.map((data) => (
-              <NavbarItem key={data.id}>
-                <Link className="text-white" href="#">
-                  <Dropdown placement="bottom-start">
-                    <DropdownTrigger>
-                      <Button className="capitalize bg-transparent border-none text-medium text-white">
-                        {data.name}
-                        <span>
-                          <ChevronDown />
-                        </span>
-                      </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu
-                      aria-label="Single selection example"
-                      variant="flat"
-                      disallowEmptySelection
-                    >
-                      {data.dropdown.map((x) => (
-                        <DropdownItem key="text">
-                          <Link href={x.link} className="text-gray-500">
-                            {x.item}
-                          </Link>
-                        </DropdownItem>
-                      ))}
-                    </DropdownMenu>
-                  </Dropdown>
-                </Link>
-              </NavbarItem>
-            ))}
-          </NavbarContent> */}
-        {/* </Navbar> */}
 
         <h1 className="text-white text-3xl text-center md:text-4xl font-bold mt-8">
           Selendra Blockchain Explorer
@@ -329,7 +273,7 @@ function ExplorerNav(props: NavbarProps) {
           labelPlacement="outside"
           size="lg"
           radius="md"
-          className="mt-8 px-6 md:px-60 lg:px-[600px]"
+          className="mt-8 px-6 md:px-60 lg:px-[600px] text-sm"
           classNames={{
             input: [""],
             inputWrapper: ["px-0"],

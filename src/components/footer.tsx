@@ -18,7 +18,7 @@ export default function Footer() {
             />
             <p className="pl-2 text-xl">Powered by Selendra</p>
           </div>
-          <div className="text-neutral-500 text-base leading-6 self-stretch mt-6 w-[500px]">
+          <div className="text-neutral-500 text-base leading-6 self-stretch mt-6 w-[300px] md:w-[500px]">
             Selendra Scan is a Block Explorer and Analytics Platform for
             Selendra, a decentralized smart contracts platform.
           </div>

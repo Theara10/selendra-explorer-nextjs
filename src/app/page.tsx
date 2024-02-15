@@ -74,8 +74,8 @@ const GET_LATEST_TRANSACTIONS = gql`
 const Explorer = () => {
   const [totalBlock, setTotalBlock] = useState<number>(0);
   const [totalTokenTransfer, setTotalTokenTransfer] = useState<number>(0);
-  const { setExtrinsic } = useExtrinsic();
-  setExtrinsic("200000");
+  const { setExtrinsic, toggleExtrinsic } = useExtrinsic();
+  toggleExtrinsic("200000");
   const data1 = [
     {
       id: 1,
@@ -272,7 +272,7 @@ const LatestTrasactions: React.FC<LatestTokenTransferProps> = ({
                 return (
                   <TableRow key={x.id} className=" border-b">
                     <TableCell>
-                      <Link href="" className="text-sel_blue font-semibold">
+                      <Link href="" className="text-sel_blue font-semibold ">
                         <User
                           avatarProps={{
                             radius: "md",
@@ -285,7 +285,10 @@ const LatestTrasactions: React.FC<LatestTokenTransferProps> = ({
                                 <Link href="/accounts/1">
                                   {truncateMiddle(x.from.evmAddress, 32)}
                                 </Link>
-                                <span className="px-2 text-gray-400">To</span>
+                                <br className="md:hidden" />
+                                <span className="pr-2 md:px-2 text-gray-400">
+                                  To
+                                </span>
                                 <Link href="#" className="truncate">
                                   {truncateMiddle(x.to.evmAddress, 32)}
                                 </Link>
