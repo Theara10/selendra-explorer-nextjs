@@ -48,11 +48,11 @@ interface BlockPageProps {
 
 const TransferDetails: React.FC<BlockPageProps> = () => {
   const params = useParams();
-  console.log("params", params.id);
+  const id = (params.id as string).startsWith("0x") ? params.id as string : "0x" + params.id;
+  console.log("params", id);
 
   const { loading, error, data } = useQuery(TOKENTRANSFER_BY_ID, {
-    // variables: { id: params.id },
-    variables: { id: params.id },
+    variables: { id },
   });
 
   if (loading) return <p>Loading...</p>;
