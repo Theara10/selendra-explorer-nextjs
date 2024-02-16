@@ -83,7 +83,7 @@ export default function TransfersTable({ users, columns }: BlocksTableProps) {
         case "eid":
           return (
             <Link
-              href={`/transfers/${user.id}`}
+              href={`/tx/${user.id}`}
               className="text-sel_blue flex items-center gap-2"
             >
               <p>{truncateMiddle(user.id, 50)}</p>
@@ -150,7 +150,7 @@ export default function TransfersTable({ users, columns }: BlocksTableProps) {
   //     case "eid":
   //       return (
   //         <Link
-  //           href={`/transfers/${user.id}`}
+  //           href={`/tx/${user.id}`}
   //           className="text-sel_blue flex items-center gap-2"
   //         >
   //           <p>{truncateMiddle(user.id, 50)}</p>
