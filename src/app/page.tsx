@@ -244,7 +244,7 @@ const LatestTrasactions: React.FC<LatestTokenTransferProps> = ({
           hideHeader
           bottomContent={
             <div className="flex items-center justify-center ">
-              <Link href="/transfers">View All Transactions</Link>
+              <Link href="/tx">View All Transactions</Link>
             </div>
           }
           className="pt-0"

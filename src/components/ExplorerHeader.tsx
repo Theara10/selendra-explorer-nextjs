@@ -23,7 +23,7 @@ const explorer_nav_items = [
     dropdown: [
       { item: "Blocks", link: "/blocks" },
       { item: "Extrinsics", link: "/extrinsics" },
-      { item: "Transfers", link: "/transfers" },
+      { item: "Transfers", link: "/tx" },
       { item: "Events", link: "#" },
       { item: "Account", link: "/accounts" },
     ],
@@ -84,9 +84,9 @@ function ExplorerHeader() {
                     aria-label="Single selection example"
                     variant="flat"
                     disallowEmptySelection
-                    // selectionMode="single"
-                    // selectedKeys={selectedKeys}
-                    // onSelectionChange={setSelectedKeys}
+                  // selectionMode="single"
+                  // selectedKeys={selectedKeys}
+                  // onSelectionChange={setSelectedKeys}
                   >
                     {data.dropdown.map((x) => (
                       <DropdownItem key="text">

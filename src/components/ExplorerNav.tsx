@@ -34,7 +34,7 @@ const explorer_nav_items = [
     dropdown: [
       { item: "Blocks", link: "/blocks" },
       { item: "Extrinsics", link: "/extrinsics" },
-      { item: "Transfers", link: "/transfers" },
+      { item: "Transactions", link: "/tx" },
       { item: "Events", link: "#" },
       { item: "Account", link: "/accounts" },
     ],
@@ -43,7 +43,7 @@ const explorer_nav_items = [
     id: 2,
     name: "EVM",
     dropdown: [
-      { item: "Transactions", link: "/evm/transactions" },
+      { item: "Transfers", link: "/evm/transactions" },
       { item: "Contracts", link: "/evm/contracts" },
       { item: "ERC-20 Tokens", link: "/evm/erc20" },
       // { item: "ERC-721 Tokens", link: "/evm/erc721" },
@@ -334,9 +334,8 @@ const MenuItem = ({ item }: { item: SideNavItem }) => {
         <>
           <button
             onClick={toggleSubMenu}
-            className={`flex flex-row items-center p-2 rounded-lg hover-bg-zinc-100 w-full justify-between hover:bg-zinc-100 ${
-              pathname.includes(item.path) ? "bg-zinc-100" : ""
-            }`}
+            className={`flex flex-row items-center p-2 rounded-lg hover-bg-zinc-100 w-full justify-between hover:bg-zinc-100 ${pathname.includes(item.path) ? "bg-zinc-100" : ""
+              }`}
           >
             <div className="flex flex-row space-x-4 items-center">
               <span className="font-semibold text-xl  flex">{item.title}</span>
@@ -354,9 +353,8 @@ const MenuItem = ({ item }: { item: SideNavItem }) => {
                   <Link
                     key={idx}
                     href={subItem.path}
-                    className={`${
-                      subItem.path === pathname ? "font-bold" : ""
-                    }`}
+                    className={`${subItem.path === pathname ? "font-bold" : ""
+                      }`}
                   >
                     <span>{subItem.title}</span>
                   </Link>
@@ -368,9 +366,8 @@ const MenuItem = ({ item }: { item: SideNavItem }) => {
       ) : (
         <Link
           href={item.path}
-          className={`flex flex-row space-x-4 items-center p-2 rounded-lg hover:bg-zinc-100 ${
-            item.path === pathname ? "bg-zinc-100" : ""
-          }`}
+          className={`flex flex-row space-x-4 items-center p-2 rounded-lg hover:bg-zinc-100 ${item.path === pathname ? "bg-zinc-100" : ""
+            }`}
         >
           <span className="font-semibold text-xl flex">{item.title}</span>
         </Link>
