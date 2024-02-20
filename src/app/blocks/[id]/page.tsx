@@ -55,7 +55,7 @@ const BlockPage: React.FC<BlockPageProps> = () => {
   console.log("block-by-id", data.blockById);
 
   return (
-    <div className="px-4 sm:px-20 lg:px-80 h-full">
+    <div className="px-4 h-full">
       <div className="flex items-center justify-between my-6">
         <p className="text-md md:text-2xl w-80">
           Blocks{" "}

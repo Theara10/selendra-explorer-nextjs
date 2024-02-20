@@ -29,6 +29,7 @@ type User = {
   timestamp: string;
   amount: number;
   success: boolean;
+  symbol: string;
 };
 
 // type User = (typeof users)[0];
@@ -77,7 +78,7 @@ export default function TransfersTable({ users, columns }: BlocksTableProps) {
         case "value":
           return (
             <div className="flex items-center gap-2">
-              <p>{ConvertBigNumber(user.amount)}</p>
+              <p>{`${ConvertBigNumber(user.amount)} ${user.symbol}`} </p>
             </div>
           );
         case "eid":

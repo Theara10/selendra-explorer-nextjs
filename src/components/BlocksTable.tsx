@@ -71,7 +71,7 @@ export default function BlocksTable({
             <p>5 secs ago</p>
 
             <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-              <CheckCircle color="green" size="16px" />
+              <CheckCircle color="green" size="24px" />
             </span>
           </div>
         );
@@ -145,11 +145,11 @@ export default function BlocksTable({
         aria-label="Example table with custom cells"
         className="pt-0"
         removeWrapper
-        // bottomContent={
-        //   <div className="flex justify-end">
-        //     <Pagination total={10} color="primary" size="sm" />
-        //   </div>
-        // }
+      // bottomContent={
+      //   <div className="flex justify-end">
+      //     <Pagination total={10} color="primary" size="sm" />
+      //   </div>
+      // }
       >
         <TableHeader columns={columns}>
           {(column) => (

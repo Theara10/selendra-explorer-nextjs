@@ -13,26 +13,27 @@ import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody } from "@nextui-org/react";
 import { CheckCircle, Copy } from "lucide-react";
 
-const TOKENTRANSFER_BY_ID = gql`
-  query TokenTransferkByID($id: String!) {
-    tokenTransferById(id: $id) {
-      amount
-      blockNumber
-      extrinsicHash
+export const TRANSFER_BY_ID = gql`
+query TransferByID($id: String!) {
+  transferById(id: $id) {
+    amount
+    blockNumber
+    extrinsicHash
+    id
+    timestamp
+    symbol
+    success
+    type
+    from {
+      evmAddress
       id
-      timestamp
-      success
-      type
-      from {
-        evmAddress
-        id
-      }
-      to {
-        evmAddress
-        id
-      }
+    }
+    to {
+      evmAddress
+      id
     }
   }
+}
 `;
 
 /**
@@ -50,7 +51,7 @@ const TransferDetails: React.FC<BlockPageProps> = () => {
   const id = (params.id as string).startsWith("0x") ? params.id as string : "0x" + params.id;
   console.log("params", id);
 
-  const { loading, error, data } = useQuery(TOKENTRANSFER_BY_ID, {
+  const { loading, error, data } = useQuery(TRANSFER_BY_ID, {
     variables: { id },
   });
 
@@ -59,20 +60,14 @@ const TransferDetails: React.FC<BlockPageProps> = () => {
     console.error("GraphQL error:", error);
     return <p>Error: {error.message}</p>;
   }
-
-  const transfer = data.tokenTransferById;
-  console.log("block-by-id", data.blockById);
+  const transfer = data.transferById;
+  console.log(transfer)
 
   return (
-    <div className="px-4 sm:px-20 md:px-60 lg:px-80">
-      <div className="flex items-center justify-between my-6">
-        <p className="text-2xl w-[500px]">
-          Transfer{" "}
-          <span className="text-gray-400">
-            # {truncateMiddle(transfer.id, 50)}
-          </span>
-        </p>
-        <></>
+    <div className="px-4">
+      <div className="flex items-center">
+        <span className="text-2xl w-[8ch]">Transfer</span><span className="text-gray-400">#{truncateMiddle(transfer.id, 50)}</span>
+        {transfer.success ? (<CheckCircle color="green" size="32px" />) : ("-")}
       </div>
       <Card>
         <CardBody>
@@ -101,7 +96,7 @@ const TransferDetails: React.FC<BlockPageProps> = () => {
                   </td>
                   <td className=" flex items-center gap-2 text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                     <span>
-                      <CheckCircle color="green" size="16px" />
+                      <CheckCircle color="green" size="24px" />
                     </span>
                     {transfer.blockNumber}
                   </td>
@@ -115,7 +110,7 @@ const TransferDetails: React.FC<BlockPageProps> = () => {
                     {transfer.extrinsicHash}
                     <span>
                       <Copy
-                        size="16px"
+                        size="24px"
                         color="gray"
                         className="cursor-pointer"
                         onClick={() =>
@@ -149,7 +144,7 @@ const TransferDetails: React.FC<BlockPageProps> = () => {
                     Value
                   </td>
                   <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                    {ConvertBigNumber(transfer.amount ? transfer.amount : "-")}
+                    {`${ConvertBigNumber(transfer.amount ? transfer.amount : "-")} ${transfer.symbol}`}
                   </td>
                 </tr>
                 <tr className="bg-white border-b">
@@ -161,27 +156,6 @@ const TransferDetails: React.FC<BlockPageProps> = () => {
                     <span className="px-3 py-2 text-white bg-primary rounded-3xl">
                       {transfer.type ? transfer.type : "-"}
                     </span>
-                  </td>
-                </tr>
-                <tr className="bg-white border-b">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    Event Count
-                  </td>
-                  <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                    {transfer.eventCount ? transfer.evenCount : "-"}
-                  </td>
-                </tr>
-
-                <tr className="bg-white ">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    Result
-                  </td>
-                  <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                    {transfer.success ? (
-                      <CheckCircle color="green" size="16px" />
-                    ) : (
-                      "-"
-                    )}
                   </td>
                 </tr>
               </tbody>

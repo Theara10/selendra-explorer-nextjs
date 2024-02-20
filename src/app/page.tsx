@@ -39,53 +39,11 @@ import Link from "next/link";
 
 import ConvertBigNumber from "@/lib/ConvertBigNumber";
 import truncateMiddle from "@/lib/TruncateMiddle";
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
+import { GET_LATEST_TRANSACTIONS } from "./tx/page"
+import { GET_LATEST_BLOCKS } from "./blocks/page";
 import { useExtrinsic } from "@/context/ExtrinsicsContext";
 import { log } from "console";
-
-const GET_LATEST_BLOCKS = gql`
-  query GetLatestBlocks {
-    blocks(limit: 10, orderBy: timestamp_DESC) {
-      eventsCount
-      id
-      timestamp
-      extrinsicsCount
-      height
-    }
-  }
-`;
-
-const GET_LATEST_TRANSACTIONS = gql`
-  query GetLatestTransactions {
-    # tokenTransfers(limit: 10, orderBy: timestamp_DESC) {
-    #   blockNumber
-    #   amount
-    #   from {
-    #     evmAddress
-    #   }
-    #   to {
-    #     evmAddress
-    #   }
-    #   timestamp
-    #   id
-    # }
-    transfers(limit: 10, orderBy: transfer_timestamp_DESC) {
-      denom
-      transfer {
-        amount
-        blockNumber
-        from {
-          evmAddress
-        }
-        id
-        timestamp
-        to {
-          evmAddress
-        }
-      }
-    }
-  }
-`;
 
 const Explorer = () => {
   const [totalBlock, setTotalBlock] = useState<number>(0);
@@ -121,16 +79,15 @@ const Explorer = () => {
   ];
 
   return (
-    <>
-      <ExplorerNav
-        bgColor={"bg-white"}
-        textColor="gray"
-        logo="/sel-logo-text.png"
-        search={true}
-        selIcon="/sel-logo-blue.png"
-      />
-      <div className="px-4 sm:px-20 md:px-40 lg:px-80 ">
-        <section className="mt-6 grid grid-cols-2 gap-2 lg:gap-4">
+    <><ExplorerNav
+      bgColor={"bg-white"}
+      textColor="gray"
+      logo="/sel-logo-text.png"
+      search={true}
+      selIcon="/sel-logo-blue.png"
+    />
+      <div className="px-4">
+        <section className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-2">
           {data1.map((data) => {
             return (
               <Card className="w-full" key={data.id}>
@@ -160,7 +117,12 @@ interface LatestBlocksProps {
 }
 
 const LatestBlocks: React.FC<LatestBlocksProps> = ({ setTotalBlock }) => {
-  const { loading, error, data, refetch } = useQuery(GET_LATEST_BLOCKS);
+  const { loading, error, data, refetch } = useQuery(GET_LATEST_BLOCKS, {
+    variables: {
+      limit: 20,
+      offset: 0,
+    },
+  });
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -255,7 +217,7 @@ const LatestTrasactions: React.FC<LatestTokenTransferProps> = ({
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
-  console.table("latest transactions", data.tokenTransfers);
+  console.table("latest transactions", data.transfers);
 
   return (
     <Card className="w-full">
@@ -281,34 +243,22 @@ const LatestTrasactions: React.FC<LatestTokenTransferProps> = ({
             {data.transfers.map(
               (
                 x: {
-                  // id: string;
-                  // from: { evmAddress: string };
-                  // to: { evmAddress: string };
-                  // blockNumber: number;
-                  // amount: number;
-                  // timestamp: string;
-                  denom: string;
-                  transfer: {
-                    amount: number;
-                    blockNumber: number;
-                    from: {
-                      evmAddress: string;
-                    };
-                    id: string;
-                    timestamp: string;
-                    to: {
-                      evmAddress: string;
-                    };
-                  };
+                  id: string;
+                  from: { evmAddress: string };
+                  to: { evmAddress: string };
+                  blockNumber: number;
+                  amount: number;
+                  timestamp: string;
+                  symbol: string;
                 },
                 index: number
               ) => {
-                console.log("tokenTransfers", typeof x.transfer.from);
+                console.log("tokenTransfers", typeof x.from);
                 setTotalTokenTransfer(index);
                 return (
-                  <TableRow key={x.transfer.id} className=" border-b">
+                  <TableRow key={x.id} className=" border-b">
                     <TableCell>
-                      <Link href="" className="text-sel_blue font-semibold ">
+                      <Link href={`/tx/${x.id}`} className="text-sel_blue font-semibold ">
                         <User
                           avatarProps={{
                             radius: "md",
@@ -320,7 +270,7 @@ const LatestTrasactions: React.FC<LatestTokenTransferProps> = ({
                               <span className="text-sel_blue ml-2">
                                 <Link href="/accounts/1">
                                   {truncateMiddle(
-                                    x.transfer.from.evmAddress,
+                                    x.from.evmAddress,
                                     32
                                   )}
                                 </Link>
@@ -329,31 +279,31 @@ const LatestTrasactions: React.FC<LatestTokenTransferProps> = ({
                                   To
                                 </span>
                                 <Link href="#" className="truncate">
-                                  {truncateMiddle(x.transfer.to.evmAddress, 32)}
+                                  {truncateMiddle(x.to.evmAddress, 32)}
                                 </Link>
                               </span>
                             </p>
                           }
-                          name={x.transfer.blockNumber}
+                          name={x.blockNumber}
                         />
                       </Link>
                     </TableCell>
                     <TableCell>
                       <div className="relative flex flex-col items-end justify-end font-light">
                         <p className="text-md">
-                          {ConvertBigNumber(x.transfer.amount)}
-                          <span> {x.denom}</span>
-                        </p>
-                        <p>{timeAgo(x.transfer.timestamp)}</p>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                          {ConvertBigNumber(x.amount)}
+                          <span> {x.symbol}</span>
+                        </p >
+                        <p>{timeAgo(x.timestamp)}</p>
+                      </div >
+                    </TableCell >
+                  </TableRow >
                 );
               }
             )}
-          </TableBody>
-        </Table>
-      </CardBody>
-    </Card>
+          </TableBody >
+        </Table >
+      </CardBody >
+    </Card >
   );
 };
