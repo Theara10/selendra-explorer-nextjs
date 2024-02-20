@@ -20,7 +20,7 @@ import { useExtrinsic } from "@/context/ExtrinsicsContext";
 import ExplorerNav from "@/components/ExplorerNav";
 import SearchInput from "@/components/SearchInput";
 
-const GET_LATEST_BLOCKS = gql`
+export const GET_LATEST_BLOCKS = gql`
   query GetLatestBlocks($limit: Int, $offset: Int) {
     blocks(limit: $limit, offset: $offset, orderBy: timestamp_DESC) {
       eventsCount
@@ -74,7 +74,7 @@ function Blocks() {
   };
 
   return (
-    <div className="px-4 sm:px-20 lg:px-80 mt-4">
+    <div className="px-4 mt-4">
       <div className="flex items-center justify-between mb-6">
         <p className="text-2xl">Blocks {extrinsic}</p>
         <SearchInput />
