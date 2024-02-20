@@ -13,6 +13,9 @@ import React, { useEffect, useState } from "react";
 import ExplorerNav from "@/components/ExplorerNav";
 import timeAgo from "@/lib/ConvertTime";
 // import { data1 } from '@/constants';
+import { Chart, LineElement, Title, Tooltip, Legend, Filler, LinearScale, CategoryScale, PointElement, ScriptableContext, TooltipModel, TooltipItem } from "chart.js"
+import { Line } from "react-chartjs-2";
+Chart.register(LineElement, Title, Tooltip, Legend, Filler, LinearScale, CategoryScale, PointElement,);
 import {
   Card,
   CardBody,
@@ -39,17 +42,33 @@ import Link from "next/link";
 
 import ConvertBigNumber from "@/lib/ConvertBigNumber";
 import truncateMiddle from "@/lib/TruncateMiddle";
-import { useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import { GET_LATEST_TRANSACTIONS } from "./tx/page"
 import { GET_LATEST_BLOCKS } from "./blocks/page";
 import { useExtrinsic } from "@/context/ExtrinsicsContext";
 import { log } from "console";
 
+const GET_LAST_MONTHS_TRANSACTIONS = gql`
+query LastMonth($t: DateTime!) {
+  transfers(where: {timestamp_gt: $t}) {
+    timestamp
+  }
+}`;
+
+function frequency(d: Date[], epoch: Date): number[] {
+  let map = Array<number>(31).fill(0);
+  d.forEach((date) => {
+    map[(epoch.getUTCDay() - date.getUTCDay())] += 1;
+  });
+  return map;
+}
+
+
 const Explorer = () => {
   const [totalBlock, setTotalBlock] = useState<number>(0);
   const [totalTokenTransfer, setTotalTokenTransfer] = useState<number>(0);
   const { extrinsic, setExtrinsic } = useExtrinsic();
-  console.log("extrinsic", extrinsic);
+  // console.log("extrinsic", extrinsic);
 
   const data1 = [
     {
@@ -87,7 +106,7 @@ const Explorer = () => {
       selIcon="/sel-logo-blue.png"
     />
       <div className="px-4">
-        <section className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-2">
+        <section className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-2">
           {data1.map((data) => {
             return (
               <Card className="w-full" key={data.id}>
@@ -101,15 +120,133 @@ const Explorer = () => {
               </Card>
             );
           })}
+          <Card className="w-full" key={3}>
+            <div className="flex flex-row items-center relative w-full flex-auto place-content-inherit align-items-inherit h-auto break-words text-left overflow-y-auto subpixel-antialiased md:gap-4 flex-row">
+              <ArrowRightLeft style={{ position: "absolute", marginLeft: "0.75rem" }} color="#00A4E5" size={30} />
+              <LastMonthsTransfers />
+            </div>
+          </Card>
         </section>
         <section className="mt-6 flex flex-col md:flex-row gap-4">
           <LatestBlocks setTotalBlock={setTotalBlock} />
           <LatestTrasactions setTotalTokenTransfer={setTotalTokenTransfer} />
         </section>
-      </div>
+      </div >
     </>
   );
 };
+
+
+// var when: Date = (() => {
+//   var now = new Date();
+//   now.setMonth(now.getMonth() - 1);
+//   return now;
+// })();
+
+class Lazy<T>{
+  data?: T;
+  assume(): T {
+    return this.data!
+  }
+  /** takes a thunk */
+  get(thunk: () => T): T {
+    if (this.data) {
+      return this.data!;
+    } else {
+      this.data = thunk();
+      return this.data;
+    }
+  }
+}
+
+var when = (() => {
+  var now = new Date();
+  now.setMonth(now.getMonth() - 1);
+  return now;
+})();
+var lastMonth = new Lazy<number[]>();
+
+const LastMonthsTransfers: React.FC = () => {
+  const { loading, error, data } = useQuery(GET_LAST_MONTHS_TRANSACTIONS, {
+    variables: { t: when }
+  });
+
+  if (loading) return <p>loading</p>;
+  if (error) return <p>error.message</p>;
+  lastMonth.get(() => {
+    return frequency(data.transfers.map((x: any) => new Date(x.timestamp)), when);
+  });
+
+  return (<div className="flex flex-col w-full noscroll">
+    {(() => {
+
+      return (<div style={{ width: "101%" }}><Line data={{
+        labels: Array(31).fill(""),
+        datasets: [{
+          data: lastMonth.assume(),
+        }]
+      }} options={{
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            backgroundColor: '#ffffff',
+            titleColor: '#000000',
+            bodyColor: '#000000',
+            displayColors: false,
+            callbacks: {
+              title: (data) => {
+                return data[0].parsed.y + " tx's";
+                // data[0].dataset.data[items.
+                // return "hey"
+              },
+              label: (context) => {
+                return ""
+              }
+            }
+          }
+        },
+        interaction: {
+          mode: "nearest",
+          axis: "x",
+          intersect: false,
+        },
+        elements: {
+          line: {
+            tension: 0,
+            borderWidth: 2,
+            borderColor: "#acdb90",
+            fill: "start",
+            backgroundColor: (context: ScriptableContext<"line">) => {
+              const ctx = context.chart.ctx;
+              const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+              gradient.addColorStop(0, "#acdb904c");
+              gradient.addColorStop(0.5, "#acdb9000");
+              return gradient;
+            },
+            // backgroundColor: "rgba(48,96,69,0.3",
+          },
+          point: {
+            radius: 0,
+            hitRadius: 0,
+          }
+        },
+        scales: {
+          x: {
+            display: false,
+          },
+          y: {
+            display: false,
+          }
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+      }}></Line></div>)
+    })()}
+  </div>)
+}
+
 
 export default Explorer;
 interface LatestBlocksProps {
@@ -217,7 +354,7 @@ const LatestTrasactions: React.FC<LatestTokenTransferProps> = ({
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
-  console.table("latest transactions", data.transfers);
+  // console.table("latest transactions", data.transfers);
 
   return (
     <Card className="w-full">
@@ -253,7 +390,7 @@ const LatestTrasactions: React.FC<LatestTokenTransferProps> = ({
                 },
                 index: number
               ) => {
-                console.log("tokenTransfers", typeof x.from);
+                // console.log("tokenTransfers", typeof x.from);
                 setTotalTokenTransfer(index);
                 return (
                   <TableRow key={x.id} className=" border-b">
