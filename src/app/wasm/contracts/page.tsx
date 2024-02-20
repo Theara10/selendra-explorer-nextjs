@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import ExplorerHeader from "@/components/ExplorerHeader";
+// import ExplorerHeader from "@/components/ExplorerHeader";
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
 
 import { columns, users } from "../../data/evm_contracts";
@@ -34,7 +34,7 @@ function page() {
     <div className="px-40 mt-6">
       <div className="flex items-center justify-between mb-6">
         <p className="text-xl w-80">WASM Contracts</p>
-        <ExplorerHeader />
+        {/* <ExplorerHeader /> */}
       </div>
       <div className="flex flex-wrap justify-between gap-3">
         {accounts.map((account) => (

@@ -1,20 +1,30 @@
 "use client";
-// components/ExtrinsicContext.tsx
 import React, { createContext, useContext, useState, ReactNode } from "react";
+import { gql, useQuery } from "@apollo/client";
 
-// Define the shape of your context
+const GET_LATEST_EXTRINSICS = gql`
+  # query GetLastestExtrinsics {
+  #   extrinsics(limit: 1, offset: 1, orderBy: block_timestamp_DESC) {
+  #     blockNumber
+  #   }
+  # }
+  query MyQuery {
+    itemsCounters(limit: 1, orderBy: total_DESC) {
+      total
+    }
+  }
+`;
+
 interface ExtrinsicContextType {
   extrinsic: string;
   setExtrinsic: (extrinsic: string) => void;
   toggleExtrinsic: (extr: string) => void;
 }
 
-// Create the context
 const ExtrinsicContext = createContext<ExtrinsicContextType | undefined>(
   undefined
 );
 
-// Create a custom hook to consume the context
 export const useExtrinsic = () => {
   const context = useContext(ExtrinsicContext);
   if (!context) {
@@ -22,6 +32,7 @@ export const useExtrinsic = () => {
   }
   return context;
 };
+
 interface ExtrinsicProviderProps {
   children: ReactNode;
 }
@@ -30,14 +41,22 @@ export const ExtrinsicProvider: React.FC<ExtrinsicProviderProps> = ({
   children,
 }) => {
   const [extrinsic, setExtrinsic] = useState("");
+  const { loading, error, data, refetch } = useQuery(GET_LATEST_EXTRINSICS);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error</div>;
 
   const toggleExtrinsic = (extr: string) => {
     setExtrinsic(extr);
   };
+  setInterval(() => {
+    refetch();
+  }, 1000);
+  const latestExtrinsic = data?.itemsCounters[0]?.total || "";
 
   return (
     <ExtrinsicContext.Provider
-      value={{ extrinsic, setExtrinsic, toggleExtrinsic }}
+      value={{ extrinsic: latestExtrinsic, setExtrinsic, toggleExtrinsic }}
     >
       {children}
     </ExtrinsicContext.Provider>

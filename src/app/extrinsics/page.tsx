@@ -2,7 +2,6 @@
 
 import React, { Suspense, useEffect, useState } from "react";
 
-import ExplorerHeader from "@/components/ExplorerHeader";
 import ExtrinsicsTable from "@/components/ExtrinsicsTable";
 import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody, CardFooter } from "@nextui-org/react";
@@ -11,6 +10,7 @@ import { columns } from "../data/extrinsics";
 import PaginationControls from "@/components/PaginationControls";
 import { useSearchParams } from "next/navigation";
 import { useExtrinsic } from "@/context/ExtrinsicsContext";
+import SearchInput from "@/components/SearchInput";
 
 const GET_LATEST_EXTRINSICS = gql`
   query GetLastestExtrinsics($limit: Int, $offset: Int) {
@@ -30,8 +30,6 @@ const GET_LATEST_EXTRINSICS = gql`
 `;
 let signedExtrinsics = null;
 function Extrinsics() {
-  const { toggleExtrinsic } = useExtrinsic();
-  toggleExtrinsic("2000");
   const PAGE_SiZE = useSearchParams().get("page") ?? "1";
   const [currentPage, setCurrentPage] = useState(parseInt(PAGE_SiZE));
   const [loading, setLoading] = useState(false);
@@ -50,8 +48,9 @@ function Extrinsics() {
     setLoading(true);
     const intervalId = setInterval(() => {
       refetch();
-      setExtrinsics(data.extrinsics);
-      console.log("extr", data.extrinsics);
+      // setExtrinsics(data.extrinsics);
+      // toggleExtrinsic(data.extrinsics.blockNumber);
+      // // console.log("extr", extrinsic);
     }, 1000);
 
     return () => clearInterval(intervalId);
@@ -81,10 +80,12 @@ function Extrinsics() {
   };
 
   return (
-    <div className="px-60 mt-6">
+    <div className="px-4 sm:px-20 lg:px-80 mt-4">
       <div className="flex items-center justify-between mb-6">
         <p className="text-2xl">Extrinsics</p>
-        <ExplorerHeader />
+        <div className="flex justify-center items-center">
+          <SearchInput />
+        </div>
       </div>
       <Card>
         <CardBody>

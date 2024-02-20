@@ -113,7 +113,7 @@ export const EXPLORERNAV_ITEMS: SideNavItem[] = [
     subMenuItems: [
       { title: "Blocks", path: "/blocks" },
       { title: "Extrinsics", path: "/extrinsics" },
-      { title: "Transfers", path: "/transfers" },
+      { title: "Transactions", path: "/tx" },
       { title: "Events", path: "#" },
       { title: "Account", path: "/accounts" },
     ],

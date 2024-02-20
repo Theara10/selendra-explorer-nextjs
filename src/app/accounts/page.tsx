@@ -3,7 +3,6 @@
 import React, { Suspense, useEffect, useState } from "react";
 
 import AccountsTable from "@/components/AccountsTable";
-import ExplorerHeader from "@/components/ExplorerHeader";
 import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody, CardFooter } from "@nextui-org/react";
 import { User, Users } from "lucide-react";
@@ -11,6 +10,7 @@ import { User, Users } from "lucide-react";
 import { columns } from "../data/accounts";
 import PaginationControls from "@/components/PaginationControls";
 import { useSearchParams } from "next/navigation";
+import SearchInput from "@/components/SearchInput";
 
 const GET_ACCOUNTS = gql`
   query Accounts {
@@ -59,10 +59,12 @@ function Accounts() {
     setCurrentPage(newPage);
   };
   return (
-    <div className="px-60 mt-6">
+    <div className="px-4 sm:px-20 lg:px-80 mt-6">
       <div className="flex items-center justify-between mb-6">
         <p className="text-2xl">Accounts</p>
-        <ExplorerHeader />
+        <div className="flex justify-center items-center">
+          <SearchInput />
+        </div>
       </div>
       <div className="flex flex-row gap-3">
         <Card className="w-full p-4">

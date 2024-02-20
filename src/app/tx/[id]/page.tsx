@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-import ExplorerHeader from "@/components/ExplorerHeader";
 import ConvertBigNumber from "@/lib/ConvertBigNumber";
 import timeAgo from "@/lib/ConvertTime";
 import truncateMiddle from "@/lib/TruncateMiddle";
@@ -48,11 +47,11 @@ interface BlockPageProps {
 
 const TransferDetails: React.FC<BlockPageProps> = () => {
   const params = useParams();
-  console.log("params", params.id);
+  const id = (params.id as string).startsWith("0x") ? params.id as string : "0x" + params.id;
+  console.log("params", id);
 
   const { loading, error, data } = useQuery(TOKENTRANSFER_BY_ID, {
-    // variables: { id: params.id },
-    variables: { id: params.id },
+    variables: { id },
   });
 
   if (loading) return <p>Loading...</p>;
@@ -65,12 +64,15 @@ const TransferDetails: React.FC<BlockPageProps> = () => {
   console.log("block-by-id", data.blockById);
 
   return (
-    <div className="px-4 sm:px-20 lg:px-60">
+    <div className="px-4 sm:px-20 md:px-60 lg:px-80">
       <div className="flex items-center justify-between my-6">
-        <p className="text-2xl w-80">
-          Transfer <span className="text-gray-400"># {transfer.id}</span>
+        <p className="text-2xl w-[500px]">
+          Transfer{" "}
+          <span className="text-gray-400">
+            # {truncateMiddle(transfer.id, 50)}
+          </span>
         </p>
-        <ExplorerHeader />
+        <></>
       </div>
       <Card>
         <CardBody>

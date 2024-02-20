@@ -4,7 +4,6 @@ import React from "react";
 
 import Image from "next/image";
 
-import ExplorerHeader from "@/components/ExplorerHeader";
 import ExplorerTable from "@/components/ExplorerTable";
 import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
@@ -38,30 +37,30 @@ function EvmContracts() {
       value: null,
       img: <FileCheck2 size={30} color="#00A4E5" />,
     },
-    {
-      id: 3,
-      title: "ERC-20 Tokens",
-      value: null,
-      img: <FileCheck2 size={30} color="#00A4E5" />,
-    },
-    {
-      id: 1,
-      title: "EVM Transactions",
-      value: null,
-      img: <FileCheck2 size={30} color="#00A4E5" />,
-    },
-    {
-      id: 2,
-      title: "EVM Accounts",
-      value: null,
-      img: <FileCheck2 size={30} color="#00A4E5" />,
-    },
-    {
-      id: 3,
-      title: "ERC-721 Tokens",
-      value: null,
-      img: <FileCheck2 size={30} color="#00A4E5" />,
-    },
+    // {
+    //   id: 3,
+    //   title: "ERC-20 Tokens",
+    //   value: null,
+    //   img: <FileCheck2 size={30} color="#00A4E5" />,
+    // },
+    // {
+    //   id: 1,
+    //   title: "EVM Transactions",
+    //   value: null,
+    //   img: <FileCheck2 size={30} color="#00A4E5" />,
+    // },
+    // {
+    //   id: 2,
+    //   title: "EVM Accounts",
+    //   value: null,
+    //   img: <FileCheck2 size={30} color="#00A4E5" />,
+    // },
+    // {
+    //   id: 3,
+    //   title: "ERC-721 Tokens",
+    //   value: null,
+    //   img: <FileCheck2 size={30} color="#00A4E5" />,
+    // },
   ];
 
   const { loading, error, data } = useQuery(GET_EVM_CONTRACTS);
@@ -71,15 +70,15 @@ function EvmContracts() {
 
   accounts[0].value = data.evmContracts.length;
   return (
-    <div className="px-60 mt-6">
+    <div className="px-4 sm:px-20 md:px-40 lg:px-80 mt-6">
       <div className="flex items-center justify-between mb-6">
         <p className="text-xl w-80">EVM Contracts</p>
-        <ExplorerHeader />
+        <></>
       </div>
-      <div className="flex flex-wrap justify-between gap-3">
+      <section className="flex flex-wrap justify-between">
         {accounts.map((account) => (
-          <Card className="w-[32%] p-2" key={account.id}>
-            <CardBody className="flex flex-row gap-3">
+          <Card className="w-[49%] p-2" key={account.id}>
+            <CardBody className="flex flex-row gap-1 md:gap-3">
               <div className="w-16 h-16 bg-primary bg-opacity-20 rounded-full flex justify-center items-center">
                 {account.img}
               </div>
@@ -97,7 +96,7 @@ function EvmContracts() {
             </CardBody>
           </Card>
         ))}
-      </div>
+      </section>
       <Card className="mt-4">
         <CardBody>
           <Tabs aria-label="Options" variant="underlined" color="primary">

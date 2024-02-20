@@ -6,11 +6,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-import ExplorerHeader from "@/components/ExplorerHeader";
 import timeAgo from "@/lib/ConvertTime";
 import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody } from "@nextui-org/react";
 import { CheckCircle, Copy } from "lucide-react";
+import { useExtrinsic } from "@/context/ExtrinsicsContext";
 
 const GET_EXTRINSICS_BY_ID = gql`
   query ExtrinsicById($id: String!) {
@@ -39,6 +39,7 @@ const GET_EXTRINSICS_BY_ID = gql`
 `;
 
 export default function ExtrinsicPage() {
+  const { extrinsic, toggleExtrinsic } = useExtrinsic();
   const params = useParams();
   const { loading, error, data } = useQuery(GET_EXTRINSICS_BY_ID, {
     variables: { id: params.id },
@@ -49,19 +50,19 @@ export default function ExtrinsicPage() {
     console.error("GraphQL error:", error);
     return <p>Error: {error.message}</p>;
   }
-  const extrinsic = data.extrinsicById;
+  const extr = data.extrinsicById;
   console.log("block-by-id", data.extrinsicById);
-
+  toggleExtrinsic(extr.blockNumber);
   return (
-    <div className=" px-60">
+    <div className=" px-4 sm:px-20 md:px-60 lg:px-80 ">
       <div className="flex items-center justify-between my-6">
         <p className="text-2xl w-80">
           Extrinsics <span className="text-gray-400">#358952502</span>
         </p>
-        <ExplorerHeader />
+        <></>
       </div>
       <Card>
-        <CardBody>
+        {/* <CardBody>
           <div className="py-2 inline-block min-w-full sm:px-6 lg:px-8">
             <div className="overflow-hidden">
               <table className="min-w-full">
@@ -199,7 +200,7 @@ export default function ExtrinsicPage() {
               </table>
             </div>
           </div>
-        </CardBody>
+        </CardBody> */}
       </Card>
     </div>
   );

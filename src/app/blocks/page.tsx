@@ -5,13 +5,20 @@ import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import BlocksTable from "@/components/BlocksTable";
-import ExplorerHeader from "@/components/ExplorerHeader";
 import PaginationControls from "@/components/PaginationControls";
 import { gql, useQuery } from "@apollo/client";
-import { Card, CardBody, CardFooter, Pagination } from "@nextui-org/react";
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  Input,
+  Pagination,
+} from "@nextui-org/react";
 
 import { columns } from "../data/blocks";
 import { useExtrinsic } from "@/context/ExtrinsicsContext";
+import ExplorerNav from "@/components/ExplorerNav";
+import SearchInput from "@/components/SearchInput";
 
 const GET_LATEST_BLOCKS = gql`
   query GetLatestBlocks($limit: Int, $offset: Int) {
@@ -70,7 +77,7 @@ function Blocks() {
     <div className="px-4 sm:px-20 lg:px-80 mt-4">
       <div className="flex items-center justify-between mb-6">
         <p className="text-2xl">Blocks {extrinsic}</p>
-        <ExplorerHeader />
+        <SearchInput />
       </div>
       <Card>
         <CardBody>

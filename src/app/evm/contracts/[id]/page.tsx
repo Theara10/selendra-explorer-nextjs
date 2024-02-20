@@ -5,7 +5,6 @@ import React from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 
-import ExplorerHeader from "@/components/ExplorerHeader";
 import ConvertBigNumber from "@/lib/ConvertBigNumber";
 import { gql, useQuery } from "@apollo/client";
 import {
@@ -31,10 +30,10 @@ import {
 
 function page() {
   return (
-    <div className="px-60 mt-6">
+    <div className="px-4 sm:px-20 md:px-60 lg:px-80 mt-6">
       <div className="flex items-center justify-between mb-6">
         <p className="text-xl w-80">Contract Details </p>
-        <ExplorerHeader />
+        <></>
       </div>
 
       <EvmContractAccount />

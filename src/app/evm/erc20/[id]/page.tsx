@@ -4,7 +4,6 @@ import React from "react";
 
 import Image from "next/image";
 
-import ExplorerHeader from "@/components/ExplorerHeader";
 import ExplorerTable from "@/components/ExplorerTable";
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
 
@@ -30,7 +29,6 @@ function page() {
     <div className="px-40 mt-6">
       <div className="flex items-center justify-between mb-6">
         <p className="text-xl w-80">Token Details</p>
-        <ExplorerHeader />
       </div>
       <div className="flex flex-wrap justify-between gap-3">
         {accounts.map((account) => (

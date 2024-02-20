@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-import ExplorerHeader from "@/components/ExplorerHeader";
 import timeAgo from "@/lib/ConvertTime";
 import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody } from "@nextui-org/react";
@@ -56,13 +55,13 @@ const BlockPage: React.FC<BlockPageProps> = () => {
   console.log("block-by-id", data.blockById);
 
   return (
-    <div className="px-4 sm:px-20 lg:px-60 h-full">
+    <div className="px-4 sm:px-20 lg:px-80 h-full">
       <div className="flex items-center justify-between my-6">
-        <p className="text-2xl w-80">
+        <p className="text-md md:text-2xl w-80">
           Blocks{" "}
           <span className="text-gray-400"># {data.blockById.height}</span>
         </p>
-        <ExplorerHeader />
+        <></>
       </div>
       <Card>
         <CardBody>

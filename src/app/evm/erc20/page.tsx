@@ -2,8 +2,7 @@
 
 import React from "react";
 
-// import ERC20TokensTable from '@/components/explorer/ERC20TokensTable';
-import ExplorerHeader from "@/components/ExplorerHeader";
+// import ERC20TokensTable from '@/components/explorer/ERCimport ExplorerHeader from "@/components/ExplorerHeader";
 import { Card, CardBody } from "@nextui-org/react";
 
 // import { columns, users } from '../../../data/evm_contracts';
@@ -13,7 +12,7 @@ function ERC20Tokens() {
     <div className="px-40 mt-6">
       <div className="flex items-center justify-between mb-6">
         <p className="text-2xl w-80">ERC-20 Tokens</p>
-        <ExplorerHeader />
+        {/* <ExplorerHeader /> */}
       </div>
       <Card>
         <CardBody>

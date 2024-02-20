@@ -1,6 +1,3 @@
-export default function ConvertBigNumber(num: number): number {
-  const value = num / 1000000000000000000000;
-  const truncatedNumber = Number(value.toString().slice(0, -10));
-
-  return truncatedNumber;
+export default function ConvertBigNumber(n: number): string {
+  return (n / 1e18).toLocaleString('fullwide', { useGrouping: true, maximumSignificantDigits: 21 });
 }

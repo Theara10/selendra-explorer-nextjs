@@ -3,16 +3,18 @@
 import React from "react";
 
 import ExplorerAccount from "@/components/ExplorerAccount";
-import ExplorerHeader from "@/components/ExplorerHeader";
 // import TransfersTable from '@/components/TransfersTable';
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
+import SearchInput from "@/components/SearchInput";
 
 function Account() {
   return (
-    <div className="px-60 mt-6">
+    <div className="px-4 sm:px-20 lg:px-80 mt-6">
       <div className="flex items-center justify-between mb-6">
-        <p className="text-lg w-80">Account </p>
-        <ExplorerHeader />
+        <p className="text-2xl">Account</p>
+        <div className="flex justify-center items-center">
+          <SearchInput />
+        </div>
       </div>
       <ExplorerAccount />
 
@@ -33,7 +35,7 @@ function Account() {
         </CardBody>
       </Card>
     </div>
-  );    
+  );
 }
 
 export default Account;
