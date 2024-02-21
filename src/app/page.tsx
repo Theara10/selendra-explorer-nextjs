@@ -13,9 +13,31 @@ import React, { useEffect, useState } from "react";
 import ExplorerNav from "@/components/ExplorerNav";
 import timeAgo from "@/lib/ConvertTime";
 // import { data1 } from '@/constants';
-import { Chart, LineElement, Title, Tooltip, Legend, Filler, LinearScale, CategoryScale, PointElement, ScriptableContext, TooltipModel, TooltipItem } from "chart.js"
+import {
+  Chart,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+  LinearScale,
+  CategoryScale,
+  PointElement,
+  ScriptableContext,
+  TooltipModel,
+  TooltipItem,
+} from "chart.js";
 import { Line } from "react-chartjs-2";
-Chart.register(LineElement, Title, Tooltip, Legend, Filler, LinearScale, CategoryScale, PointElement,);
+Chart.register(
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+  LinearScale,
+  CategoryScale,
+  PointElement
+);
 import {
   Card,
   CardBody,
@@ -45,14 +67,25 @@ import truncateMiddle from "@/lib/TruncateMiddle";
 import { gql, useQuery } from "@apollo/client";
 import { useExtrinsic } from "@/context/ExtrinsicsContext";
 import { log } from "console";
-import { GET_LAST_MONTHS_TRANSACTIONS, GET_LATEST_BLOCKS, GET_LATEST_TRANSACTIONS } from "@/graphql/queries";
+import {
+  GET_LAST_MONTHS_TRANSACTIONS,
+  GET_LATEST_BLOCKS,
+  GET_LATEST_TRANSACTIONS,
+} from "@/graphql/queries";
 
 function frequency(d: Date[]): number[] {
   let map = Array<number>(30).fill(0);
-  d.forEach((date) => map[(29 - Math.round(Math.abs((date.getTime() - new Date().getTime()) / 0x5265c00)))] += 1);
+  d.forEach(
+    (date) =>
+      (map[
+        29 -
+          Math.round(
+            Math.abs((date.getTime() - new Date().getTime()) / 0x5265c00)
+          )
+      ] += 1)
+  );
   return map;
 }
-
 
 const Explorer = () => {
   const [totalBlock, setTotalBlock] = useState<number>(0);
@@ -88,14 +121,15 @@ const Explorer = () => {
   ];
 
   return (
-    <><ExplorerNav
-      bgColor={"bg-white"}
-      textColor="gray"
-      logo="/sel-logo-text.png"
-      search={true}
-      selIcon="/sel-logo-blue.png"
-    />
-      <div className="px-4">
+    <>
+      <ExplorerNav
+        bgColor={"bg-white"}
+        textColor="gray"
+        logo="/sel-logo-text.png"
+        search={true}
+        selIcon="/sel-logo-blue.png"
+      />
+      <div className="px-4 sm:px-20 lg:px-80 mt-6">
         <section className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-2">
           {data1.map((data) => {
             return (
@@ -110,9 +144,13 @@ const Explorer = () => {
               </Card>
             );
           })}
-          <Card className="w-full" key={3}>
-            <div className="flex flex-row items-center relative w-full flex-auto place-content-inherit align-items-inherit h-auto break-words text-left overflow-y-auto subpixel-antialiased md:gap-4 flex-row">
-              <ArrowRightLeft style={{ position: "absolute", marginLeft: "0.75rem" }} color="#00A4E5" size={30} />
+          <Card className="w-full p-4" key={3}>
+            <div className="flex items-center relative w-full flex-auto place-content-inherit align-items-inherit h-auto break-words text-left overflow-y-auto subpixel-antialiased md:gap-4 flex-row">
+              <ArrowRightLeft
+                style={{ position: "absolute", marginLeft: "0.75rem" }}
+                color="#00A4E5"
+                size={30}
+              />
               <LastMonthsTransfers />
             </div>
           </Card>
@@ -121,16 +159,15 @@ const Explorer = () => {
           <LatestBlocks setTotalBlock={setTotalBlock} />
           <LatestTrasactions setTotalTokenTransfer={setTotalTokenTransfer} />
         </section>
-      </div >
+      </div>
     </>
   );
 };
 
-
-class Lazy<T>{
+class Lazy<T> {
   data?: T;
   assume(): T {
-    return this.data!
+    return this.data!;
   }
   /** takes a thunk */
   get(thunk: () => T): T {
@@ -151,78 +188,122 @@ var when = (() => {
 
 var labels = (() => {
   var start = new Date(when.getTime());
-  return Array<string>(30).fill("").map(() => {
-    var x = start.toLocaleDateString();
-    start.setUTCDate(start.getUTCDate() + 1);
-    return x;
-  });
+  return Array<string>(30)
+    .fill("")
+    .map((x, i) => {
+      return i;
+    });
 })();
 
 var lastMonth = new Lazy<number[]>();
 const LastMonthsTransfers: React.FC = () => {
   const { loading, error, data } = useQuery(GET_LAST_MONTHS_TRANSACTIONS, {
-    variables: { t: when }
+    variables: { t: when },
   });
 
   if (loading) return <p>loading</p>;
   if (error) return <p>{error.message}</p>;
-  lastMonth.get(() => {
+  const last = lastMonth.get(() => {
     return frequency(data.transfers.map((x: any) => new Date(x.timestamp)));
   });
-  return (<div className="flex flex-col w-full noscroll">
-    {(() => {
-      return (<div style={{ width: "101%", maxHeight: "95%" }}><Line data={{
-        labels,
-        datasets: [{ data: lastMonth.assume() }]
-      }} options={{
-        plugins: {
-          legend: { display: false, },
-          tooltip: {
-            backgroundColor: '#ffffff80',
-            titleColor: '#000000',
-            bodyColor: '#000000',
-            bodyFont: { family: "monospace" },
-            titleFont: { family: "monospace" },
-            displayColors: false,
-            callbacks: {
-              title: (data) => {
-                return data[0].parsed.y + " tx's";
-              },
-              label: (context) => {
-                return context.label
-              }
-            }
-          }
-        },
-        interaction: {
-          mode: "nearest",
-          axis: "x",
-          intersect: false,
-        },
-        elements: {
-          line: {
-            tension: 0.2,
-            borderWidth: 2,
-            borderColor: "#acdb90",
-            fill: "start",
-            backgroundColor: (context: ScriptableContext<"line">) => {
-              const ctx = context.chart.ctx;
-              const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
-              gradient.addColorStop(0, "#acdb904c");
-              gradient.addColorStop(0.4, "#acdb9000");
-              return gradient;
-            },
-          },
-          point: { radius: 0, hitRadius: 0 }
-        },
-        scales: { x: { display: false, }, y: { display: false, } },
-        responsive: true,
-        maintainAspectRatio: false,
-      }}></Line></div>)
-    })()}
-  </div>)
-}
 
+  console.log("lastmonth-data", last);
+  console.log("label", labels);
+
+  return (
+    <div className="flex flex-col w-full noscroll">
+      {(() => {
+        return (
+          <div style={{ width: "101%", maxHeight: "95%" }}>
+            <Line
+              data={{
+                labels,
+                datasets: [{ data: lastMonth.assume() }],
+              }}
+              options={{
+                plugins: {
+                  legend: { display: false },
+                  tooltip: {
+                    backgroundColor: "#ffffff80",
+                    titleColor: "#000000",
+                    bodyColor: "#000000",
+                    bodyFont: { family: "monospace" },
+                    titleFont: { family: "monospace" },
+                    displayColors: false,
+                    callbacks: {
+                      title: (data) => {
+                        return data[0].parsed.y + " tx's";
+                      },
+                      label: (context) => {
+                        return "";
+                      },
+                    },
+                  },
+                },
+                interaction: {
+                  mode: "nearest",
+                  axis: "x",
+                  intersect: false,
+                },
+                elements: {
+                  line: {
+                    tension: 0.2,
+                    borderWidth: 2,
+                    borderColor: "#acdb90",
+                    fill: "start",
+                    backgroundColor: (context: ScriptableContext<"line">) => {
+                      const ctx = context.chart.ctx;
+                      const gradient = ctx.createLinearGradient(
+                        0,
+                        0,
+                        0,
+                        ctx.canvas.height
+                      );
+                      gradient.addColorStop(0, "#acdb904c");
+                      gradient.addColorStop(0.4, "#acdb9000");
+                      return gradient;
+                    },
+                  },
+                  point: { radius: 0, hitRadius: 0 },
+                },
+
+                scales: {
+                  x: {
+                    grid: {
+                      display: false,
+                    },
+                    ticks: {
+                      stepSize: 1,
+                      autoSkip: false,
+
+                      callback: (x) =>
+                        x == 5 || x == 15 || x == "26"
+                          ? (() => {
+                              const date = new Date(
+                                when.getTime() + 0x5265c00 * Number(x)
+                              );
+                              return `${date.toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                              })}`;
+                            })()
+                          : undefined,
+                    },
+                  },
+                  y: {
+                    display: false,
+                  },
+                },
+                responsive: true,
+                maintainAspectRatio: false,
+              }}
+            ></Line>
+          </div>
+        );
+      })()}
+    </div>
+  );
+};
 
 export default Explorer;
 interface LatestBlocksProps {
@@ -371,7 +452,10 @@ const LatestTrasactions: React.FC<LatestTokenTransferProps> = ({
                 return (
                   <TableRow key={x.id} className=" border-b">
                     <TableCell>
-                      <Link href={`/tx/${x.id}`} className="text-sel_blue font-semibold ">
+                      <Link
+                        href={`/tx/${x.id}`}
+                        className="text-sel_blue font-semibold "
+                      >
                         <User
                           avatarProps={{
                             radius: "md",
@@ -382,10 +466,7 @@ const LatestTrasactions: React.FC<LatestTokenTransferProps> = ({
                               From
                               <span className="text-sel_blue ml-2">
                                 <Link href="/accounts/1">
-                                  {truncateMiddle(
-                                    x.from.evmAddress,
-                                    32
-                                  )}
+                                  {truncateMiddle(x.from.evmAddress, 32)}
                                 </Link>
                                 <br className="md:hidden" />
                                 <span className="pr-2 md:px-2 text-gray-400">
@@ -406,17 +487,17 @@ const LatestTrasactions: React.FC<LatestTokenTransferProps> = ({
                         <p className="text-md">
                           {ConvertBigNumber(x.amount)}
                           <span> {x.symbol}</span>
-                        </p >
+                        </p>
                         <p>{timeAgo(x.timestamp)}</p>
-                      </div >
-                    </TableCell >
-                  </TableRow >
+                      </div>
+                    </TableCell>
+                  </TableRow>
                 );
               }
             )}
-          </TableBody >
-        </Table >
-      </CardBody >
-    </Card >
+          </TableBody>
+        </Table>
+      </CardBody>
+    </Card>
   );
 };

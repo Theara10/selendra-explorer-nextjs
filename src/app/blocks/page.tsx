@@ -61,7 +61,7 @@ function Blocks() {
   };
 
   return (
-    <div className="px-4 mt-4">
+    <div className="px-4 sm:px-20 lg:px-80 mt-6">
       <div className="flex items-center justify-between mb-6">
         <p className="text-2xl">Blocks {extrinsic}</p>
         <SearchInput />
