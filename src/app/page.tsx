@@ -313,7 +313,7 @@ interface LatestBlocksProps {
 const LatestBlocks: React.FC<LatestBlocksProps> = ({ setTotalBlock }) => {
   const { loading, error, data, refetch } = useQuery(GET_LATEST_BLOCKS, {
     variables: {
-      limit: 20,
+      limit: 10,
       offset: 0,
     },
   });
