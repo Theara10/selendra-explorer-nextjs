@@ -72,17 +72,18 @@ import {
   GET_LATEST_BLOCKS,
   GET_LATEST_TRANSACTIONS,
 } from "@/graphql/queries";
+import { day } from "@/lib/millis";
 
 function frequency(d: Date[]): number[] {
   let map = Array<number>(30).fill(0);
   d.forEach(
     (date) =>
-      (map[
-        29 -
-          Math.round(
-            Math.abs((date.getTime() - new Date().getTime()) / 0x5265c00)
-          )
-      ] += 1)
+    (map[
+      29 -
+      Math.round(
+        Math.abs((date.getTime() - new Date().getTime()) / day)
+      )
+    ] += 1)
   );
   return map;
 }
@@ -276,14 +277,14 @@ const LastMonthsTransfers: React.FC = () => {
                       callback: (x) =>
                         x == 2 || x == 15 || x == 27
                           ? (() => {
-                              const date = new Date(
-                                when.getTime() + 0x5265c00 * Number(x)
-                              );
-                              return date.toLocaleDateString("en-US", {
-                                month: "short",
-                                day: "numeric",
-                              });
-                            })()
+                            const date = new Date(
+                              when.getTime() + day * Number(x)
+                            );
+                            return date.toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                            });
+                          })()
                           : undefined,
                     },
                   },
