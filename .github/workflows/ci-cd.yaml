@@ -3,16 +3,28 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '**.ts'
+      - 'package.json'
+      - '**.json'
+      - '**.css'
+      - '**.png'
+      - '**.svg'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Run SSHPASS
+      - name: write secret
+        shell: python
+        run: |
+          with open("pass", "w") as f: f.write("${{ secrets.SSH_PASS }}")
+
+      - name: deploy
         run: |
           sshpass \
-            -p ${{ secrets.SSH_PASS }} \
+            -f pass \
             ssh \
               -o 'StrictHostKeyChecking no' \
-              -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-              'cd /root/selendra-explorer-nextjs && git checkout main && git pull && npm i --force && npm run build && pm2 restart 4'
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+              'cd /root/selendra-explorer-nextjs && git checkout main && git checkout . && git pull --rebase && npm i --force && npm run build && pm2 restart 4'
