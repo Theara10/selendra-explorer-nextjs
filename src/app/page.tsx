@@ -144,7 +144,7 @@ const Explorer = () => {
               </Card>
             );
           })}
-          <Card className="w-full p-4" key={3}>
+          <Card className="w-full" key={3}>
             <div className="flex items-center relative w-full flex-auto place-content-inherit align-items-inherit h-auto break-words text-left overflow-y-auto subpixel-antialiased md:gap-4 flex-row">
               <ArrowRightLeft
                 style={{ position: "absolute", marginLeft: "0.75rem" }}
@@ -207,9 +207,6 @@ const LastMonthsTransfers: React.FC = () => {
     return frequency(data.transfers.map((x: any) => new Date(x.timestamp)));
   });
 
-  console.log("lastmonth-data", last);
-  console.log("label", labels);
-
   return (
     <div className="flex flex-col w-full noscroll">
       {(() => {
@@ -218,7 +215,7 @@ const LastMonthsTransfers: React.FC = () => {
             <Line
               data={{
                 labels,
-                datasets: [{ data: lastMonth.assume() }],
+                datasets: [{ data: last }],
               }}
               options={{
                 plugins: {
@@ -277,15 +274,15 @@ const LastMonthsTransfers: React.FC = () => {
                       autoSkip: false,
 
                       callback: (x) =>
-                        x == 5 || x == 15 || x == "26"
+                        x == 2 || x == 15 || x == 27
                           ? (() => {
                               const date = new Date(
                                 when.getTime() + 0x5265c00 * Number(x)
                               );
-                              return `${date.toLocaleDateString("en-US", {
+                              return date.toLocaleDateString("en-US", {
                                 month: "short",
                                 day: "numeric",
-                              })}`;
+                              });
                             })()
                           : undefined,
                     },
