@@ -1,6 +1,0 @@
-query getAccounts {
-  accounts(limit: 10) {
-    id
-    evmAddress
-  }
-}

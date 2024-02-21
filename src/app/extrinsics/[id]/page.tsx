@@ -11,32 +11,7 @@ import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody } from "@nextui-org/react";
 import { CheckCircle, Copy } from "lucide-react";
 import { useExtrinsic } from "@/context/ExtrinsicsContext";
-
-const GET_EXTRINSICS_BY_ID = gql`
-  query ExtrinsicById($id: String!) {
-    extrinsicById(id: $id) {
-      timestamp
-      extrinsicHash
-      blockNumber
-      fee
-      tip
-      version
-      success
-      signerPublicKey
-      indexInBlock
-      events {
-        eventName
-      }
-      calls {
-        callName
-      }
-      block {
-        height
-        id
-      }
-    }
-  }
-`;
+import { GET_EXTRINSICS_BY_ID } from "@/graphql/queries";
 
 export default function ExtrinsicPage() {
   const { extrinsic, toggleExtrinsic } = useExtrinsic();

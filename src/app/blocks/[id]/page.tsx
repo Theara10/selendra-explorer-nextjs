@@ -10,23 +10,7 @@ import timeAgo from "@/lib/ConvertTime";
 import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody } from "@nextui-org/react";
 import { Check, CheckCircle, Copy } from "lucide-react";
-
-const BLOCK_BY_ID = gql`
-  query BlockByID($id: String!) {
-    blockById(id: $id) {
-      id
-      validator
-      hash
-      specVersion
-      timestamp
-      height
-      parentHash
-      extrinsicsCount
-      eventsCount
-      callsCount
-    }
-  }
-`;
+import { BLOCK_BY_ID } from "@/graphql/queries";
 
 /**
  * Interface for the props passed to the BlockPage component.

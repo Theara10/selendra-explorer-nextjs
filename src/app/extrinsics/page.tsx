@@ -11,23 +11,8 @@ import PaginationControls from "@/components/PaginationControls";
 import { useSearchParams } from "next/navigation";
 import { useExtrinsic } from "@/context/ExtrinsicsContext";
 import SearchInput from "@/components/SearchInput";
+import { GET_LATEST_EXTRINSICS } from "@/graphql/queries";
 
-const GET_LATEST_EXTRINSICS = gql`
-  query GetLastestExtrinsics($limit: Int, $offset: Int) {
-    extrinsics(limit: $limit, offset: $offset, orderBy: block_timestamp_DESC) {
-      id
-      extrinsicHash
-      timestamp
-      success
-      fee
-      block {
-        height
-        id
-      }
-      blockNumber
-    }
-  }
-`;
 let signedExtrinsics = null;
 function Extrinsics() {
   const PAGE_SiZE = useSearchParams().get("page") ?? "1";

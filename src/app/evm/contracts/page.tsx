@@ -10,18 +10,7 @@ import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
 
 import { columns } from "../../data/evm_contracts";
 import { FileCheck2 } from "lucide-react";
-
-const GET_EVM_CONTRACTS = gql`
-  query evmContracts {
-    evmContracts {
-      account
-      id
-      extrinsicHash
-      timestamp
-      type
-    }
-  }
-`;
+import { GET_EVM_CONTRACTS } from "@/graphql/queries";
 
 function EvmContracts() {
   const accounts = [

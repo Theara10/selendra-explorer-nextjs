@@ -43,17 +43,9 @@ import Link from "next/link";
 import ConvertBigNumber from "@/lib/ConvertBigNumber";
 import truncateMiddle from "@/lib/TruncateMiddle";
 import { gql, useQuery } from "@apollo/client";
-import { GET_LATEST_TRANSACTIONS } from "./tx/page"
-import { GET_LATEST_BLOCKS } from "./blocks/page";
 import { useExtrinsic } from "@/context/ExtrinsicsContext";
 import { log } from "console";
-
-const GET_LAST_MONTHS_TRANSACTIONS = gql`
-query LastMonth($t: DateTime!) {
-  transfers(where: {timestamp_gt: $t}) {
-    timestamp
-  }
-}`;
+import { GET_LAST_MONTHS_TRANSACTIONS, GET_LATEST_BLOCKS, GET_LATEST_TRANSACTIONS } from "@/graphql/queries";
 
 function frequency(d: Date[]): number[] {
   let map = Array<number>(30).fill(0);

@@ -8,25 +8,7 @@ import { Card, CardBody } from "@nextui-org/react";
 
 import { columns } from "../data/transfers";
 import SearchInput from "@/components/SearchInput";
-
-export const GET_LATEST_TRANSACTIONS = gql`
-query GetLatestTransactions {
-  transfers(limit: 10, orderBy: timestamp_DESC) {
-    blockNumber
-    amount
-    from {
-      evmAddress
-    }
-    to {
-      evmAddress
-    }
-    timestamp
-    id
-    success
-  symbol
-  }
-}
-`;
+import { GET_LATEST_TRANSACTIONS } from "@/graphql/queries";
 
 function Transfers() {
   const { loading, error, data } = useQuery(GET_LATEST_TRANSACTIONS);

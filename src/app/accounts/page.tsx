@@ -11,19 +11,7 @@ import { columns } from "../data/accounts";
 import PaginationControls from "@/components/PaginationControls";
 import { useSearchParams } from "next/navigation";
 import SearchInput from "@/components/SearchInput";
-
-const GET_ACCOUNTS = gql`
-  query Accounts {
-    accounts {
-      evmAddress
-      freeBalance
-      id
-      totalBalance
-      updatedAt
-      reservedBalance
-    }
-  }
-`;
+import { GET_ACCOUNTS } from "@/graphql/queries";
 
 function Accounts() {
   const PAGE_SiZE = useSearchParams().get("page") ?? "1";

@@ -19,20 +19,7 @@ import { columns } from "../data/blocks";
 import { useExtrinsic } from "@/context/ExtrinsicsContext";
 import ExplorerNav from "@/components/ExplorerNav";
 import SearchInput from "@/components/SearchInput";
-
-export const GET_LATEST_BLOCKS = gql`
-  query GetLatestBlocks($limit: Int, $offset: Int) {
-    blocks(limit: $limit, offset: $offset, orderBy: timestamp_DESC) {
-      eventsCount
-      id
-      timestamp
-      extrinsicsCount
-      height
-      hash
-      validator
-    }
-  }
-`;
+import { GET_LATEST_BLOCKS } from "@/graphql/queries";
 
 function Blocks() {
   const PAGE_SiZE = useSearchParams().get("page") ?? "1";

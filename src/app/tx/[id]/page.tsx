@@ -12,35 +12,13 @@ import truncateMiddle from "@/lib/TruncateMiddle";
 import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody } from "@nextui-org/react";
 import { CheckCircle, Copy } from "lucide-react";
-
-export const TRANSFER_BY_ID = gql`
-query TransferByID($id: String!) {
-  transferById(id: $id) {
-    amount
-    blockNumber
-    extrinsicHash
-    id
-    timestamp
-    symbol
-    success
-    type
-    from {
-      evmAddress
-      id
-    }
-    to {
-      evmAddress
-      id
-    }
-  }
-}
-`;
+import { TRANSFER_BY_ID } from "@/graphql/queries";
 
 /**
  * Interface for the props passed to the BlockPage component.
  * Contains the route params with the block ID.
  */
-interface BlockPageProps {
+export interface BlockPageProps {
   params: {
     id: string;
   };

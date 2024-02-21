@@ -25,21 +25,9 @@ import {
   QrCode,
   Wallet,
 } from "lucide-react";
+import { ACCOUNT_BY_ID } from "@/graphql/queries";
 
-const ACCOUNT_BY_ID = gql`
-  query AccountByID($id: String!) {
-    accountById(id: $id) {
-      id
-      evmAddress
-      freeBalance
-      reservedBalance
-      totalBalance
-      updatedAt
-    }
-  }
-`;
-
-function ExplorerAccount({}): React.ReactElement {
+function ExplorerAccount({ }): React.ReactElement {
   const params = useParams();
   const { loading, error, data } = useQuery(ACCOUNT_BY_ID, {
     variables: { id: params.id },
@@ -126,9 +114,9 @@ function ExplorerAccount({}): React.ReactElement {
                   aria-label="Single selection example"
                   variant="flat"
                   disallowEmptySelection
-                  // selectionMode="single"
-                  // selectedKeys={selectedKeys}
-                  // onSelectionChange={setSelectedKeys}
+                // selectionMode="single"
+                // selectedKeys={selectedKeys}
+                // onSelectionChange={setSelectedKeys}
                 >
                   <DropdownItem
                     key="copy"

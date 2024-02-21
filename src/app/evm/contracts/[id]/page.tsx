@@ -27,6 +27,7 @@ import {
   QrCode,
   Wallet,
 } from "lucide-react";
+import { EVM_CONTRACT_BY_ID } from "@/graphql/queries";
 
 function page() {
   return (
@@ -66,19 +67,7 @@ function page() {
 
 export default page;
 
-const EVM_CONTRACT_BY_ID = gql`
-  query evmContractById($id: String!) {
-    evmContractById(id: $id) {
-      account
-      extrinsicHash
-      id
-      timestamp
-      type
-    }
-  }
-`;
-
-function EvmContractAccount({}): React.ReactElement {
+function EvmContractAccount({ }): React.ReactElement {
   const params = useParams();
   const { loading, error, data } = useQuery(EVM_CONTRACT_BY_ID, {
     variables: { id: params.id },
@@ -163,9 +152,9 @@ function EvmContractAccount({}): React.ReactElement {
                   aria-label="Single selection example"
                   variant="flat"
                   disallowEmptySelection
-                  // selectionMode="single"
-                  // selectedKeys={selectedKeys}
-                  // onSelectionChange={setSelectedKeys}
+                // selectionMode="single"
+                // selectedKeys={selectedKeys}
+                // onSelectionChange={setSelectedKeys}
                 >
                   <DropdownItem
                     key="copy"
