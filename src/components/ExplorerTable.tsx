@@ -17,23 +17,16 @@ import {
   User,
 } from "@nextui-org/react";
 import { Contact2, FileCode2 } from "lucide-react";
+import { Contract } from "@/graphql/types";
 
-type User = {
-  id: string;
-  contract: string;
-  name: string;
-  extrinsicHash: string;
-  verified_time: string;
-  account: string;
-};
 interface BlocksTableProps {
-  users: User[];
+  users: Contract[];
   columns: { uid: string; name: string }[];
 }
 
 export default function ExplorerTable({ users, columns }: BlocksTableProps) {
-  const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
-    const cellValue = user[columnKey as keyof User];
+  const renderCell = React.useCallback((user: Contract, columnKey: React.Key) => {
+    const cellValue = user[columnKey as keyof Contract];
 
     switch (columnKey) {
       case "contract":

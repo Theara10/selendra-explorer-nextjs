@@ -10,7 +10,8 @@ import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
 
 import { columns } from "../../data/evm_contracts";
 import { FileCheck2 } from "lucide-react";
-import { GET_EVM_CONTRACTS } from "@/graphql/queries";
+import { get_evm_contracts } from "@/graphql/queries";
+import { Contract } from "@/graphql/types";
 
 function EvmContracts() {
   const accounts = [
@@ -52,12 +53,15 @@ function EvmContracts() {
     // },
   ];
 
-  const { loading, error, data } = useQuery(GET_EVM_CONTRACTS);
-  if (error) return <p>Error :(</p>;
-  if (loading) return <p>Loading...</p>;
-  // const contracts = data.evmContracts;
+  const result = get_evm_contracts();
+  let data: Contract[];
+  switch (result.state) {
+    case "loading": return <p>Loading...</p>
+    case "error": return <p>Error...</p>
+    case "ok": data = result.data;
+  }
 
-  accounts[0].value = data.evmContracts.length;
+  accounts[0].value = data.length.toLocaleString();
   return (
     <div className="px-4 sm:px-20 md:px-40 lg:px-80 mt-6">
       <div className="flex items-center justify-between mb-6">
@@ -90,7 +94,7 @@ function EvmContracts() {
         <CardBody>
           <Tabs aria-label="Options" variant="underlined" color="primary">
             <Tab key="contracts" title="Contracts">
-              <ExplorerTable users={data.evmContracts} columns={columns} />
+              <ExplorerTable users={data} columns={columns} />
             </Tab>
             <Tab key="verified" title="Verified Contracts">
               {/* <ExplorerTable users={users} columns={columns} /> */}

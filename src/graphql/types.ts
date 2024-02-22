@@ -36,3 +36,12 @@ export type Account = {
     // identity: TODO
     // sub: TODO
 };
+
+export type Contract = {
+    id: string;
+    contract: string;
+    name: string;
+    extrinsicHash: string;
+    verified_time: string;
+    account: string;
+};

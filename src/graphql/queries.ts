@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { QueryResult, gql, useQuery } from '@apollo/client';
 import { GraphQLErrors } from '@apollo/client/errors';
-import { Block, Transfer } from './types';
+import { Block, Contract, Transfer } from './types';
 
 export type Ok<T> = {
   data: T;
@@ -74,18 +74,18 @@ export function get_latest_blocks(limit: number, offset: number = 0): Refreshabl
   )
 }
 
-export const GET_EVM_CONTRACTS = gql`
-  query evmContracts {
-    evmContracts {
-      account
-      id
-      extrinsicHash
-      timestamp
-      type
-    }
-  }
-`;
-
+export function get_evm_contracts(): Result<Contract[]> {
+  return map_query(useQuery(gql`
+    query evmContracts {
+      evmContracts {
+        account
+        id
+        extrinsicHash
+        timestamp
+        type
+      }
+    }`), (x) => x.evmContracts)
+}
 
 export const GET_LATEST_EXTRINSICS = gql`
   query GetLastestExtrinsics($limit: Int, $offset: Int) {
