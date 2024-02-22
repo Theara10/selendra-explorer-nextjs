@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { map } from '@/lib/utils';
-import { QueryResult, gql, useQuery, ApolloQueryResult } from '@apollo/client';
+import { QueryResult, gql, useQuery } from '@apollo/client';
 import { GraphQLErrors } from '@apollo/client/errors';
-import { Block } from './types';
+import { Block, Transfer } from './types';
 
 export type Ok<T> = {
   data: T;
@@ -59,23 +58,21 @@ query LastMonth($t: DateTime!) {
 
 export function get_latest_blocks(limit: number, offset: number = 0): Refreshable<Block[]> {
   return map_refreshable(
-    useQuery(GET_LATEST_BLOCKS, { variables: { limit, offset } }),
+    useQuery(gql`
+      query GetLatestBlocks($limit: Int, $offset: Int) {
+        blocks(limit: $limit, offset: $offset, orderBy: timestamp_DESC) {
+          eventsCount
+          id
+          timestamp
+          extrinsicsCount
+          height
+          validator
+        }
+      }
+  `, { variables: { limit, offset } }),
     (y) => y.blocks
   )
 }
-
-export const GET_LATEST_BLOCKS = gql`
-  query GetLatestBlocks($limit: Int, $offset: Int) {
-    blocks(limit: $limit, offset: $offset, orderBy: timestamp_DESC) {
-      eventsCount
-      id
-      timestamp
-      extrinsicsCount
-      height
-      validator
-    }
-  }
-`;
 
 export const GET_EVM_CONTRACTS = gql`
   query evmContracts {
@@ -107,25 +104,22 @@ export const GET_LATEST_EXTRINSICS = gql`
   }
 `;
 
-export const GET_LATEST_TRANSACTIONS = gql`
-query GetLatestTransactions {
-  transfers(limit: 10, orderBy: timestamp_DESC) {
-    blockNumber
-    amount
-    from {
-      evmAddress
-    }
-    to {
-      evmAddress
-    }
-    timestamp
-    id
-    success
-  symbol
-  }
+export function get_latest_transactions(n: number): Result<Transfer[]> {
+  return map_query(useQuery(gql`
+    query GetLatestTransactions($n: Int!) {
+      transfers(limit: $n, orderBy: timestamp_DESC) {
+        blockNumber
+        amount
+        from { id, evmAddress, freeBalance, totalBalance, updatedAt }
+        to { id, evmAddress, freeBalance, totalBalance, updatedAt }
+        timestamp
+        id
+        success
+        symbol
+      }
+    }`,
+    { variables: { n } }), (y) => y.transfers)
 }
-`;
-
 
 export const GET_ACCOUNTS = gql`
   query Accounts {

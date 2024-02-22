@@ -69,11 +69,11 @@ import { log } from "console";
 import {
   GET_LAST_MONTHS_TRANSACTIONS,
   get_latest_blocks,
-  GET_LATEST_TRANSACTIONS,
+  get_latest_transactions,
 } from "@/graphql/queries";
 import { day } from "@/lib/millis";
 import { HashLoader } from "react-spinners";
-import { Block } from "@/graphql/types";
+import { Block, Transfer } from "@/graphql/types";
 
 function frequency(d: Date[]): number[] {
   let map = Array<number>(30).fill(0);
@@ -393,14 +393,19 @@ interface LatestTokenTransferProps {
 const LatestTransactions: React.FC<LatestTokenTransferProps> = ({
   setTotalTokenTransfer,
 }) => {
-  const { loading, error, data } = useQuery(GET_LATEST_TRANSACTIONS);
-  if (loading) return <Card className="w-full">
-    <CardHeader className="border-b">Latest Transactions</CardHeader>
-    <CardBody>
-      <HashLoader size={150} style={{ alignContent: "center" }} color={"#00A3E4"} />
-    </CardBody>
-  </Card>;
-  if (error) return <p>Error: {error.message}</p>;
+  const result = get_latest_transactions(10);
+  let data: Transfer[];
+  switch (result.state) {
+    case "loading":
+      return <Card className="w-full">
+        <CardHeader className="border-b">Latest Transactions</CardHeader>
+        <CardBody>
+          <HashLoader size={150} style={{ alignContent: "center" }} color={"#00A3E4"} />
+        </CardBody>
+      </Card>;
+    case "error": return <p>Error: {result.message}</p>;
+    case "ok": data = result.data;
+  }
 
   return (
     <Card className="w-full">
@@ -423,19 +428,8 @@ const LatestTransactions: React.FC<LatestTokenTransferProps> = ({
             <TableColumn>Time</TableColumn>
           </TableHeader>
           <TableBody>
-            {data.transfers.map(
-              (
-                x: {
-                  id: string;
-                  from: { evmAddress: string };
-                  to: { evmAddress: string };
-                  blockNumber: number;
-                  amount: number;
-                  timestamp: string;
-                  symbol: string;
-                },
-                index: number
-              ) => {
+            {data.map(
+              (x, index: number) => {
                 // console.log("tokenTransfers", typeof x.from);
                 setTotalTokenTransfer(index);
                 return (
