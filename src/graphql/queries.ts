@@ -1,7 +1,19 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { QueryResult, gql, useQuery } from '@apollo/client';
 import { GraphQLErrors } from '@apollo/client/errors';
-import { Block, Contract, Transfer } from './types';
+import { Block, Contract, Extrinsic, Transfer } from './types';
+
+const BLOCK = `
+id
+validator
+specVersion
+timestamp
+height
+parentHash
+extrinsicsCount
+eventsCount
+callsCount
+`;
 
 export type Ok<T> = {
   data: T;
@@ -87,22 +99,25 @@ export function get_evm_contracts(): Result<Contract[]> {
     }`), (x) => x.evmContracts)
 }
 
-export const GET_LATEST_EXTRINSICS = gql`
-  query GetLastestExtrinsics($limit: Int, $offset: Int) {
-    extrinsics(limit: $limit, offset: $offset, orderBy: block_timestamp_DESC) {
-      id
-      extrinsicHash
-      timestamp
-      success
-      fee
-      block {
-        height
+export function get_latest_extrinsics(limit: number, offset: number = 0): Refreshable<Extrinsic[]> {
+  return map_refreshable(useQuery(gql`
+    query GetLastestExtrinsics($limit: Int, $offset: Int) {
+      extrinsics(limit: $limit, offset: $offset, orderBy: timestamp_DESC) {
         id
+        extrinsicHash
+        timestamp
+        success
+        fee
+        version
+        tip
+        block {
+          ${BLOCK}
+        }
+        blockNumber
       }
-      blockNumber
     }
-  }
-`;
+  `, { variables: { limit, offset } }), y => y.extrinsics)
+}
 
 export function get_latest_transactions(n: number): Result<Transfer[]> {
   return map_query(useQuery(gql`
@@ -161,33 +176,18 @@ export function block_by_hash(hash: string): Result<Block> {
   return map_query(useQuery(gql`
     query BlockByHash($hash: String!) {
       blockById(id: $hash) {
-        id
-        validator
-        specVersion
-        timestamp
-        height
-        parentHash
-        extrinsicsCount
-        eventsCount
-        callsCount
+        ${BLOCK}
       }
     }`, { variables: { hash } }),
     (y) => y.blockById)
 }
 
+
 export function block_by_height(height: number): Result<Block> {
   return map_query(useQuery(gql`
     query BlockByHeight($height: Int!) {
       blocks(where: { height_eq: $height }) {
-        id
-        validator
-        specVersion
-        timestamp
-        height
-        parentHash
-        extrinsicsCount
-        eventsCount
-        callsCount
+        ${BLOCK}
       }
     }`, { variables: { height } }),
     (y) => y.blocks[0]);

@@ -45,3 +45,15 @@ export type Contract = {
     verified_time: string;
     account: string;
 };
+
+export type Extrinsic = {
+    timestamp: string;
+    extrinsicHash: string;
+    blockNumber: number;
+    fee?: number;
+    success: boolean;
+    height: number;
+    block: Block;
+    tip?: number;
+    version: string;
+};
