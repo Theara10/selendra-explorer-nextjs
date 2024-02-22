@@ -187,14 +187,7 @@ var when = (() => {
   return now;
 })();
 
-var labels = (() => {
-  var start = new Date(when.getTime());
-  return Array<string>(30)
-    .fill("")
-    .map((x, i) => {
-      return i;
-    });
-})();
+var labels = Array.from(Array(30).keys());
 
 var lastMonth = new Lazy<number[]>();
 const LastMonthsTransfers: React.FC = () => {
