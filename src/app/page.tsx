@@ -268,15 +268,12 @@ const LastMonthsTransfers: React.FC = () => {
 
                       callback: (x) =>
                         x == 2 || x == 15 || x == 27
-                          ? (() => {
-                            const date = new Date(
-                              when.getTime() + day * Number(x)
-                            );
-                            return date.toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                            });
-                          })()
+                          ? new Date(
+                            when.getTime() + day * { 2: 0, 15: 15, 27: 30 }[x]!
+                          ).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })
                           : undefined,
                     },
                   },
