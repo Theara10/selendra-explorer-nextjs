@@ -2,6 +2,7 @@
 import { map } from '@/lib/utils';
 import { QueryResult, gql, useQuery, ApolloQueryResult } from '@apollo/client';
 import { GraphQLErrors } from '@apollo/client/errors';
+import { Block } from './types';
 
 export type Ok<T> = {
   data: T;
@@ -55,6 +56,13 @@ query LastMonth($t: DateTime!) {
     timestamp
   }
 }`;
+
+export function get_latest_blocks(limit: number, offset: number = 0): Refreshable<Block[]> {
+  return map_refreshable(
+    useQuery(GET_LATEST_BLOCKS, { variables: { limit, offset } }),
+    (y) => y.blocks
+  )
+}
 
 export const GET_LATEST_BLOCKS = gql`
   query GetLatestBlocks($limit: Int, $offset: Int) {
@@ -154,18 +162,6 @@ export function counts(): Refreshable<number> {
     }
   `), (y) => y.itemsCounters[0].total)
 }
-
-export type Block = {
-  eventsCount: number;
-  callsCount: number;
-  id: string;
-  specVersion: number;
-  timestamp: string;
-  extrinsicsCount: number;
-  height: number;
-  validator: string;
-  parentHash: string;
-};
 
 export function block_by_hash(hash: string): Result<Block> {
   return map_query(useQuery(gql`

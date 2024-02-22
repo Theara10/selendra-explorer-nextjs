@@ -68,11 +68,12 @@ import { useExtrinsic } from "@/context/ExtrinsicsContext";
 import { log } from "console";
 import {
   GET_LAST_MONTHS_TRANSACTIONS,
-  GET_LATEST_BLOCKS,
+  get_latest_blocks,
   GET_LATEST_TRANSACTIONS,
 } from "@/graphql/queries";
 import { day } from "@/lib/millis";
 import { HashLoader } from "react-spinners";
+import { Block } from "@/graphql/types";
 
 function frequency(d: Date[]): number[] {
   let map = Array<number>(30).fill(0);
@@ -98,7 +99,7 @@ const Explorer = () => {
     {
       id: 1,
       title: "Finalized Blocks",
-      value: totalBlock,
+      value: totalBlock.toLocaleString(),
       icon: <Blocks size={30} color="#00A4E5" />,
     },
     // {
@@ -298,27 +299,26 @@ interface LatestBlocksProps {
 }
 
 const LatestBlocks: React.FC<LatestBlocksProps> = ({ setTotalBlock }) => {
-  const { loading, error, data, refetch } = useQuery(GET_LATEST_BLOCKS, {
-    variables: {
-      limit: 10,
-      offset: 0,
-    },
-  });
+  const { result, refresh } = get_latest_blocks(10);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      refetch();
+      refresh();
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [refetch]);
-  if (loading) return <Card className="w-full">
-    <CardHeader className="border-b">Latest Blocks</CardHeader>
-    <CardBody>
-      <HashLoader size={150} style={{ alignContent: "center" }} color={"#00A3E4"} />
-    </CardBody>
-  </Card>;
-  if (error) return <p>Error: {error.message}</p>;
+  }, [refresh]);
+  let data: Block[];
+  switch (result.state) {
+    case "loading": return <Card className="w-full">
+      <CardHeader className="border-b">Latest Blocks</CardHeader>
+      <CardBody>
+        <HashLoader size={150} style={{ alignContent: "center" }} color={"#00A3E4"} />
+      </CardBody>
+    </Card>
+    case "error": return <p>Error: {result.message}</p>;
+    case "ok": data = result.data;
+  }
 
   return (
     <Card className="w-full">
@@ -341,14 +341,8 @@ const LatestBlocks: React.FC<LatestBlocksProps> = ({ setTotalBlock }) => {
             <TableColumn>Time</TableColumn>
           </TableHeader>
           <TableBody>
-            {data.blocks.map(
-              (x: {
-                id: string;
-                extrinsicsCount: number;
-                eventsCount: number;
-                height: number;
-                timestamp: string;
-              }) => {
+            {data.map(
+              x => {
                 setTotalBlock(x.height);
                 return (
                   <TableRow key={x.id} className=" border-b">

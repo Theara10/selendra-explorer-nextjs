@@ -9,7 +9,8 @@ import { useParams } from "next/navigation";
 import timeAgo from "@/lib/ConvertTime";
 import { Card, CardBody } from "@nextui-org/react";
 import { CheckCircle, Copy } from "lucide-react";
-import { Block, block_by_hash, block_by_height } from "@/graphql/queries";
+import { block_by_hash, block_by_height } from "@/graphql/queries";
+import { Block } from "@/graphql/types";
 
 /**
  * Interface for the props passed to the BlockPage component.
