@@ -1,4 +1,6 @@
-import { gql } from '@apollo/client';
+/* eslint-disable react-hooks/rules-of-hooks */
+import { map } from '@/lib/utils';
+import { QueryResult, gql, useQuery } from '@apollo/client';
 
 export const GET_LAST_MONTHS_TRANSACTIONS = gql`
 query LastMonth($t: DateTime!) {
@@ -106,37 +108,75 @@ export const COUNTS = gql`
   }
 `;
 
-export const BLOCK_BY_HEIGHT = gql`
-  query BlockByHeight($height: Int!) {
-    blocks(where: { height_eq: $height }) {
-      id
-      validator
-      specVersion
-      timestamp
-      height
-      parentHash
-      extrinsicsCount
-      eventsCount
-      callsCount
-    }
-  }
-`
+export type Block = {
+  eventsCount: number;
+  callsCount: number;
+  id: string;
+  specVersion: number;
+  timestamp: string;
+  extrinsicsCount: number;
+  height: number;
+  validator: string;
+  parentHash: string;
+};
 
-export const BLOCK_BY_HASH = gql`
-  query BlockByHash($hash: String!) {
-    blockById(id: $hash) {
-      id
-      validator
-      specVersion
-      timestamp
-      height
-      parentHash
-      extrinsicsCount
-      eventsCount
-      callsCount
-    }
-  }
-`;
+export type Ok<T> = {
+  data: T;
+  state: "ok";
+}
+
+export type Loading = {
+  state: "loading";
+}
+
+export type Error = {
+  state: "error";
+  message: string,
+}
+
+type Result<T> = Ok<T> | Loading | Error;
+
+function map_query<T, U>(q: QueryResult<T>, f: (y: T) => U): Result<U> {
+  if (q.loading) return { state: "loading" }
+  if (q.error) return { state: "error", message: q.error.message }
+  return { state: "ok", data: f(q.data!) }
+}
+
+export function block_by_hash(hash: string): Result<Block> {
+  return map_query(useQuery(gql`
+    query BlockByHash($hash: String!) {
+      blockById(id: $hash) {
+        id
+        validator
+        specVersion
+        timestamp
+        height
+        parentHash
+        extrinsicsCount
+        eventsCount
+        callsCount
+      }
+    }`, { variables: { hash } }),
+    (y) => y.blockById)
+}
+
+export function block_by_height(height: number): Result<Block> {
+  return map_query(useQuery(gql`
+    query BlockByHeight($height: Int!) {
+      blocks(where: { height_eq: $height }) {
+        id
+        validator
+        specVersion
+        timestamp
+        height
+        parentHash
+        extrinsicsCount
+        eventsCount
+        callsCount
+      }
+    }`, { variables: { height } }),
+    (y) => y.blocks[0]);
+}
 
 export const EVM_CONTRACT_BY_ID = gql`
   query evmContractById($id: String!) {
