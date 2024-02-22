@@ -1,6 +1,53 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { map } from '@/lib/utils';
-import { QueryResult, gql, useQuery } from '@apollo/client';
+import { QueryResult, gql, useQuery, ApolloQueryResult } from '@apollo/client';
+import { GraphQLErrors } from '@apollo/client/errors';
+
+export type Ok<T> = {
+  data: T;
+  state: "ok";
+}
+
+export type Loading = {
+  state: "loading";
+}
+
+export type Error = {
+  state: "error";
+  message: string,
+}
+
+
+export type Errors = {
+  state: "error";
+  errors?: GraphQLErrors,
+  error?: string,
+}
+
+type Result<T> = Ok<T> | Loading | Error;
+
+export type Refreshable<T> = {
+  result: Result<T>,
+  refresh: () => Promise<Ok<T> | Loading | Errors>;
+}
+
+function map_query<T, U>(q: QueryResult<T>, f: (y: T) => U): Result<U> {
+  if (q.loading) return { state: "loading" }
+  if (q.error) return { state: "error", message: q.error.message }
+  return { state: "ok", data: f(q.data!) }
+}
+
+function map_refreshable<T, U>(q: QueryResult<T>, f: (y: T) => U): Refreshable<U> {
+  return {
+    result: map_query(q, f),
+    refresh: async () => {
+      const r = await q.refetch();
+      if (r.loading) return <any>{ state: "loading" };
+      if (r.error || r.errors) return { state: "error", errors: r.errors, error: r.error };
+      return { state: "ok", data: f(r.data!) };
+    }
+  };
+}
 
 export const GET_LAST_MONTHS_TRANSACTIONS = gql`
 query LastMonth($t: DateTime!) {
@@ -100,13 +147,13 @@ export const ACCOUNT_BY_ID = gql`
 `;
 
 
-export const COUNTS = gql`
-  query Count {
-    itemsCounters(limit: 1, orderBy: total_DESC) {
-      total
+export function counts(): Refreshable<number> {
+  return map_refreshable(useQuery(gql`
+    query Count {
+      itemsCounters(limit: 1, orderBy: total_DESC) { total }
     }
-  }
-`;
+  `), (y) => y.itemsCounters[0].total)
+}
 
 export type Block = {
   eventsCount: number;
@@ -119,28 +166,6 @@ export type Block = {
   validator: string;
   parentHash: string;
 };
-
-export type Ok<T> = {
-  data: T;
-  state: "ok";
-}
-
-export type Loading = {
-  state: "loading";
-}
-
-export type Error = {
-  state: "error";
-  message: string,
-}
-
-type Result<T> = Ok<T> | Loading | Error;
-
-function map_query<T, U>(q: QueryResult<T>, f: (y: T) => U): Result<U> {
-  if (q.loading) return { state: "loading" }
-  if (q.error) return { state: "error", message: q.error.message }
-  return { state: "ok", data: f(q.data!) }
-}
 
 export function block_by_hash(hash: string): Result<Block> {
   return map_query(useQuery(gql`
