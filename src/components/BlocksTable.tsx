@@ -27,7 +27,6 @@ type User = {
   timestamp: string;
   extrinsicsCount: number;
   height: number;
-  hash: string;
   validator: string;
 };
 
@@ -131,7 +130,7 @@ export default function BlocksTable({
             href={`/blocks/${user.id}`}
             className="relative flex items-center justify-start gap-2 text-sel_blue"
           >
-            <p>{truncateMiddle(user.hash, 52)}</p>
+            <p>{truncateMiddle(user.id, 52)}</p>
           </Link>
         );
       default:
