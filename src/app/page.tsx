@@ -9,10 +9,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-
 import ExplorerNav from "@/components/ExplorerNav";
 import timeAgo from "@/lib/ConvertTime";
-// import { data1 } from '@/constants';
+
 import {
   Chart,
   LineElement,
@@ -73,6 +72,7 @@ import {
   GET_LATEST_TRANSACTIONS,
 } from "@/graphql/queries";
 import { day } from "@/lib/millis";
+import { HashLoader } from "react-spinners";
 
 function frequency(d: Date[]): number[] {
   let map = Array<number>(30).fill(0);
@@ -158,7 +158,7 @@ const Explorer = () => {
         </section>
         <section className="mt-6 flex flex-col md:flex-row gap-4">
           <LatestBlocks setTotalBlock={setTotalBlock} />
-          <LatestTrasactions setTotalTokenTransfer={setTotalTokenTransfer} />
+          <LatestTransactions setTotalTokenTransfer={setTotalTokenTransfer} />
         </section>
       </div>
     </>
@@ -201,8 +201,7 @@ const LastMonthsTransfers: React.FC = () => {
   const { loading, error, data } = useQuery(GET_LAST_MONTHS_TRANSACTIONS, {
     variables: { t: when },
   });
-
-  if (loading) return <p>loading</p>;
+  if (loading) return <HashLoader size={50} style={{ alignContent: "center" }} color={"#00A3E4"} />;
   if (error) return <p>{error.message}</p>;
   const last = lastMonth.get(() => {
     return frequency(data.transfers.map((x: any) => new Date(x.timestamp)));
@@ -323,7 +322,12 @@ const LatestBlocks: React.FC<LatestBlocksProps> = ({ setTotalBlock }) => {
 
     return () => clearInterval(intervalId);
   }, [refetch]);
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Card className="w-full">
+    <CardHeader className="border-b">Latest Blocks</CardHeader>
+    <CardBody>
+      <HashLoader size={150} style={{ alignContent: "center" }} color={"#00A3E4"} />
+    </CardBody>
+  </Card>;
   if (error) return <p>Error: {error.message}</p>;
 
   return (
@@ -402,14 +406,17 @@ interface LatestTokenTransferProps {
   setTotalTokenTransfer: (newTotalBlock: number) => void;
 }
 
-const LatestTrasactions: React.FC<LatestTokenTransferProps> = ({
+const LatestTransactions: React.FC<LatestTokenTransferProps> = ({
   setTotalTokenTransfer,
 }) => {
   const { loading, error, data } = useQuery(GET_LATEST_TRANSACTIONS);
-
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Card className="w-full">
+    <CardHeader className="border-b">Latest Transactions</CardHeader>
+    <CardBody>
+      <HashLoader size={150} style={{ alignContent: "center" }} color={"#00A3E4"} />
+    </CardBody>
+  </Card>;
   if (error) return <p>Error: {error.message}</p>;
-  // console.table("latest transactions", data.transfers);
 
   return (
     <Card className="w-full">
