@@ -15,7 +15,6 @@ export const GET_LATEST_BLOCKS = gql`
       timestamp
       extrinsicsCount
       height
-      hash
       validator
     }
   }
@@ -107,13 +106,27 @@ export const COUNTS = gql`
   }
 `;
 
-
-export const BLOCK_BY_ID = gql`
-  query BlockByID($id: String!) {
-    blockById(id: $id) {
+export const BLOCK_BY_HEIGHT = gql`
+  query BlockByHeight($height: Int!) {
+    blocks(where: { height_eq: $height }) {
       id
       validator
-      hash
+      specVersion
+      timestamp
+      height
+      parentHash
+      extrinsicsCount
+      eventsCount
+      callsCount
+    }
+  }
+`
+
+export const BLOCK_BY_HASH = gql`
+  query BlockByHash($hash: String!) {
+    blockById(id: $hash) {
+      id
+      validator
       specVersion
       timestamp
       height
