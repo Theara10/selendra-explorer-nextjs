@@ -3,7 +3,6 @@
 import React from "react";
 
 import TransfersTable from "@/components/TransfersTable";
-import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody } from "@nextui-org/react";
 
 import { columns } from "../data/transfers";

@@ -5,7 +5,6 @@ import React from "react";
 import Image from "next/image";
 
 import ExplorerTable from "@/components/ExplorerTable";
-import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
 
 import { columns } from "../../data/evm_contracts";

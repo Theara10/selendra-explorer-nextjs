@@ -3,7 +3,6 @@
 import React, { Suspense, useEffect, useState } from "react";
 
 import ExtrinsicsTable from "@/components/ExtrinsicsTable";
-import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody, CardFooter } from "@nextui-org/react";
 
 import { columns } from "../data/extrinsics";
