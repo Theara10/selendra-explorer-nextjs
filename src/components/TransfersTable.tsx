@@ -18,32 +18,20 @@ import {
   User,
 } from "@nextui-org/react";
 import { ArrowRight, CheckCircle } from "lucide-react";
+import { Transfer } from "@/graphql/types";
 
 // import { columns, users } from './data';
-
-type User = {
-  id: string;
-  blockNumber: number;
-  from: { evmAddress: string };
-  to: { evmAddress: string };
-  timestamp: string;
-  amount: number;
-  success: boolean;
-  symbol: string;
-};
 
 // type User = (typeof users)[0];
 
 interface BlocksTableProps {
-  users: User[];
+  users: Transfer[];
   columns: { uid: string; name: string }[]; // Add columns prop
 }
 
 export default function TransfersTable({ users, columns }: BlocksTableProps) {
   const renderCell = React.useCallback(
-    (user: User, columnKey: React.Key): React.ReactNode => {
-      const cellValue = user[columnKey as keyof User];
-
+    (user: Transfer, columnKey: React.Key): React.ReactNode => {
       switch (columnKey) {
         case "from":
           return (

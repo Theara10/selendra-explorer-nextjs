@@ -3,20 +3,22 @@
 import React from "react";
 
 import TransfersTable from "@/components/TransfersTable";
-import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody } from "@nextui-org/react";
 
 import { columns } from "../data/transfers";
 import SearchInput from "@/components/SearchInput";
-import { GET_LATEST_TRANSACTIONS } from "@/graphql/queries";
+import { get_latest_transactions } from "@/graphql/queries";
+import { Transfer } from "@/graphql/types";
 
 function Transfers() {
-  const { loading, error, data } = useQuery(GET_LATEST_TRANSACTIONS);
+  const result = get_latest_transactions(10);
+  let data: Transfer[];
+  switch (result.state) {
+    case "loading": return <p>Loading...</p>;
+    case "error": return <p>Error: {result.message}</p>;
+    case "ok": data = result.data;
+  }
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
-  console.table("latest transactions", data.transfers);
-  const tokenTransfers = data.transfers;
   return (
     <div className="px-10 mt-6">
       <div className="flex items-center justify-between mb-6">
@@ -27,7 +29,7 @@ function Transfers() {
       </div>
       <Card>
         <CardBody>
-          <TransfersTable users={tokenTransfers} columns={columns} />
+          <TransfersTable users={data} columns={columns} />
         </CardBody>
       </Card>
     </div>

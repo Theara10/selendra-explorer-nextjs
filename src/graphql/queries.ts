@@ -1,84 +1,154 @@
-import { gql } from '@apollo/client';
+/* eslint-disable react-hooks/rules-of-hooks */
+import { QueryResult, gql, useQuery } from '@apollo/client';
+import { GraphQLErrors } from '@apollo/client/errors';
+import { Block, Contract, Extrinsic, Transfer } from './types';
 
-export const GET_LAST_MONTHS_TRANSACTIONS = gql`
-query LastMonth($t: DateTime!) {
-  transfers(where: {timestamp_gt: $t}) {
-    timestamp
-  }
-}`;
+const BLOCK = `
+id
+validator
+specVersion
+timestamp
+height
+parentHash
+extrinsicsCount
+eventsCount
+callsCount`;
 
-export const GET_LATEST_BLOCKS = gql`
-  query GetLatestBlocks($limit: Int, $offset: Int) {
-    blocks(limit: $limit, offset: $offset, orderBy: timestamp_DESC) {
-      eventsCount
-      id
-      timestamp
-      extrinsicsCount
-      height
-      validator
-    }
-  }
-`;
+const ACCOUNT = `
+id
+evmAddress
+freeBalance
+reservedBalance
+totalBalance
+updatedAt`;
 
-export const GET_EVM_CONTRACTS = gql`
-  query evmContracts {
-    evmContracts {
-      account
-      id
-      extrinsicHash
-      timestamp
-      type
-    }
-  }
-`;
-
-
-export const GET_LATEST_EXTRINSICS = gql`
-  query GetLastestExtrinsics($limit: Int, $offset: Int) {
-    extrinsics(limit: $limit, offset: $offset, orderBy: block_timestamp_DESC) {
-      id
-      extrinsicHash
-      timestamp
-      success
-      fee
-      block {
-        height
-        id
-      }
-      blockNumber
-    }
-  }
-`;
-
-export const GET_LATEST_TRANSACTIONS = gql`
-query GetLatestTransactions {
-  transfers(limit: 10, orderBy: timestamp_DESC) {
-    blockNumber
-    amount
-    from {
-      evmAddress
-    }
-    to {
-      evmAddress
-    }
-    timestamp
-    id
-    success
-  symbol
-  }
+export type Ok<T> = {
+  data: T;
+  state: "ok";
 }
-`;
 
+export type Loading = {
+  state: "loading";
+}
+
+export type Error = {
+  state: "error";
+  message: string,
+}
+
+
+export type Errors = {
+  state: "error";
+  errors?: GraphQLErrors,
+  error?: string,
+}
+
+type Result<T> = Ok<T> | Loading | Error;
+
+export type Refreshable<T> = {
+  result: Result<T>,
+  refresh: () => Promise<Ok<T> | Loading | Errors>;
+}
+
+function map_query<T, U>(q: QueryResult<T>, f: (y: T) => U): Result<U> {
+  if (q.loading) return { state: "loading" }
+  if (q.error) return { state: "error", message: q.error.message }
+  return { state: "ok", data: f(q.data!) }
+}
+
+function map_refreshable<T, U>(q: QueryResult<T>, f: (y: T) => U): Refreshable<U> {
+  return {
+    result: map_query(q, f),
+    refresh: async () => {
+      const r = await q.refetch();
+      if (r.loading) return <any>{ state: "loading" };
+      if (r.error || r.errors) return { state: "error", errors: r.errors, error: r.error };
+      return { state: "ok", data: f(r.data!) };
+    }
+  };
+}
+
+export function get_transactions(since: Date): Result<Date[]> {
+  return map_query(useQuery(gql`
+    query LastMonth($since: DateTime!) {
+      transfers(where: {timestamp_gt: $since}) {
+        timestamp
+      }
+    }`, { variables: { since } }), y => y.transfers.map((x: { timestamp: string }) => new Date(x.timestamp)))
+}
+
+export function get_latest_blocks(limit: number, offset: number = 0): Refreshable<Block[]> {
+  return map_refreshable(
+    useQuery(gql`
+      query GetLatestBlocks($limit: Int, $offset: Int) {
+        blocks(limit: $limit, offset: $offset, orderBy: timestamp_DESC) {
+          eventsCount
+          id
+          timestamp
+          extrinsicsCount
+          height
+          validator
+        }
+      }
+  `, { variables: { limit, offset } }),
+    (y) => y.blocks
+  )
+}
+
+export function get_evm_contracts(): Result<Contract[]> {
+  return map_query(useQuery(gql`
+    query evmContracts {
+      evmContracts {
+        account
+        id
+        extrinsicHash
+        timestamp
+        type
+      }
+    }`), (x) => x.evmContracts)
+}
+
+export function get_latest_extrinsics(limit: number, offset: number = 0): Refreshable<Extrinsic[]> {
+  return map_refreshable(useQuery(gql`
+    query GetLastestExtrinsics($limit: Int, $offset: Int) {
+      extrinsics(limit: $limit, offset: $offset, orderBy: timestamp_DESC) {
+        id
+        extrinsicHash
+        timestamp
+        success
+        fee
+        version
+        tip
+        block {
+          ${BLOCK}
+        }
+        blockNumber
+      }
+    }
+  `, { variables: { limit, offset } }), y => y.extrinsics)
+}
+
+export function get_latest_transactions(n: number): Result<Transfer[]> {
+  return map_query(useQuery(gql`
+    query GetLatestTransactions($n: Int!) {
+      transfers(limit: $n, orderBy: timestamp_DESC) {
+        blockNumber
+        amount
+        from { ${ACCOUNT} }
+        to { ${ACCOUNT} }
+        timestamp
+        id
+        success
+        symbol
+      }
+    }`,
+    { variables: { n } }), (y) => y.transfers)
+}
 
 export const GET_ACCOUNTS = gql`
   query Accounts {
     accounts {
-      evmAddress
-      freeBalance
-      id
-      totalBalance
-      updatedAt
-      reservedBalance
+      ${ACCOUNT}
     }
   }
 `;
@@ -87,56 +157,40 @@ export const GET_ACCOUNTS = gql`
 export const ACCOUNT_BY_ID = gql`
   query AccountByID($id: String!) {
     accountById(id: $id) {
-      id
-      evmAddress
-      freeBalance
-      reservedBalance
-      totalBalance
-      updatedAt
+      ${ACCOUNT}
     }
   }
 `;
 
 
-export const COUNTS = gql`
-  query Count {
-    itemsCounters(limit: 1, orderBy: total_DESC) {
-      total
+export function counts(): Refreshable<number> {
+  return map_refreshable(useQuery(gql`
+    query Count {
+      itemsCounters(limit: 1, orderBy: total_DESC) { total }
     }
-  }
-`;
+  `), (y) => y.itemsCounters[0].total)
+}
 
-export const BLOCK_BY_HEIGHT = gql`
-  query BlockByHeight($height: Int!) {
-    blocks(where: { height_eq: $height }) {
-      id
-      validator
-      specVersion
-      timestamp
-      height
-      parentHash
-      extrinsicsCount
-      eventsCount
-      callsCount
-    }
-  }
-`
+export function block_by_hash(hash: string): Result<Block> {
+  return map_query(useQuery(gql`
+    query BlockByHash($hash: String!) {
+      blockById(id: $hash) {
+        ${BLOCK}
+      }
+    }`, { variables: { hash } }),
+    (y) => y.blockById)
+}
 
-export const BLOCK_BY_HASH = gql`
-  query BlockByHash($hash: String!) {
-    blockById(id: $hash) {
-      id
-      validator
-      specVersion
-      timestamp
-      height
-      parentHash
-      extrinsicsCount
-      eventsCount
-      callsCount
-    }
-  }
-`;
+
+export function block_by_height(height: number): Result<Block> {
+  return map_query(useQuery(gql`
+    query BlockByHeight($height: Int!) {
+      blocks(where: { height_eq: $height }) {
+        ${BLOCK}
+      }
+    }`, { variables: { height } }),
+    (y) => y.blocks[0]);
+}
 
 export const EVM_CONTRACT_BY_ID = gql`
   query evmContractById($id: String!) {
@@ -177,26 +231,28 @@ export const GET_EXTRINSICS_BY_ID = gql`
   }
 `;
 
-
-export const TRANSFER_BY_ID = gql`
-query TransferByID($id: String!) {
-  transferById(id: $id) {
-    amount
-    blockNumber
-    extrinsicHash
-    id
-    timestamp
-    symbol
-    success
-    type
-    from {
-      evmAddress
-      id
-    }
-    to {
-      evmAddress
-      id
-    }
-  }
+export function transfer_by_hash(hash: string): Result<Transfer> {
+  return map_query(
+    useQuery(gql`
+      query TransferByID($hash: String!) {
+        transferById(id: $hash) {
+          amount
+          blockNumber
+          extrinsicHash
+          id
+          timestamp
+          symbol
+          success
+          type
+          from {
+            ${ACCOUNT}
+          }
+          to {
+            ${ACCOUNT}
+          }
+        }
+      }`, { variables: { hash } }
+    ), y => y.transferById
+  )
 }
-`;
+

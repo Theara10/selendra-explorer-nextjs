@@ -6,52 +6,45 @@ import { useSearchParams } from "next/navigation";
 
 import BlocksTable from "@/components/BlocksTable";
 import PaginationControls from "@/components/PaginationControls";
-import { gql, useQuery } from "@apollo/client";
 import {
   Card,
   CardBody,
   CardFooter,
-  Input,
-  Pagination,
 } from "@nextui-org/react";
 
 import { columns } from "../data/blocks";
 import { useExtrinsic } from "@/context/ExtrinsicsContext";
-import ExplorerNav from "@/components/ExplorerNav";
 import SearchInput from "@/components/SearchInput";
-import { GET_LATEST_BLOCKS } from "@/graphql/queries";
+import { get_latest_blocks } from "@/graphql/queries";
+import { Block } from "@/graphql/types";
+import { HashLoader } from "react-spinners";
 
 function Blocks() {
-  const PAGE_SiZE = useSearchParams().get("page") ?? "1";
-  console.log("page sixe", PAGE_SiZE);
+  const PAGE_SIZE = useSearchParams().get("page") ?? "1";
   const { extrinsic } = useExtrinsic();
 
-  const [currentPage, setCurrentPage] = useState(parseInt(PAGE_SiZE));
-  const [blocks, setBLocks] = useState([]);
+  const [currentPage, setCurrentPage] = useState(parseInt(PAGE_SIZE));
+  const [blocks, setBLocks] = useState<Block[]>([]);
   const [loading, setLoading] = useState(false);
-  const { data, refetch } = useQuery(GET_LATEST_BLOCKS, {
-    variables: {
-      limit: 20,
-      offset: parseInt(PAGE_SiZE),
-    },
-  });
-
+  const { result, refresh } = get_latest_blocks(20, parseInt(PAGE_SIZE));
+  let data: Block[] | undefined;
   useEffect(() => {
-    if (!data) {
-      return;
-    }
     setLoading(true);
     const intervalId = setInterval(() => {
-      refetch();
-      setBLocks(data.blocks);
+      refresh();
+      setBLocks(data!);
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [data, refetch]);
+  }, [data, refresh]);
 
+  switch (result.state) {
+    case "error": return <p>Error {result.message}</p>
+    case "loading": return <HashLoader className="h-screen" size={150} style={{ alignContent: "center" }} color={"#00A3E4"} />
+    case "ok": data = result.data;
+  }
   const itemsPerPage = 20;
-  const totalPages = Math.ceil(data?.blocks.length / itemsPerPage);
-  console.log("length", data?.blocks.length);
+  const totalPages = Math.ceil(blocks.length / itemsPerPage);
   const handlePageChange = (newPage: number) => {
     setLoading(true);
     setTimeout(() => {

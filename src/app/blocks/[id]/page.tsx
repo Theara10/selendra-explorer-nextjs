@@ -7,10 +7,10 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 import timeAgo from "@/lib/ConvertTime";
-import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody } from "@nextui-org/react";
-import { Check, CheckCircle, Copy } from "lucide-react";
-import { BLOCK_BY_HASH, BLOCK_BY_HEIGHT } from "@/graphql/queries";
+import { CheckCircle, Copy } from "lucide-react";
+import { block_by_hash, block_by_height } from "@/graphql/queries";
+import { Block } from "@/graphql/types";
 
 /**
  * Interface for the props passed to the BlockPage component.
@@ -25,17 +25,15 @@ interface BlockPageProps {
 const BlockPage: React.FC<BlockPageProps> = () => {
   const params: { id: string } = useParams();
   const hash = params.id.startsWith("0x");
-  const { loading, error, data: odata } = useQuery(hash ? BLOCK_BY_HASH : BLOCK_BY_HEIGHT, {
-    variables: hash ? { hash: params.id } : { height: Number(params.id) },
-  });
-
-  if (loading) return <p>Loading...</p>;
-  if (error) {
-    console.error("GraphQL error:", error);
-    return <p>Error: {error.message}</p>;
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const result = hash ? block_by_hash(params.id) : block_by_height(Number(params.id));
+  let data: Block;
+  // match at home
+  switch (result.state) {
+    case "loading": return <p>Loading...</p>
+    case "error": return <p>Error: {result.message}</p>
+    case "ok": data = result.data;
   }
-  // TODO wrap queries into typed api
-  const data = hash ? odata.blockById : odata.blocks[0];
 
   return (
     <div className="px-4 h-full">
@@ -91,7 +89,7 @@ const BlockPage: React.FC<BlockPageProps> = () => {
                         color="gray"
                         className="cursor-pointer"
                         onClick={() =>
-                          navigator.clipboard.writeText(data.hash)
+                          navigator.clipboard.writeText(data.id)
                         }
                       />
                     </span>
