@@ -61,12 +61,14 @@ function map_refreshable<T, U>(q: QueryResult<T>, f: (y: T) => U): Refreshable<U
   };
 }
 
-export const GET_LAST_MONTHS_TRANSACTIONS = gql`
-query LastMonth($t: DateTime!) {
-  transfers(where: {timestamp_gt: $t}) {
-    timestamp
-  }
-}`;
+export function get_transactions(since: Date): Result<Date[]> {
+  return map_query(useQuery(gql`
+    query LastMonth($since: DateTime!) {
+      transfers(where: {timestamp_gt: $since}) {
+        timestamp
+      }
+    }`, { variables: { since } }), y => y.transfers.map((x: { timestamp: string }) => new Date(x.timestamp)))
+}
 
 export function get_latest_blocks(limit: number, offset: number = 0): Refreshable<Block[]> {
   return map_refreshable(

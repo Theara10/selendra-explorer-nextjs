@@ -63,11 +63,9 @@ import Link from "next/link";
 
 import ConvertBigNumber from "@/lib/ConvertBigNumber";
 import truncateMiddle from "@/lib/TruncateMiddle";
-import { gql, useQuery } from "@apollo/client";
 import { useExtrinsic } from "@/context/ExtrinsicsContext";
-import { log } from "console";
 import {
-  GET_LAST_MONTHS_TRANSACTIONS,
+  get_transactions,
   get_latest_blocks,
   get_latest_transactions,
 } from "@/graphql/queries";
@@ -192,14 +190,13 @@ var labels = Array.from(Array(30).keys());
 
 var lastMonth = new Lazy<number[]>();
 const LastMonthsTransfers: React.FC = () => {
-  const { loading, error, data } = useQuery(GET_LAST_MONTHS_TRANSACTIONS, {
-    variables: { t: when },
-  });
-  if (loading) return <HashLoader size={50} style={{ alignContent: "center" }} color={"#00A3E4"} />;
-  if (error) return <p>{error.message}</p>;
-  const last = lastMonth.get(() => {
-    return frequency(data.transfers.map((x: any) => new Date(x.timestamp)));
-  });
+  const result = get_transactions(when);
+  let last: number[];
+  switch (result.state) {
+    case "loading": return <HashLoader size={50} style={{ alignContent: "center" }} color={"#00A3E4"} />;
+    case "error": return <p>{result.message}</p>
+    case "ok": last = lastMonth.get(() => frequency(result.data))
+  }
 
   return (
     <div className="flex flex-col w-full noscroll">
