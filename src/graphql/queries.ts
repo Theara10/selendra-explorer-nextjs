@@ -12,8 +12,15 @@ height
 parentHash
 extrinsicsCount
 eventsCount
-callsCount
-`;
+callsCount`;
+
+const ACCOUNT = `
+id
+evmAddress
+freeBalance
+reservedBalance
+totalBalance
+updatedAt`;
 
 export type Ok<T> = {
   data: T;
@@ -127,8 +134,8 @@ export function get_latest_transactions(n: number): Result<Transfer[]> {
       transfers(limit: $n, orderBy: timestamp_DESC) {
         blockNumber
         amount
-        from { id, evmAddress, freeBalance, totalBalance, updatedAt }
-        to { id, evmAddress, freeBalance, totalBalance, updatedAt }
+        from { ${ACCOUNT} }
+        to { ${ACCOUNT} }
         timestamp
         id
         success
@@ -141,12 +148,7 @@ export function get_latest_transactions(n: number): Result<Transfer[]> {
 export const GET_ACCOUNTS = gql`
   query Accounts {
     accounts {
-      evmAddress
-      freeBalance
-      id
-      totalBalance
-      updatedAt
-      reservedBalance
+      ${ACCOUNT}
     }
   }
 `;
@@ -155,12 +157,7 @@ export const GET_ACCOUNTS = gql`
 export const ACCOUNT_BY_ID = gql`
   query AccountByID($id: String!) {
     accountById(id: $id) {
-      id
-      evmAddress
-      freeBalance
-      reservedBalance
-      totalBalance
-      updatedAt
+      ${ACCOUNT}
     }
   }
 `;
@@ -234,26 +231,28 @@ export const GET_EXTRINSICS_BY_ID = gql`
   }
 `;
 
-
-export const TRANSFER_BY_ID = gql`
-query TransferByID($id: String!) {
-  transferById(id: $id) {
-    amount
-    blockNumber
-    extrinsicHash
-    id
-    timestamp
-    symbol
-    success
-    type
-    from {
-      evmAddress
-      id
-    }
-    to {
-      evmAddress
-      id
-    }
-  }
+export function transfer_by_hash(hash: string): Result<Transfer> {
+  return map_query(
+    useQuery(gql`
+      query TransferByID($hash: String!) {
+        transferById(id: $hash) {
+          amount
+          blockNumber
+          extrinsicHash
+          id
+          timestamp
+          symbol
+          success
+          type
+          from {
+            ${ACCOUNT}
+          }
+          to {
+            ${ACCOUNT}
+          }
+        }
+      }`, { variables: { hash } }
+    ), y => y.transferById
+  )
 }
-`;
+

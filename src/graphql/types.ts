@@ -16,7 +16,7 @@ export type Transfer = {
     symbol: string;
     blockNumber: number;
     timestamp: string;
-    extrinsicsHash: string,
+    extrinsicHash: string,
     amount: number;
     type: "Native" | "ERC20" | "ERC721" | "ERC1155" | "SRC20" | "SRC721" | "SRC1155";
     success: boolean;
