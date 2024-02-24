@@ -41,6 +41,7 @@ export type Contract = {
     id: string;
     contract: string;
     name: string;
+    symbol: string;
     extrinsicHash: string;
     verified_time: string;
     account: string;

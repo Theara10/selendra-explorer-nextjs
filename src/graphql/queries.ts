@@ -112,6 +112,8 @@ export function get_evm_contracts(): Result<Contract[]> {
         account
         id
         extrinsicHash
+        name
+        symbol
         timestamp
         type
       }

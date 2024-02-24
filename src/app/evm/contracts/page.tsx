@@ -8,7 +8,7 @@ import ExplorerTable from "@/components/ExplorerTable";
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
 
 import { columns } from "../../data/evm_contracts";
-import { FileCheck2 } from "lucide-react";
+import { FileCheck2, FileBadge } from "lucide-react";
 import { get_evm_contracts } from "@/graphql/queries";
 import { Contract } from "@/graphql/types";
 
@@ -24,7 +24,7 @@ function EvmContracts() {
       id: 2,
       title: "Verified Contracts",
       value: null,
-      img: <FileCheck2 size={30} color="#00A4E5" />,
+      img: <FileBadge size={30} color="#00A4E5" />,
     },
     // {
     //   id: 3,
@@ -59,7 +59,6 @@ function EvmContracts() {
     case "error": return <p>Error...</p>
     case "ok": data = result.data;
   }
-
   accounts[0].value = data.length.toLocaleString();
   return (
     <div className="px-4 sm:px-20 md:px-40 lg:px-80 mt-6">

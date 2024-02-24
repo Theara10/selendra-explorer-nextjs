@@ -14,9 +14,8 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  User,
 } from "@nextui-org/react";
-import { Contact2, FileCode2 } from "lucide-react";
+import { FileCode2 } from "lucide-react";
 import { Contract } from "@/graphql/types";
 
 interface BlocksTableProps {
@@ -45,7 +44,7 @@ export default function ExplorerTable({ users, columns }: BlocksTableProps) {
       case "name":
         return (
           <div className="relative flex items-center  gap-2">
-            <p>Unknown</p>
+            <p>{user.name && user.symbol ? `${user.name} (${user.symbol})` : "-"}</p>
           </div>
         );
 
