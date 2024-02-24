@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { QueryResult, gql, useQuery } from '@apollo/client';
 import { GraphQLErrors } from '@apollo/client/errors';
-import { Block, Contract, Extrinsic, Transfer } from './types';
+import { Account, Block, Contract, Extrinsic, Transfer } from './types';
 
 const BLOCK = `
 id
@@ -154,13 +154,15 @@ export const GET_ACCOUNTS = gql`
 `;
 
 
-export const ACCOUNT_BY_ID = gql`
-  query AccountByID($id: String!) {
-    accountById(id: $id) {
+export function get_account_by_address(address: string): Result<Account> {
+  return map_query(useQuery(gql`
+  query AccountByID($address: String!) {
+    accountById(id: $address) {
       ${ACCOUNT}
     }
   }
-`;
+`, { variables: { address } }), y => y.accountById)
+}
 
 
 export function counts(): Refreshable<number> {

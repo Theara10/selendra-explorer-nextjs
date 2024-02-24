@@ -25,27 +25,26 @@ import {
   QrCode,
   Wallet,
 } from "lucide-react";
-import { ACCOUNT_BY_ID } from "@/graphql/queries";
+import { get_account_by_address } from "@/graphql/queries";
+import { Account } from "@/graphql/types";
 
 function ExplorerAccount({ }): React.ReactElement {
-  const params = useParams();
-  const { loading, error, data } = useQuery(ACCOUNT_BY_ID, {
-    variables: { id: params.id },
-  });
+  const params: any = useParams().id;
+  const result = get_account_by_address(params);
+  let item: Account;
+  switch (result.state) {
+    case "loading": return <p>Loading...</p>;
+    case "error": return <p>Error {result.message}</p>
+    case "ok": item = result.data
+  }
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error :(</p>;
-  console.log("batman", data);
-  const item = data.accountById;
+  console.log("batman", item);
   return (
     <div className="flex flex-row gap-3">
       <Card className="w-full p-4">
         <CardBody className="flex flex-col gap-3">
           <div className="flex flex-row items-center gap-2">
             <Image width={52} height={52} alt="profile" src="/profile.png" />
-            <p className="text-2xl">{item.name ? item.name : "Unknown"}</p>
-          </div>
-          <div className="flex flex-row items-center gap-2">
             <p className="text-md overflow-hidden">
               <span className="font-semibold mr-2 text-xl">Address:</span>
               {item.evmAddress}
@@ -81,23 +80,42 @@ function ExplorerAccount({ }): React.ReactElement {
       <Card className="w-full p-4">
         <CardBody className="flex flex-col gap-3">
           <div className="flex flex-row justify-between">
-            <div className="flex flex-col ">
-              <p className="text-gray-400"> Total Balance</p>
-              <p className="text-lg">
-                {ConvertBigNumber(item.totalBalance)} SEL
-              </p>
-            </div>
-            <div className="flex flex-col ">
-              <p className="text-gray-400">Free Balance</p>
-              <p className="text-lg">
-                {ConvertBigNumber(item.freeBalance)} SEL
-              </p>
-            </div>
+            {
+              (() => {
+                if (item.totalBalance != item.freeBalance) {
+                  return (
+                    <>
+                      <div className="flex flex-col ">
+                        <p className="text-gray-400">Total Balance</p>
+                        <div>
+                          <Image src="/sel.svg" className="float-left" alt="" width={32} height={32} />
+                          {ConvertBigNumber(item.totalBalance)} SEL
+                        </div>
+                      </div>
+                      < div className="flex flex-col " >
+                        <p className="text-gray-400">Free Balance</p>
+                        <div>
+                          <Image src="/sel.svg" className="float-left" alt="" width={32} height={32} />
+                          {ConvertBigNumber(item.freeBalance)} SEL
+                        </div>
+                      </div>
+                    </>)
+                } else {
+                  return <div className="flex flex-col inline-block">
+                    <p className="text-gray-400">Total Balance</p>
+                    <div>
+                      <Image src="/sel.svg" className="float-left" alt="" width={32} height={32} />
+                      {ConvertBigNumber(item.totalBalance)} SEL
+                    </div>
+                  </div>
+                }
+              })()}
             <div className="flex flex-col ">
               <p className="text-gray-400">Reserved Balance</p>
-              <p className="text-lg">
+              <div>
+                <Image src="/sel.svg" className="float-left" alt="" width={32} height={32} />
                 {ConvertBigNumber(item.reservedBalance)} SEL
-              </p>
+              </div>
             </div>
           </div>
           <div className="mt-6">
@@ -122,10 +140,10 @@ function ExplorerAccount({ }): React.ReactElement {
                     key="copy"
                     startContent={
                       <Image
-                        src="/sel-logo-blue.png"
+                        src="/sel.svg"
                         alt="sel"
-                        width={12}
-                        height={22}
+                        width={32}
+                        height={32}
                       />
                     }
                     endContent={
@@ -144,7 +162,7 @@ function ExplorerAccount({ }): React.ReactElement {
           </div>
         </CardBody>
       </Card>
-    </div>
+    </div >
   );
 }
 
