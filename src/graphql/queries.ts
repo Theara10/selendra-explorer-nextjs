@@ -145,13 +145,15 @@ export function get_latest_transactions(n: number): Result<Transfer[]> {
     { variables: { n } }), (y) => y.transfers)
 }
 
-export const GET_ACCOUNTS = gql`
-  query Accounts {
-    accounts {
-      ${ACCOUNT}
+export function get_accounts(): Result<Account[]> {
+  return map_query(useQuery(gql`
+    query Accounts {
+      accounts {
+        ${ACCOUNT}
+      }
     }
-  }
-`;
+  `), x => x.accounts)
+}
 
 
 export function get_account_by_address(address: string): Result<Account> {
