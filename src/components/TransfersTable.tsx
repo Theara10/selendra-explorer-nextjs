@@ -46,22 +46,20 @@ export default function TransfersTable({ users, columns }: BlocksTableProps) {
           );
         case "to":
           return (
-            <Link href="" className="text-sel_blue">
+            <Link href={`/accounts/${user.to.id}`} className="text-sel_blue">
               <p>{truncateMiddle(user.to.evmAddress, 20)}</p>
             </Link>
           );
 
         case "block":
           return (
-            <Link href={`/blocks/${user.id}`} className="text-sel_blue">
+            <Link href={`/blocks/${user.blockNumber}`} className="text-sel_blue">
               <p>{user.blockNumber}</p>
             </Link>
           );
         case "time":
           return (
-            <Link href="/accounts/1" className="flex items-center gap-2">
-              <p>{timeAgo(user.timestamp)}</p>
-            </Link>
+            <p>{timeAgo(user.timestamp)}</p>
           );
         case "value":
           return (

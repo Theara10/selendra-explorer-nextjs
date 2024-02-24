@@ -22,6 +22,16 @@ reservedBalance
 totalBalance
 updatedAt`;
 
+const TRANSFER = `
+blockNumber
+amount
+from { ${ACCOUNT} }
+to { ${ACCOUNT} }
+timestamp
+id
+success
+symbol`;
+
 export type Ok<T> = {
   data: T;
   state: "ok";
@@ -128,18 +138,25 @@ export function get_latest_extrinsics(limit: number, offset: number = 0): Refres
   `, { variables: { limit, offset } }), y => y.extrinsics)
 }
 
+export function get_account_transactions(id: string): Result<Transfer[]> {
+  return map_query(useQuery(gql`
+    query AccountTx($id: String!) {
+      transfers(where:
+        {to: {id_eq: $id},
+        OR: {from: {id_eq: $id}}
+        AND: {from: {evmAddress_not_eq: "0x0000000000000000000000000000000000000000"}}
+        }) {
+        ${TRANSFER}
+      }
+    }`,
+    { variables: { id } }), x => x.transfers)
+}
+
 export function get_latest_transactions(n: number): Result<Transfer[]> {
   return map_query(useQuery(gql`
     query GetLatestTransactions($n: Int!) {
       transfers(limit: $n, orderBy: timestamp_DESC) {
-        blockNumber
-        amount
-        from { ${ACCOUNT} }
-        to { ${ACCOUNT} }
-        timestamp
-        id
-        success
-        symbol
+        ${TRANSFER}
       }
     }`,
     { variables: { n } }), (y) => y.transfers)
@@ -240,20 +257,7 @@ export function transfer_by_hash(hash: string): Result<Transfer> {
     useQuery(gql`
       query TransferByID($hash: String!) {
         transferById(id: $hash) {
-          amount
-          blockNumber
-          extrinsicHash
-          id
-          timestamp
-          symbol
-          success
-          type
-          from {
-            ${ACCOUNT}
-          }
-          to {
-            ${ACCOUNT}
-          }
+          ${TRANSFER}
         }
       }`, { variables: { hash } }
     ), y => y.transferById
