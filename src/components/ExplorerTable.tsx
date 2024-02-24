@@ -17,6 +17,7 @@ import {
 } from "@nextui-org/react";
 import { FileCode2 } from "lucide-react";
 import { Contract } from "@/graphql/types";
+import ImportToken from "./ImportToken";
 
 interface BlocksTableProps {
   users: Contract[];
@@ -30,6 +31,7 @@ export default function ExplorerTable({ users, columns }: BlocksTableProps) {
       case "contract":
         return (
           <div className="relative flex items-center flex-row text-sel_blue  gap-2">
+            <ImportToken contract={user} />
             <Link
               href={`/evm/contracts/${user.id}`}
               className="flex items-center justify-center"

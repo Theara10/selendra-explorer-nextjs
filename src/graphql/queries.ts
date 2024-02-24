@@ -40,13 +40,14 @@ symbol
 timestamp
 type`;
 
-function map_contract({ id, name, symbol, extrinsicHash, account, timestamp }: {
+function map_contract({ id, name, symbol, extrinsicHash, account, timestamp, type }: {
   id: string;
   name: string;
   symbol: string;
   extrinsicHash: string;
   account: string;
   timestamp: string;
+  type: string;
 }): Contract {
   return {
     id,
@@ -55,6 +56,7 @@ function map_contract({ id, name, symbol, extrinsicHash, account, timestamp }: {
     extrinsicHash,
     account,
     block: Number(timestamp),
+    type: <any>type,
   }
 }
 
