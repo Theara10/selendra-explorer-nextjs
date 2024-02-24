@@ -25,12 +25,12 @@ import {
   QrCode,
   Wallet,
 } from "lucide-react";
-import { get_account_by_address } from "@/graphql/queries";
+import { get_account } from "@/graphql/queries";
 import { Account } from "@/graphql/types";
 
 function ExplorerAccount({ }): React.ReactElement {
   const params: any = useParams().id;
-  const result = get_account_by_address(params);
+  const result = get_account(params);
   let item: Account;
   switch (result.state) {
     case "loading": return <p>Loading...</p>;

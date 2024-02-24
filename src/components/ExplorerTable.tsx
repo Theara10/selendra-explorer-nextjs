@@ -26,7 +26,6 @@ interface BlocksTableProps {
 export default function ExplorerTable({ users, columns }: BlocksTableProps) {
   const renderCell = React.useCallback((user: Contract, columnKey: React.Key) => {
     const cellValue = user[columnKey as keyof Contract];
-
     switch (columnKey) {
       case "contract":
         return (
@@ -36,7 +35,7 @@ export default function ExplorerTable({ users, columns }: BlocksTableProps) {
               className="flex items-center justify-center"
             >
               <FileCode2 color="gray" size="16px" />
-              <p className="ml-1">{truncateMiddle(user.account, 20)}</p>
+              <p className="ml-1">{truncateMiddle(user.account, 30)}</p>
             </Link>
           </div>
         );
@@ -47,7 +46,22 @@ export default function ExplorerTable({ users, columns }: BlocksTableProps) {
             <p>{user.name && user.symbol ? `${user.name} (${user.symbol})` : "-"}</p>
           </div>
         );
-
+      case "block":
+        return (
+          <div className="relative flex items-center justify-start gap-2 text-sel_blue">
+            <Link href={`/blocks/${user.block}`} >
+              <p className="ml-1">{user.block.toString()}</p>
+            </Link>
+          </div>
+        );
+      case "account":
+        return (
+          <div className="relative flex items-center justify-start gap-2 text-sel_blue">
+            <Link href={`/accounts/${user.account}`} >
+              <p className="ml-1">{truncateMiddle(user.account, 30)}</p>
+            </Link>
+          </div>
+        );
       case "verified_time":
         return (
           <div className="relative flex items-center justify-start gap-2">
@@ -57,7 +71,7 @@ export default function ExplorerTable({ users, columns }: BlocksTableProps) {
       case "extrinsichash":
         return (
           <div className="relative flex items-center justify-start gap-2">
-            <p>{truncateMiddle(user.extrinsicHash, 30)} </p>
+            <p>{truncateMiddle(user.extrinsicHash, 50)} </p>
           </div>
         );
 

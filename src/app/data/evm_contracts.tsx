@@ -5,6 +5,8 @@ const columns = [
   { name: 'Contract', uid: 'contract' },
   { name: 'Name', uid: 'name' },
   { name: 'Extrinsic Hash', uid: 'extrinsichash' },
+  { name: 'Block', uid: 'block' },
+  { name: 'Account', uid: 'account' }
   // { name: 'Verified Time', uid: 'verified_time' },
 ];
 

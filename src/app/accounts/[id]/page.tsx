@@ -7,10 +7,11 @@ import ExplorerAccount from "@/components/ExplorerAccount";
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
 import SearchInput from "@/components/SearchInput";
 import { useParams } from "next/navigation";
-import { get_account_transactions } from "@/graphql/queries";
+import { get_account_contracts, get_account_transactions } from "@/graphql/queries";
 import TransfersTable from "@/components/TransfersTable";
 import { columns } from "../../data/transfers";
 import { Transfer } from "@/graphql/types";
+import ExplorerTable from "@/components/ExplorerTable";
 
 function Account() {
   let id: any = useParams().id;
@@ -40,6 +41,23 @@ function Account() {
                 })()
               }
               {/* <TransfersTable users={users} columns={columns} /> */}
+            </Tab>
+            <Tab title="Contracts">
+              {
+                (() => {
+                  let contracts = get_account_contracts(id);
+                  console.log(contracts)
+                  switch (contracts.state) {
+                    case "loading": return <p>Loading</p>
+                    case "error": return <p>Error {contracts.message}</p>
+                    case "ok": return <ExplorerTable users={contracts.data} columns={[
+                      { name: 'Name', uid: 'name' },
+                      { name: 'Extrinsic Hash', uid: 'extrinsichash' },
+                      { name: 'Block', uid: 'block' },
+                    ]} />;
+                  }
+                })()
+              }
             </Tab>
             <Tab key="photos" title="Extrinsics(TODO)">
               {/* <TransfersTable users={users} columns={columns} /> */}

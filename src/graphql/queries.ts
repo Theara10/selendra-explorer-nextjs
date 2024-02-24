@@ -32,6 +32,32 @@ id
 success
 symbol`;
 
+const CONTRACT = `account
+id
+extrinsicHash
+name
+symbol
+timestamp
+type`;
+
+function map_contract({ id, name, symbol, extrinsicHash, account, timestamp }: {
+  id: string;
+  name: string;
+  symbol: string;
+  extrinsicHash: string;
+  account: string;
+  timestamp: string;
+}): Contract {
+  return {
+    id,
+    name,
+    symbol,
+    extrinsicHash,
+    account,
+    block: Number(timestamp),
+  }
+}
+
 export type Ok<T> = {
   data: T;
   state: "ok";
@@ -46,12 +72,33 @@ export type Error = {
   message: string,
 }
 
-
 export type Errors = {
   state: "error";
-  errors?: GraphQLErrors,
-  error?: string,
+  errors?: GraphQLErrors;
+  error?: string;
 }
+
+function flatten<T>(t: Result<Result<T>>): Result<T> {
+  switch (t.state) {
+    case "loading": return t
+    case "error": return t
+    case "ok": switch (t.data.state) {
+      case "loading": return { state: "loading" }
+      case "error": return { state: "error", message: t.data.message }
+      case "ok": return { state: "ok", data: t.data.data }
+    }
+  }
+}
+
+function and_then<T, U>(t: Result<T>, f: (x: T | undefined) => Result<U>): Result<U> {
+  switch (t.state) {
+    // hooks must be called
+    case "loading": { f(undefined); return t };
+    case "error": { f(undefined); return t };
+    case "ok": return f(t.data);
+  }
+}
+
 
 type Result<T> = Ok<T> | Loading | Error;
 
@@ -108,16 +155,10 @@ export function get_latest_blocks(limit: number, offset: number = 0): Refreshabl
 export function get_evm_contracts(): Result<Contract[]> {
   return map_query(useQuery(gql`
     query evmContracts {
-      evmContracts {
-        account
-        id
-        extrinsicHash
-        name
-        symbol
-        timestamp
-        type
+      evmContracts(orderBy: timestamp_DESC) {
+        ${CONTRACT}
       }
-    }`), (x) => x.evmContracts)
+    }`), (x) => x.evmContracts.map(map_contract))
 }
 
 export function get_latest_extrinsics(limit: number, offset: number = 0): Refreshable<Extrinsic[]> {
@@ -140,14 +181,28 @@ export function get_latest_extrinsics(limit: number, offset: number = 0): Refres
   `, { variables: { limit, offset } }), y => y.extrinsics)
 }
 
+export function get_account_native_contracts(id: string): Result<Contract[]> {
+  // TODO make `account` a `Account` instead of just the evmAddress
+  return and_then(get_account_by_native_address(id), x => get_account_evm_contracts(x?.evmAddress))
+}
+
+export function get_account_evm_contracts(id: string | undefined): Result<Contract[]> {
+  return map_query(useQuery(gql`
+    query AccountContractsEvm($id: String!) {
+      evmContracts(where: {account_eq: $id}) {
+         ${CONTRACT}
+      }
+    }`, { variables: { id } }), y => y.evmContracts.map(map_contract))
+}
+
 export function get_account_transactions(id: string): Result<Transfer[]> {
   return map_query(useQuery(gql`
     query AccountTx($id: String!) {
-      transfers(where:
-        {to: {id_eq: $id},
+      transfers(where: {
+        to: {id_eq: $id},
         OR: {from: {id_eq: $id}}
         AND: {from: {evmAddress_not_eq: "0x0000000000000000000000000000000000000000"}}
-        }) {
+      }, orderBy: timestamp_DESC) {
         ${TRANSFER}
       }
     }`,
@@ -174,8 +229,17 @@ export function get_accounts(): Result<Account[]> {
   `), x => x.accounts)
 }
 
+/** checks for a 0x prefix to determine whether this is a native or evm address. */
+export function get_account(address: string): Result<Account> {
+  return address.startsWith("0x") ? get_account_by_evmaddress(address) : get_account_by_native_address(address)
+}
 
-export function get_account_by_address(address: string): Result<Account> {
+/** checks for a 0x prefix to determine whether this is a native or evm address. */
+export function get_account_contracts(address: string): Result<Contract[]> {
+  return address.startsWith("0x") ? get_account_evm_contracts(address) : get_account_native_contracts(address)
+}
+
+export function get_account_by_native_address(address: string): Result<Account> {
   return map_query(useQuery(gql`
   query AccountByID($address: String!) {
     accountById(id: $address) {
@@ -184,6 +248,18 @@ export function get_account_by_address(address: string): Result<Account> {
   }
 `, { variables: { address } }), y => y.accountById)
 }
+
+export function get_account_by_evmaddress(address: string): Result<Account> {
+  return map_query(useQuery(gql`
+  query AccountByEVM($address: String!) {
+    accounts(where: {evmAddress_eq: $address}) {
+      ${ACCOUNT}
+    }
+}
+`, { variables: { address } }), y => y.accounts[0])
+}
+
+
 
 
 export function counts(): Refreshable<number> {
