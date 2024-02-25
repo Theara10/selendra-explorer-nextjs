@@ -1,12 +1,8 @@
 "use client";
 
-import React from "react";
-
+import React, { useState } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-
-import ConvertBigNumber from "@/lib/ConvertBigNumber";
-import { gql, useQuery } from "@apollo/client";
 import {
   Button,
   Card,
@@ -30,7 +26,7 @@ import {
 import { evm_contract_by_id } from "@/graphql/queries";
 import { Contract } from "@/graphql/types";
 import ImportToken from "@/components/ImportToken";
-
+import QRCode from "react-qr-code";
 function page() {
   return (
     <div className="px-4 sm:px-20 md:px-60 lg:px-80 mt-6">
@@ -70,6 +66,7 @@ function page() {
 export default page;
 
 function EvmContractAccount({ }): React.ReactElement {
+  let [qr, setQr] = useState(false);
   const params: any = useParams().id;
   const result = evm_contract_by_id(params);
   let item: Contract;
@@ -100,15 +97,13 @@ function EvmContractAccount({ }): React.ReactElement {
             />
           </div>
           <div className="flex flex-row gap-3 mt-2">
-            <div className="bg-primary bg-opacity-20 p-2 flex justify-center items-center rounded-full">
-              <Tooltip content="QR Code">
-                <QrCode
-                  className="-2"
-                  color="#00A4E5"
-                  size="16px"
-                  onClick={() => navigator.clipboard.writeText("")}
-                />
-              </Tooltip>
+            <div className="bg-primary bg-opacity-20 p-2 flex justify-center items-center rounded-full"
+              onClick={() => setQr(!qr)}>
+              <QrCode
+                className="-2"
+                color={qr ? "green" : "#00A4E5"}
+                size="16px"
+              />
             </div>
             <div className="bg-primary bg-opacity-20 p-2 flex justify-center items-center rounded-full">
               <Fingerprint className="-2" color="#00A4E5" size="16px" />
@@ -120,8 +115,9 @@ function EvmContractAccount({ }): React.ReactElement {
               <ImportToken contract={item} color="#00A4E5" size="16px" />
             </div> : <></>}
           </div>
+          <QRCode value={item.id} style={qr ? {} : { display: "none" }} />
         </CardBody>
       </Card>
-    </div>
+    </div >
   );
 }
