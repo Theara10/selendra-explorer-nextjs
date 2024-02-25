@@ -11,13 +11,14 @@ interface Contract {
     type: "Native" | "ERC20" | "ERC721" | "ERC1155" | "SRC20" | "SRC721" | "SRC1155";
     symbol: string,
 }
-export default function ImportToken({ contract: { id, type, symbol } }: { contract: Contract }) {
+
+export default function ImportToken({ contract: { id, type, symbol }, color, size }: { contract: Contract, color: string, size: string }) {
     let [added, setAdded] = useState<boolean>();
     let [failed, setFailed] = useState<undefined | any>(undefined);
     if (type != "ERC20") return <></>
-    if (added) return <CheckCircle size="24px" color="green" />
-    if (failed) return <XCircle size="24px" color="red" />
-    return <Import size="24px" color="grey" onClick={async () => {
+    if (added) return <CheckCircle size={size} color="green" />
+    if (failed) return <XCircle size={size} color="red" />
+    return <Import size={size} color={color} onClick={async () => {
         try {
             setAdded(await window.ethereum.request({
                 method: "wallet_watchAsset",

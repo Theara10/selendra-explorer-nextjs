@@ -31,7 +31,7 @@ export default function ExplorerTable({ users, columns }: BlocksTableProps) {
       case "contract":
         return (
           <div className="relative flex items-center flex-row text-sel_blue  gap-2">
-            <ImportToken contract={user} />
+            <ImportToken color="gray" size="24px" contract={user} />
             <Link
               href={`/evm/contracts/${user.id}`}
               className="flex items-center justify-center"

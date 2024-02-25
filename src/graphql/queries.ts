@@ -293,17 +293,17 @@ export function block_by_height(height: number): Result<Block> {
     (y) => y.blocks[0]);
 }
 
-export const EVM_CONTRACT_BY_ID = gql`
-  query evmContractById($id: String!) {
-    evmContractById(id: $id) {
-      account
-      extrinsicHash
-      id
-      timestamp
-      type
-    }
-  }
-`;
+export function evm_contract_by_id(id: string): Result<Contract> {
+  return map_query(useQuery(gql`
+    query evmContractById($id: String!) {
+      evmContractById(id: $id) {
+        ${CONTRACT}
+      }
+    }`,
+    { variables: { id } }),
+    y => y.evmContractById
+  )
+}
 
 
 export const GET_EXTRINSICS_BY_ID = gql`
