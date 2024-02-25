@@ -30,10 +30,10 @@ export default function Footer() {
               About Us
             </div>
             <div className="text-neutral-500 text-base whitespace-nowrap mt-4">
-              Privacy Policies
+              <Link href="/privacy">Privacy Policies</Link>
             </div>
             <div className="text-neutral-500 text-base whitespace-nowrap mt-2">
-              Terms and Conditions
+              <Link href="/term">Terms and Conditions</Link>
             </div>
           </div>
           <div className="flex grow basis-[0%] flex-col items-stretch self-start">

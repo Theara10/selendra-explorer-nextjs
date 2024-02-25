@@ -30,12 +30,12 @@ const data = [
   {
     title: "6. Third-Party Links",
     content:
-      "Our blockchain explorer may contain links to third-party websites or services. Please note that we are not responsible for the privacy practices of these third-party sites. We encourage you to review the privacy policies of those websites before providing any personal information.",
+      "Selendra Explorer may contain links to third-party websites or services. Please note that we are not responsible for the privacy practices of these third-party sites. We encourage you to review the privacy policies of those websites before providing any personal information.",
   },
   {
     title: "7. Policy Changes",
     content:
-      "We reserve the right to update or modify this Privacy Policy at any time. Any changes to the policy will be reflected on this page with an updated effective date. Your continued use of our blockchain explorer after any modifications to this Privacy Policy will constitute your acknowledgment of the modifications and your consent to abide and be bound by the modified Privacy Policy.",
+      "We reserve the right to update or modify this Privacy Policy at any time. Any changes to the policy will be reflected on this page with an updated effective date. Your continued use of Selendra Explorer after any modifications to this Privacy Policy will constitute your acknowledgment of the modifications and your consent to abide and be bound by the modified Privacy Policy.",
   },
   {
     title: "8. Contact Us",
@@ -65,6 +65,7 @@ function Privacy() {
             <p>{x.content}</p>
           </>
         ))}
+        <p className="mt-4">Last Updated: February 25th, 2024.</p>
       </div>
     </div>
   );

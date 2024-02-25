@@ -10,7 +10,7 @@ const data = [
   {
     title: "2. Intellectual Property",
     content:
-      "All content and materials available on Selendra Explorer, including but not limited to text, graphics, logos, button icons, images, audio clips, digital downloads, and data compilations, are open and freely available for use by the public. We encourage sharing, distribution, and modification of these materials. They are not subject to copyright restrictions unless otherwise stated explicitly.",
+      "All content and materials available on Selendra Explorer, including but not limited to text, graphics, logos, button icons, images, and data compilations, are open and freely available for use by the public. We encourage sharing, distribution, and modification of these materials. They are not subject to copyright restrictions unless otherwise stated explicitly.",
   },
   {
     title: "3. No Warranty",
@@ -67,6 +67,7 @@ function Term() {
             <p>{x.content}</p>
           </>
         ))}
+        <p className="mt-4">Last Updated: February 25th, 2024.</p>
       </div>
     </div>
   );
