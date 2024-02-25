@@ -17,44 +17,22 @@ import {
   User,
 } from "@nextui-org/react";
 import { CheckCircle } from "lucide-react";
-
-// import { columns, users } from './data';
-
-type User = {
-  id: string;
-  name: string;
-  evmAddress: string;
-  extrinsics: string;
-  totalBalance: number;
-  freeBalance: number;
-  reward: [];
-  extrinsicCount: number;
-};
-
-// type User = (typeof users)[0];
+import { Account } from "@/graphql/types";
 
 interface BlocksTableProps {
-  users: User[];
+  users: Account[];
   columns: { uid: string; name: string }[]; // Add columns prop
 }
 
 export default function AccountsTable({ users, columns }: BlocksTableProps) {
-  console.log("sglagla", users);
-
-  const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
-    const cellValue = user[columnKey as keyof User];
+  const renderCell = React.useCallback((user: Account, columnKey: React.Key) => {
+    const cellValue = user[columnKey as keyof Account];
 
     switch (columnKey) {
-      case "eid":
-        return (
-          <Link href="/extrinsics/1" className="text-sel_blue">
-            <p>#</p>
-          </Link>
-        );
       case "name":
         return (
           <Link href={`/accounts/${user.id}`} className="text-sel_blue">
-            <p>{user.name}</p>
+            <p>placeholder</p>
           </Link>
         );
       case "account":
@@ -76,23 +54,6 @@ export default function AccountsTable({ users, columns }: BlocksTableProps) {
           </Link>
         );
 
-      case "reward":
-        return (
-          <div className="relative flex items-center justify-start gap-2">
-            <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-              -
-            </span>
-          </div>
-        );
-      case "extrinsics":
-        return (
-          <div className="relative flex items-center justify-start gap-2">
-            <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-              -
-            </span>
-          </div>
-        );
-
       default:
         return cellValue;
     }
@@ -103,11 +64,11 @@ export default function AccountsTable({ users, columns }: BlocksTableProps) {
       aria-label="Example table with custom cells"
       className="pt-0"
       removeWrapper
-      // bottomContent={
-      //   <div className="flex justify-end">
-      //     <Pagination total={10} color="primary" size="sm" />
-      //   </div>
-      // }
+    // bottomContent={
+    //   <div className="flex justify-end">
+    //     <Pagination total={10} color="primary" size="sm" />
+    //   </div>
+    // }
     >
       <TableHeader columns={columns}>
         {(column) => (

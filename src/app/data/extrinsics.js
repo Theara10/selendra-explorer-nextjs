@@ -1,5 +1,4 @@
 const columns = [
-  { name: 'Extrinsic ID', uid: 'eid' },
   { name: 'Block', uid: 'name' },
   { name: 'Extrinsics Hash', uid: 'extrinsichash' },
   { name: 'Time', uid: 'time' },

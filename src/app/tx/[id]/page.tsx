@@ -12,7 +12,8 @@ import truncateMiddle from "@/lib/TruncateMiddle";
 import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody } from "@nextui-org/react";
 import { CheckCircle, Copy } from "lucide-react";
-import { TRANSFER_BY_ID } from "@/graphql/queries";
+import { Transfer } from "@/graphql/types";
+import { transfer_by_hash } from "@/graphql/queries";
 
 /**
  * Interface for the props passed to the BlockPage component.
@@ -28,18 +29,13 @@ const TransferDetails: React.FC<BlockPageProps> = () => {
   const params = useParams();
   const id = (params.id as string).startsWith("0x") ? params.id as string : "0x" + params.id;
   console.log("params", id);
-
-  const { loading, error, data } = useQuery(TRANSFER_BY_ID, {
-    variables: { id },
-  });
-
-  if (loading) return <p>Loading...</p>;
-  if (error) {
-    console.error("GraphQL error:", error);
-    return <p>Error: {error.message}</p>;
+  const result = transfer_by_hash(id);
+  let transfer: Transfer;
+  switch (result.state) {
+    case "loading": return <p>loading</p>;
+    case "error": return <p>Error {result.message}</p>
+    case "ok": transfer = result.data;
   }
-  const transfer = data.transferById;
-  console.log(transfer)
 
   return (
     <div className="px-4">
@@ -91,10 +87,7 @@ const TransferDetails: React.FC<BlockPageProps> = () => {
                         size="24px"
                         color="gray"
                         className="cursor-pointer"
-                        onClick={() =>
-                          navigator.clipboard.writeText(transfer.hash)
-                        }
-                      />
+                        onClick={() => navigator.clipboard.writeText(transfer.id)} />
                     </span>
                   </td>
                 </tr>
@@ -122,7 +115,7 @@ const TransferDetails: React.FC<BlockPageProps> = () => {
                     Value
                   </td>
                   <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                    {`${ConvertBigNumber(transfer.amount ? transfer.amount : "-")} ${transfer.symbol}`}
+                    {`${transfer.amount ? ConvertBigNumber(transfer.amount) : "-"} ${transfer.symbol}`}
                   </td>
                 </tr>
                 <tr className="bg-white border-b">

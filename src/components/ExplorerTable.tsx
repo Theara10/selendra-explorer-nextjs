@@ -14,37 +14,30 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  User,
 } from "@nextui-org/react";
-import { Contact2, FileCode2 } from "lucide-react";
+import { FileCode2 } from "lucide-react";
+import { Contract } from "@/graphql/types";
+import ImportToken from "./ImportToken";
 
-type User = {
-  id: string;
-  contract: string;
-  name: string;
-  extrinsicHash: string;
-  verified_time: string;
-  account: string;
-};
 interface BlocksTableProps {
-  users: User[];
+  users: Contract[];
   columns: { uid: string; name: string }[];
 }
 
 export default function ExplorerTable({ users, columns }: BlocksTableProps) {
-  const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
-    const cellValue = user[columnKey as keyof User];
-
+  const renderCell = React.useCallback((user: Contract, columnKey: React.Key) => {
+    const cellValue = user[columnKey as keyof Contract];
     switch (columnKey) {
       case "contract":
         return (
           <div className="relative flex items-center flex-row text-sel_blue  gap-2">
+            <ImportToken color="gray" size="24px" contract={user} />
             <Link
               href={`/evm/contracts/${user.id}`}
               className="flex items-center justify-center"
             >
               <FileCode2 color="gray" size="16px" />
-              <p className="ml-1">{truncateMiddle(user.account, 20)}</p>
+              <p className="ml-1">{truncateMiddle(user.account, 30)}</p>
             </Link>
           </div>
         );
@@ -52,10 +45,25 @@ export default function ExplorerTable({ users, columns }: BlocksTableProps) {
       case "name":
         return (
           <div className="relative flex items-center  gap-2">
-            <p>Unknown</p>
+            <p>{user.name && user.symbol ? `${user.name} (${user.symbol})` : "-"}</p>
           </div>
         );
-
+      case "block":
+        return (
+          <div className="relative flex items-center justify-start gap-2 text-sel_blue">
+            <Link href={`/blocks/${user.block}`} >
+              <p className="ml-1">{user.block.toString()}</p>
+            </Link>
+          </div>
+        );
+      case "account":
+        return (
+          <div className="relative flex items-center justify-start gap-2 text-sel_blue">
+            <Link href={`/accounts/${user.account}`} >
+              <p className="ml-1">{truncateMiddle(user.account, 30)}</p>
+            </Link>
+          </div>
+        );
       case "verified_time":
         return (
           <div className="relative flex items-center justify-start gap-2">
@@ -65,7 +73,7 @@ export default function ExplorerTable({ users, columns }: BlocksTableProps) {
       case "extrinsichash":
         return (
           <div className="relative flex items-center justify-start gap-2">
-            <p>{truncateMiddle(user.extrinsicHash, 30)} </p>
+            <p>{truncateMiddle(user.extrinsicHash, 50)} </p>
           </div>
         );
 

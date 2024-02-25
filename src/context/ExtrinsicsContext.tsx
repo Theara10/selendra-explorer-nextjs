@@ -1,7 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { gql, useQuery } from "@apollo/client";
-import { COUNTS } from "@/graphql/queries";
+import { counts } from "@/graphql/queries";
 
 interface ExtrinsicContextType {
   extrinsic: string;
@@ -28,23 +27,25 @@ interface ExtrinsicProviderProps {
 export const ExtrinsicProvider: React.FC<ExtrinsicProviderProps> = ({
   children,
 }) => {
-  const [extrinsic, setExtrinsic] = useState("");
-  const { loading, error, data, refetch } = useQuery(COUNTS);
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error</div>;
+  const [_, setExtrinsic] = useState("");
+  const { result, refresh } = counts();
+  let latestExtrinsic = 0
+  switch (result.state) {
+    case "loading": return <div>Loading...</div>;
+    case "error": return <div>Error {result.message}</div>
+    case "ok": latestExtrinsic = result.data;
+  };
 
   const toggleExtrinsic = (extr: string) => {
     setExtrinsic(extr);
   };
   setInterval(() => {
-    refetch();
+    refresh();
   }, 1000);
-  const latestExtrinsic = data?.itemsCounters[0]?.total || "";
 
   return (
     <ExtrinsicContext.Provider
-      value={{ extrinsic: latestExtrinsic, setExtrinsic, toggleExtrinsic }}
+      value={{ extrinsic: latestExtrinsic.toLocaleString(), setExtrinsic, toggleExtrinsic }}
     >
       {children}
     </ExtrinsicContext.Provider>

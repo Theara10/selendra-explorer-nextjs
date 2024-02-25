@@ -1,10 +1,6 @@
 const columns = [
-  { name: 'Rank', uid: 'eid' },
   { name: 'Account', uid: 'account' },
-  { name: 'Extrinsics', uid: 'extrinsics' },
   { name: 'Total Balance', uid: 'balance' },
-  // { name: 'Free Balance', uid: 'freeBalance' },
-  { name: 'Reward', uid: 'reward' },
 ];
 
 const users = [

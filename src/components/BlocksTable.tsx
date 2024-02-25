@@ -7,32 +7,21 @@ import Link from "next/link";
 
 import truncateMiddle from "@/lib/TruncateMiddle";
 import {
-  Pagination,
-  Spinner,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
-  User,
 } from "@nextui-org/react";
 import { CheckCircle } from "lucide-react";
 
 import timeAgo from "../lib/ConvertTime";
-
-type User = {
-  eventsCount: number;
-  id: string;
-  timestamp: string;
-  extrinsicsCount: number;
-  height: number;
-  hash: string;
-  validator: string;
-};
+import { Block } from "@/graphql/types";
+import { HashLoader } from "react-spinners";
 
 interface BlocksTableProps {
-  users: User[];
+  users: Block[];
   columns: { uid: string; name: string }[];
   loading: boolean;
 }
@@ -49,9 +38,9 @@ export default function BlocksTable({
     });
   }
 
-  const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
+  const renderCell = React.useCallback((user: Block, columnKey: React.Key) => {
     console.log("time", timeAgo(user.timestamp));
-    const cellValue = user[columnKey as keyof User];
+    const cellValue = user[columnKey as keyof Block];
 
     switch (columnKey) {
       case "actions":
@@ -131,7 +120,7 @@ export default function BlocksTable({
             href={`/blocks/${user.id}`}
             className="relative flex items-center justify-start gap-2 text-sel_blue"
           >
-            <p>{truncateMiddle(user.hash, 52)}</p>
+            <p>{truncateMiddle(user.id, 52)}</p>
           </Link>
         );
       default:
@@ -165,7 +154,7 @@ export default function BlocksTable({
         <TableBody
           items={users}
           isLoading={!loading}
-          loadingContent={<Spinner color="primary" />}
+          loadingContent={<HashLoader className="h-screen" size={150} style={{ alignContent: "center" }} color={"#00A3E4"} />}
           className="border-b-2"
         >
           {users.map((item) => (

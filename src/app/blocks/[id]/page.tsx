@@ -7,10 +7,10 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 import timeAgo from "@/lib/ConvertTime";
-import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody } from "@nextui-org/react";
-import { Check, CheckCircle, Copy } from "lucide-react";
-import { BLOCK_BY_ID } from "@/graphql/queries";
+import { CheckCircle, Copy } from "lucide-react";
+import { block_by_hash, block_by_height } from "@/graphql/queries";
+import { Block } from "@/graphql/types";
 
 /**
  * Interface for the props passed to the BlockPage component.
@@ -23,27 +23,24 @@ interface BlockPageProps {
 }
 
 const BlockPage: React.FC<BlockPageProps> = () => {
-  const params = useParams();
-  console.log("params", params.id);
-
-  const { loading, error, data } = useQuery(BLOCK_BY_ID, {
-    // variables: { id: params.id },
-    variables: { id: params.id },
-  });
-
-  if (loading) return <p>Loading...</p>;
-  if (error) {
-    console.error("GraphQL error:", error);
-    return <p>Error: {error.message}</p>;
+  const params: { id: string } = useParams();
+  const hash = params.id.startsWith("0x");
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const result = hash ? block_by_hash(params.id) : block_by_height(Number(params.id));
+  let data: Block;
+  // match at home
+  switch (result.state) {
+    case "loading": return <p>Loading...</p>
+    case "error": return <p>Error: {result.message}</p>
+    case "ok": data = result.data;
   }
-  console.log("block-by-id", data.blockById);
 
   return (
     <div className="px-4 h-full">
       <div className="flex items-center justify-between my-6">
         <p className="text-md md:text-2xl w-80">
           Blocks{" "}
-          <span className="text-gray-400"># {data.blockById.height}</span>
+          <span className="text-gray-400"># {data.height}</span>
         </p>
         <></>
       </div>
@@ -57,7 +54,7 @@ const BlockPage: React.FC<BlockPageProps> = () => {
                     Timestamp
                   </td>
                   <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                    {data.blockById.timestamp}
+                    {data.timestamp}
                   </td>
                 </tr>
                 <tr className="bg-white border-b">
@@ -65,7 +62,7 @@ const BlockPage: React.FC<BlockPageProps> = () => {
                     Block Time
                   </td>
                   <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                    {timeAgo(data.blockById.timestamp)}
+                    {timeAgo(data.timestamp)}
                   </td>
                 </tr>
                 <tr className="bg-white border-b">
@@ -85,14 +82,14 @@ const BlockPage: React.FC<BlockPageProps> = () => {
                     Hash
                   </td>
                   <td className=" flex items-center gap-2 text-sm text-gray-900 font-light px-6 py-4">
-                    {data.blockById.hash}
+                    {data.id}
                     <span>
                       <Copy
                         size="16px"
                         color="gray"
                         className="cursor-pointer"
                         onClick={() =>
-                          navigator.clipboard.writeText(data.blockById.hash)
+                          navigator.clipboard.writeText(data.id)
                         }
                       />
                     </span>
@@ -103,8 +100,8 @@ const BlockPage: React.FC<BlockPageProps> = () => {
                     Parent Hash
                   </td>
                   <td className="text-sm text-sel_blue font-light px-6 py-4 whitespace-normal">
-                    <Link href="#" className="whitespace-normal">
-                      {data.blockById.parentHash}
+                    <Link href={`/blocks/${data.parentHash}`} className="whitespace-normal">
+                      {data.parentHash}
                     </Link>
                   </td>
                 </tr>
@@ -113,7 +110,7 @@ const BlockPage: React.FC<BlockPageProps> = () => {
                     Extrinsics Count
                   </td>
                   <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                    {data.blockById.extrinsicsCount}
+                    {data.extrinsicsCount}
                   </td>
                 </tr>
 
@@ -122,7 +119,7 @@ const BlockPage: React.FC<BlockPageProps> = () => {
                     Event Count
                   </td>
                   <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                    {data.blockById.eventsCount}
+                    {data.eventsCount}
                   </td>
                 </tr>
 
@@ -141,14 +138,14 @@ const BlockPage: React.FC<BlockPageProps> = () => {
                           className="w-6 h-6"
                         />
                       </span>
-                      <span>{data.blockById.validator}</span>
+                      <span>{data.validator}</span>
                       <span>
                         <Copy
                           size="16px"
                           color="gray"
                           onClick={() =>
                             navigator.clipboard.writeText(
-                              data.blockById.validator
+                              data.validator
                             )
                           }
                         />
@@ -162,7 +159,7 @@ const BlockPage: React.FC<BlockPageProps> = () => {
                     Specs Version
                   </td>
                   <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                    {data.blockById.specVersion}
+                    {data.specVersion}
                   </td>
                 </tr>
               </tbody>

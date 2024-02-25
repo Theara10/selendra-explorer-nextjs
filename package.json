@@ -20,6 +20,7 @@
     "react": "^18",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18",
+    "react-qr-code": "^2.0.12",
     "react-spinners": "^0.13.8"
   },
   "devDependencies": {
