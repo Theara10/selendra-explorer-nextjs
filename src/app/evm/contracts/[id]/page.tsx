@@ -27,6 +27,7 @@ import { evm_contract_by_id } from "@/graphql/queries";
 import { Contract } from "@/graphql/types";
 import ImportToken from "@/components/ImportToken";
 import QRCode from "react-qr-code";
+import Link from "next/link";
 function page() {
   return (
     <div className="px-4 sm:px-20 md:px-60 lg:px-80 mt-6">
@@ -88,13 +89,24 @@ function EvmContractAccount({ }): React.ReactElement {
           <div className="flex flex-row items-center gap-2">
             <p className="text-md overflow-hidden">
               <span className="font-semibold mr-2 text-xl">Address:</span>
-              {item.account}
+              {item.id}
             </p>
             <Copy
               size="16px"
               color="gray"
-              onClick={() => navigator.clipboard.writeText(item.account)}
+              onClick={() => navigator.clipboard.writeText(item.id)}
             />
+          </div>
+          <div className="flex flex-row items-center gap-2">
+            <Link
+              href={`/accounts/${item.account}`}
+              className="flex items-center gap-2"
+            >
+              <p className="text-md overflow-hidden text-sel_blue">
+                <span className="font-semibold mr-2 text-xl text-black">Owner:</span>
+                {item.account}
+              </p>
+            </Link>
           </div>
           <div className="flex flex-row gap-3 mt-2">
             <div className="bg-primary bg-opacity-20 p-2 flex justify-center items-center rounded-full"
