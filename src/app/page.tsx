@@ -445,14 +445,14 @@ const LatestTransactions: React.FC<LatestTokenTransferProps> = ({
                             <p className="font-light">
                               From
                               <span className="text-sel_blue ml-2">
-                                <Link href="/accounts/1">
+                                <Link href={`/accounts/${x.from.evmAddress}`}>
                                   {truncateMiddle(x.from.evmAddress, 32)}
                                 </Link>
                                 <br className="md:hidden" />
                                 <span className="pr-2 md:px-2 text-gray-400">
                                   To
                                 </span>
-                                <Link href="#" className="truncate">
+                                <Link href={`/accounts/${x.to.evmAddress}`} className="truncate">
                                   {truncateMiddle(x.to.evmAddress, 32)}
                                 </Link>
                               </span>
@@ -464,10 +464,12 @@ const LatestTransactions: React.FC<LatestTokenTransferProps> = ({
                     </TableCell>
                     <TableCell>
                       <div className="relative flex flex-col items-end justify-end font-light">
-                        <p className="text-md">
-                          {ConvertBigNumber(x.amount)}
-                          <span> {x.symbol}</span>
-                        </p>
+                        <span className="text-md">
+                          {ConvertBigNumber(x.amount) + " "}
+                          <Link href={`/evm/contracts/${x.contract}`} className="text-sel_blue">
+                            {x.symbol}
+                          </Link>
+                        </span>
                         <p>{timeAgo(x.timestamp)}</p>
                       </div>
                     </TableCell>
