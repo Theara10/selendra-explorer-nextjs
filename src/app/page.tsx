@@ -77,12 +77,9 @@ function frequency(d: Date[]): number[] {
   let map = Array<number>(30).fill(0);
   d.forEach(
     (date) =>
-    (map[
-      29 -
-      Math.round(
-        Math.abs((date.getTime() - new Date().getTime()) / day)
-      )
-    ] += 1)
+      (map[
+        29 - Math.round(Math.abs((date.getTime() - new Date().getTime()) / day))
+      ] += 1)
   );
   return map;
 }
@@ -134,9 +131,9 @@ const Explorer = () => {
           {data1.map((data) => {
             return (
               <Card className="w-full" key={data.id}>
-                <CardBody className="flex gap-2 md:gap-4 flex-row items-center p-3 md:p-6">
+                <CardBody className="flex gap-2 md:gap-4 flex-row  p-3 md:p-6">
                   {data.icon}
-                  <div className="flex flex-col">
+                  <div className="flex flex-col mt-6">
                     <p className="text-sm text-default-500">{data.title}</p>
                     <p className="text-xl md:text-2xl ">{data.value}</p>
                   </div>
@@ -144,13 +141,35 @@ const Explorer = () => {
               </Card>
             );
           })}
-          <Card className="w-full" key={3}>
+          <Card className="w-full hidden md:block" key={3}>
             <div className="flex items-center relative w-full flex-auto place-content-inherit align-items-inherit h-auto break-words text-left overflow-y-auto subpixel-antialiased md:gap-4 flex-row">
               <ArrowRightLeft
-                style={{ position: "absolute", marginLeft: "0.75rem" }}
+                style={{
+                  position: "absolute",
+                  marginLeft: "1.5rem",
+                  top: "1.5rem",
+                  marginBottom: "0.75rem",
+                }}
                 color="#00A4E5"
                 size={30}
               />
+              <LastMonthsTransfers />
+            </div>
+          </Card>
+        </section>
+        <section className="mt-3">
+          <Card className="w-full md:hidden" key={3}>
+            <div className="flex items-center relative w-full flex-auto place-content-inherit align-items-inherit h-auto break-words text-left overflow-y-auto subpixel-antialiased md:gap-4 flex-row">
+              <ArrowRightLeft
+                style={{
+                  position: "absolute",
+                  marginLeft: "1.5rem",
+                  top: "1.5rem",
+                }}
+                color="#00A4E5"
+                size={30}
+              />
+
               <LastMonthsTransfers />
             </div>
           </Card>
@@ -193,9 +212,18 @@ const LastMonthsTransfers: React.FC = () => {
   const result = get_transactions(when);
   let last: number[];
   switch (result.state) {
-    case "loading": return <HashLoader size={50} style={{ alignContent: "center" }} color={"#00A3E4"} />;
-    case "error": return <p>{result.message}</p>
-    case "ok": last = lastMonth.get(() => frequency(result.data))
+    case "loading":
+      return (
+        <HashLoader
+          size={50}
+          style={{ alignContent: "center" }}
+          color={"#00A3E4"}
+        />
+      );
+    case "error":
+      return <p>{result.message}</p>;
+    case "ok":
+      last = lastMonth.get(() => frequency(result.data));
   }
 
   return (
@@ -267,11 +295,12 @@ const LastMonthsTransfers: React.FC = () => {
                       callback: (x) =>
                         x == 2 || x == 15 || x == 27
                           ? new Date(
-                            when.getTime() + day * { 2: 0, 15: 15, 27: 30 }[x]!
-                          ).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                          })
+                              when.getTime() +
+                                day * { 2: 0, 15: 15, 27: 30 }[x]!
+                            ).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                            })
                           : undefined,
                     },
                   },
@@ -307,14 +336,23 @@ const LatestBlocks: React.FC<LatestBlocksProps> = ({ setTotalBlock }) => {
   }, [refresh]);
   let data: Block[];
   switch (result.state) {
-    case "loading": return <Card className="w-full">
-      <CardHeader className="border-b">Latest Blocks</CardHeader>
-      <CardBody>
-        <HashLoader size={150} style={{ alignContent: "center" }} color={"#00A3E4"} />
-      </CardBody>
-    </Card>
-    case "error": return <p>Error: {result.message}</p>;
-    case "ok": data = result.data;
+    case "loading":
+      return (
+        <Card className="w-full">
+          <CardHeader className="border-b">Latest Blocks</CardHeader>
+          <CardBody>
+            <HashLoader
+              size={150}
+              style={{ alignContent: "center" }}
+              color={"#00A3E4"}
+            />
+          </CardBody>
+        </Card>
+      );
+    case "error":
+      return <p>Error: {result.message}</p>;
+    case "ok":
+      data = result.data;
   }
 
   return (
@@ -338,44 +376,42 @@ const LatestBlocks: React.FC<LatestBlocksProps> = ({ setTotalBlock }) => {
             <TableColumn>Time</TableColumn>
           </TableHeader>
           <TableBody>
-            {data.map(
-              x => {
-                setTotalBlock(x.height);
-                return (
-                  <TableRow key={x.id} className=" border-b">
-                    <TableCell>
-                      <Link
-                        href={`/blocks/${x.id}`}
-                        className="text-primary font-semibold"
-                      >
-                        <User
-                          avatarProps={{ radius: "md", src: "/block.png" }}
-                          description={
-                            <p className=" font-light">
-                              Include
-                              <span className="text-primary ml-2">
-                                {x.extrinsicsCount} Extrinsics {x.eventsCount}{" "}
-                                Events
-                              </span>
-                            </p>
-                          }
-                          name={x.height}
-                        />
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <div className="relative flex items-center justify-end gap-2 font-light">
-                        <p>{timeAgo(x.timestamp)}</p>
+            {data.map((x) => {
+              setTotalBlock(x.height);
+              return (
+                <TableRow key={x.id} className=" border-b">
+                  <TableCell>
+                    <Link
+                      href={`/blocks/${x.id}`}
+                      className="text-primary font-semibold"
+                    >
+                      <User
+                        avatarProps={{ radius: "md", src: "/block.png" }}
+                        description={
+                          <p className=" font-light">
+                            Include
+                            <span className="text-primary ml-2">
+                              {x.extrinsicsCount} Extrinsics {x.eventsCount}{" "}
+                              Events
+                            </span>
+                          </p>
+                        }
+                        name={x.height}
+                      />
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <div className="relative flex items-center justify-end gap-2 font-light">
+                      <p>{timeAgo(x.timestamp)}</p>
 
-                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                          <CheckCircle color="green" size="16px" />
-                        </span>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              }
-            )}
+                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                        <CheckCircle color="green" size="16px" />
+                      </span>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </CardBody>
@@ -394,14 +430,22 @@ const LatestTransactions: React.FC<LatestTokenTransferProps> = ({
   let data: Transfer[];
   switch (result.state) {
     case "loading":
-      return <Card className="w-full">
-        <CardHeader className="border-b">Latest Transactions</CardHeader>
-        <CardBody>
-          <HashLoader size={150} style={{ alignContent: "center" }} color={"#00A3E4"} />
-        </CardBody>
-      </Card>;
-    case "error": return <p>Error: {result.message}</p>;
-    case "ok": data = result.data;
+      return (
+        <Card className="w-full">
+          <CardHeader className="border-b">Latest Transactions</CardHeader>
+          <CardBody>
+            <HashLoader
+              size={150}
+              style={{ alignContent: "center" }}
+              color={"#00A3E4"}
+            />
+          </CardBody>
+        </Card>
+      );
+    case "error":
+      return <p>Error: {result.message}</p>;
+    case "ok":
+      data = result.data;
   }
 
   return (
@@ -425,58 +469,62 @@ const LatestTransactions: React.FC<LatestTokenTransferProps> = ({
             <TableColumn>Time</TableColumn>
           </TableHeader>
           <TableBody>
-            {data.map(
-              (x, index: number) => {
-                // console.log("tokenTransfers", typeof x.from);
-                setTotalTokenTransfer(index);
-                return (
-                  <TableRow key={x.id} className=" border-b">
-                    <TableCell>
-                      <Link
-                        href={`/tx/${x.id}`}
-                        className="text-sel_blue font-semibold "
-                      >
-                        <User
-                          avatarProps={{
-                            radius: "md",
-                            src: "/transaction.png",
-                          }}
-                          description={
-                            <p className="font-light">
-                              From
-                              <span className="text-sel_blue ml-2">
-                                <Link href={`/accounts/${x.from.evmAddress}`}>
-                                  {truncateMiddle(x.from.evmAddress, 32)}
-                                </Link>
-                                <br className="md:hidden" />
-                                <span className="pr-2 md:px-2 text-gray-400">
-                                  To
-                                </span>
-                                <Link href={`/accounts/${x.to.evmAddress}`} className="truncate">
-                                  {truncateMiddle(x.to.evmAddress, 32)}
-                                </Link>
+            {data.map((x, index: number) => {
+              // console.log("tokenTransfers", typeof x.from);
+              setTotalTokenTransfer(index);
+              return (
+                <TableRow key={x.id} className=" border-b">
+                  <TableCell>
+                    <Link
+                      href={`/tx/${x.id}`}
+                      className="text-sel_blue font-semibold "
+                    >
+                      <User
+                        avatarProps={{
+                          radius: "md",
+                          src: "/transaction.png",
+                        }}
+                        description={
+                          <p className="font-light">
+                            From
+                            <span className="text-sel_blue ml-2">
+                              <Link href={`/accounts/${x.from.evmAddress}`}>
+                                {truncateMiddle(x.from.evmAddress, 32)}
+                              </Link>
+                              <br className="md:hidden" />
+                              <span className="pr-2 md:px-2 text-gray-400">
+                                To
                               </span>
-                            </p>
-                          }
-                          name={x.blockNumber}
-                        />
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <div className="relative flex flex-col items-end justify-end font-light">
-                        <span className="text-md">
-                          {ConvertBigNumber(x.amount) + " "}
-                          <Link href={`/evm/contracts/${x.contract}`} className="text-sel_blue">
-                            {x.symbol}
-                          </Link>
-                        </span>
-                        <p>{timeAgo(x.timestamp)}</p>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              }
-            )}
+                              <Link
+                                href={`/accounts/${x.to.evmAddress}`}
+                                className="truncate"
+                              >
+                                {truncateMiddle(x.to.evmAddress, 32)}
+                              </Link>
+                            </span>
+                          </p>
+                        }
+                        name={x.blockNumber}
+                      />
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <div className="relative flex flex-col items-end justify-end font-light">
+                      <span className="text-md">
+                        {ConvertBigNumber(x.amount) + " "}
+                        <Link
+                          href={`/evm/contracts/${x.contract}`}
+                          className="text-sel_blue"
+                        >
+                          {x.symbol}
+                        </Link>
+                      </span>
+                      <p>{timeAgo(x.timestamp)}</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </CardBody>
