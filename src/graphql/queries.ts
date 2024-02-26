@@ -234,12 +234,12 @@ export function get_accounts(): Result<Account[]> {
 
 /** checks for a 0x prefix to determine whether this is a native or evm address. */
 export function get_account(address: string): Result<Account> {
-  return address.startsWith("0x") ? get_account_by_evmaddress(address) : get_account_by_native_address(address)
+  return address.startsWith("0x") ? get_account_by_evmaddress(address.toLowerCase()) : get_account_by_native_address(address)
 }
 
 /** checks for a 0x prefix to determine whether this is a native or evm address. */
 export function get_account_contracts(address: string): Result<Contract[]> {
-  return address.startsWith("0x") ? get_account_evm_contracts(address) : get_account_native_contracts(address)
+  return address.startsWith("0x") ? get_account_evm_contracts(address.toLowerCase()) : get_account_native_contracts(address)
 }
 
 export function get_account_by_native_address(address: string): Result<Account> {
@@ -258,8 +258,7 @@ export function get_account_by_evmaddress(address: string): Result<Account> {
     accounts(where: {evmAddress_eq: $address}) {
       ${ACCOUNT}
     }
-}
-`, { variables: { address } }), y => y.accounts[0])
+  }`, { variables: { address } }), y => y.accounts[0])
 }
 
 
