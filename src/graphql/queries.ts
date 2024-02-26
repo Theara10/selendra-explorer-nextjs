@@ -33,6 +33,17 @@ contract
 success
 symbol`;
 
+const EXTRINSIC = `extrinsicHash
+timestamp
+success
+fee
+version
+tip
+block {
+  ${BLOCK}
+}
+blockNumber`;
+
 const CONTRACT = `account
 id
 extrinsicHash
@@ -168,17 +179,7 @@ export function get_latest_extrinsics(limit: number, offset: number = 0): Refres
   return map_refreshable(useQuery(gql`
     query GetLastestExtrinsics($limit: Int, $offset: Int) {
       extrinsics(limit: $limit, offset: $offset, orderBy: timestamp_DESC) {
-        id
-        extrinsicHash
-        timestamp
-        success
-        fee
-        version
-        tip
-        block {
-          ${BLOCK}
-        }
-        blockNumber
+        ${EXTRINSIC}
       }
     }
   `, { variables: { limit, offset } }), y => y.extrinsics)
@@ -316,32 +317,16 @@ export function evm_transfers_by_id(id: string): Result<Transfer[]> {
   )
 }
 
-
-export const GET_EXTRINSICS_BY_ID = gql`
-  query ExtrinsicById($id: String!) {
-    extrinsicById(id: $id) {
-      timestamp
-      extrinsicHash
-      blockNumber
-      fee
-      tip
-      version
-      success
-      signerPublicKey
-      indexInBlock
-      events {
-        eventName
+export function get_extrinsic_by_hash(hash: string): Result<Extrinsic | undefined> {
+  return map_query(useQuery(gql`
+    query ExtrinsicByHash($hash: String!) {
+      extrinsics(where: {extrinsicHash_eq: $hash}) {
+        ${EXTRINSIC}
       }
-      calls {
-        callName
-      }
-      block {
-        height
-        id
-      }
-    }
-  }
-`;
+    }`,
+    { variables: { hash } }
+  ), x => x.extrinsics[0])
+}
 
 export function transfer_by_hash(hash: string): Result<Transfer> {
   return map_query(

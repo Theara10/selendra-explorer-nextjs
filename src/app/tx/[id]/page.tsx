@@ -11,7 +11,7 @@ import timeAgo from "@/lib/ConvertTime";
 import truncateMiddle from "@/lib/TruncateMiddle";
 import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody } from "@nextui-org/react";
-import { CheckCircle, Copy } from "lucide-react";
+import { CheckCircle, Copy, XCircle } from "lucide-react";
 import { Transfer } from "@/graphql/types";
 import { transfer_by_hash } from "@/graphql/queries";
 
@@ -40,8 +40,8 @@ const TransferDetails: React.FC<BlockPageProps> = () => {
   return (
     <div className="px-4">
       <div className="flex items-center">
-        <span className="text-2xl w-[8ch]">Transfer</span><span className="text-gray-400">#{truncateMiddle(transfer.id, 50)}</span>
-        {transfer.success ? (<CheckCircle color="green" size="32px" />) : ("-")}
+        <span className="text-2xl w-[7ch]">Transfer</span><span className="text-gray-400">#{truncateMiddle(transfer.id, 50)}</span>
+        {transfer.success ? (<CheckCircle className="m-2" color="green" size="32px" />) : (<XCircle className="m-2" color="red" size="32px" />)}
       </div>
       <Card>
         <CardBody>

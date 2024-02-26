@@ -2,91 +2,73 @@
 
 import * as React from "react";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
 import timeAgo from "@/lib/ConvertTime";
-import { gql, useQuery } from "@apollo/client";
 import { Card, CardBody } from "@nextui-org/react";
-import { CheckCircle, Copy } from "lucide-react";
-import { useExtrinsic } from "@/context/ExtrinsicsContext";
-import { GET_EXTRINSICS_BY_ID } from "@/graphql/queries";
+import { CheckCircle, Copy, XCircle } from "lucide-react";
+import { get_extrinsic_by_hash } from "@/graphql/queries";
+import { Extrinsic } from "@/graphql/types";
+import truncateMiddle from "@/lib/TruncateMiddle";
 
 export default function ExtrinsicPage() {
-  const { extrinsic, toggleExtrinsic } = useExtrinsic();
-  const params = useParams();
-  const { loading, error, data } = useQuery(GET_EXTRINSICS_BY_ID, {
-    variables: { id: params.id },
-  });
-
-  if (loading) return <p>Loading...</p>;
-  if (error) {
-    console.error("GraphQL error:", error);
-    return <p>Error: {error.message}</p>;
+  const params: any = useParams().id;
+  const result = get_extrinsic_by_hash(params);
+  let extrinsic: Extrinsic;
+  switch (result.state) {
+    case "loading": return <p>loading</p>
+    case "error": return <p>error</p>
+    case "ok": {
+      if (result.data) extrinsic = result.data;
+      else return <p>incorrect id</p>;
+    }
   }
-  const extr = data.extrinsicById;
-  console.log("block-by-id", data.extrinsicById);
-  toggleExtrinsic(extr.blockNumber);
+
   return (
-    <div className=" px-4 sm:px-20 md:px-60 lg:px-80 ">
-      <div className="flex items-center justify-between my-6">
-        <p className="text-2xl w-80">
-          Extrinsics <span className="text-gray-400">#358952502</span>
-        </p>
-        <></>
+    <div className="px-4 sm:px-20 md:px-60 lg:px-80">
+      <div className="flex items-center">
+        <span className="text-2xl w-[7ch]">Extrinsic</span><span className="text-sel_blue">
+          <Link href={`/blocks/${extrinsic.blockNumber}`}>#{extrinsic.blockNumber}</Link>
+        </span>
+        {extrinsic.success ? (<CheckCircle className="m-2" color="green" size="32px" />) : (<XCircle className="m-2" color="red" size="32px" />)}
       </div>
       <Card>
-        {/* <CardBody>
-          <div className="py-2 inline-block min-w-full sm:px-6 lg:px-8">
-            <div className="overflow-hidden">
-              <table className="min-w-full">
-                <tbody>
-                  <tr className="border-b">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      Timestamp
-                    </td>
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      {extrinsic.timestamp}
-                    </td>
-                  </tr>
-                  <tr className="bg-white border-b">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      Block Time
-                    </td>
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      {timeAgo(extrinsic.timestamp)}
-                    </td>
-                  </tr>
-                  <tr className="bg-white border-b">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      Block Number
-                    </td>
-                    <td className=" flex items-center gap-2 text-sm text-sel_blue font-light px-6 py-4 whitespace-nowrap">
-                      {extrinsic.blockNumber}
-                    </td>
-                  </tr>
-                  <tr className="bg-white border-b">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      Extrinsics Hash
-                    </td>
-                    <td className=" flex items-center gap-2 text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      {extrinsic.extrinsicHash}
-                      <span>
-                        <Copy
-                          size="16px"
-                          color="gray"
-                          className="cursor-pointer"
-                          onClick={() =>
-                            navigator.clipboard.writeText(
-                              extrinsic.extrinsicHash
-                            )
-                          }
-                        />
-                      </span>
-                    </td>
-                  </tr>
-                  <tr className="bg-white border-b">
+        <CardBody>
+          <div className="">
+            <table className="min-w-full">
+              <tbody>
+                <tr className="border-b">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    Timestamp
+                  </td>
+                  <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                    {extrinsic.timestamp}
+                    {" | "}
+                    {timeAgo(extrinsic.timestamp)}
+                  </td>
+                </tr>
+                <tr className="bg-white border-b">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    Extrinsic Hash
+                  </td>
+                  <td className="flex items-center gap-2 text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                    {truncateMiddle(extrinsic.extrinsicHash, 40)}
+                    <span>
+                      <Copy
+                        size="16px"
+                        color="gray"
+                        className="cursor-pointer"
+                        onClick={() =>
+                          navigator.clipboard.writeText(
+                            extrinsic.extrinsicHash
+                          )
+                        }
+                      />
+                    </span>
+                  </td>
+                </tr>
+                {/* <tr className="bg-white border-b">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       Parent Hash
                     </td>
@@ -112,25 +94,25 @@ export default function ExtrinsicPage() {
                         )}
                       </Link>
                     </td>
-                  </tr>
+                  </tr> */}
 
-                  <tr className="bg-white border-b">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      Fee
-                    </td>
-                    <td className="  text-sm  font-light px-6 py-4 whitespace-nowrap">
-                      {extrinsic.fee ? extrinsic.fee : "-"}
-                    </td>
-                  </tr>
-                  <tr className="bg-white border-b">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      Tip
-                    </td>
-                    <td className="text-sm  font-light px-6 py-4 whitespace-nowrap">
-                      {extrinsic.tip ? extrinsic.tip : "-"}
-                    </td>
-                  </tr>
-                  <tr className="bg-white border-b">
+                {extrinsic.fee ? <tr className="bg-white border-b">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    Fee
+                  </td>
+                  <td className="  text-sm  font-light px-6 py-4 whitespace-nowrap">
+                    {extrinsic.fee}
+                  </td>
+                </tr> : <></>}
+                {extrinsic.tip ? <tr className="bg-white border-b">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    Tip
+                  </td>
+                  <td className="text-sm  font-light px-6 py-4 whitespace-nowrap">
+                    {extrinsic.tip}
+                  </td>
+                </tr> : <></>}
+                {/* <tr className="bg-white border-b">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       Signer Public key
                     </td>
@@ -150,32 +132,18 @@ export default function ExtrinsicPage() {
                         : "-"}
                     </td>
                   </tr>
-                  <tr className="bg-white ">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      Version
-                    </td>
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      {extrinsic.version}
-                    </td>
-                  </tr>
-                  <tr className="bg-white ">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      Result
-                    </td>
-                    <td className="text-sm text-gray-900 font-light py-4 whitespace-nowrap">
-                      <td className=" flex items-center gap-2 text-sm text-gray-900 font-light px-6 whitespace-nowrap">
-                        <span>
-                          <CheckCircle size={16} color="green" />
-                        </span>
-                        Success
-                      </td>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                <tr className="bg-white ">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    Version
+                  </td>
+                  <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                    {extrinsic.version}
+                  </td>
+                </tr> */}
+              </tbody>
+            </table>
           </div>
-        </CardBody> */}
+        </CardBody>
       </Card>
     </div>
   );
