@@ -32,7 +32,10 @@ const BlockPage: React.FC<BlockPageProps> = () => {
   switch (result.state) {
     case "loading": return <p>Loading...</p>
     case "error": return <p>Error: {result.message}</p>
-    case "ok": data = result.data;
+    case "ok": {
+      if (result.data) data = result.data
+      else return <p>invalid id</p>
+    }
   }
 
   return (

@@ -34,7 +34,10 @@ const TransferDetails: React.FC<BlockPageProps> = () => {
   switch (result.state) {
     case "loading": return <p>loading</p>;
     case "error": return <p>Error {result.message}</p>
-    case "ok": transfer = result.data;
+    case "ok": {
+      if (result.data) transfer = result.data
+      else return <p>invalid id</p>
+    }
   }
 
   return (

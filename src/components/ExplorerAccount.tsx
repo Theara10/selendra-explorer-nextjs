@@ -35,10 +35,12 @@ function ExplorerAccount({ }): React.ReactElement {
   switch (result.state) {
     case "loading": return <p>Loading...</p>;
     case "error": return <p>Error {result.message}</p>
-    case "ok": item = result.data
+    case "ok": {
+      if (result.data) item = result.data
+      else return <p>invalid id</p>
+    }
   }
 
-  console.log("batman", item);
   return (
     <div className="flex flex-row gap-3">
       <Card className="w-full p-4">

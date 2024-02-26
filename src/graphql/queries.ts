@@ -234,7 +234,7 @@ export function get_accounts(): Result<Account[]> {
 }
 
 /** checks for a 0x prefix to determine whether this is a native or evm address. */
-export function get_account(address: string): Result<Account> {
+export function get_account(address: string): Result<Account | undefined> {
   return address.startsWith("0x") ? get_account_by_evmaddress(address.toLowerCase()) : get_account_by_native_address(address)
 }
 
@@ -243,7 +243,7 @@ export function get_account_contracts(address: string): Result<Contract[]> {
   return address.startsWith("0x") ? get_account_evm_contracts(address.toLowerCase()) : get_account_native_contracts(address)
 }
 
-export function get_account_by_native_address(address: string): Result<Account> {
+export function get_account_by_native_address(address: string): Result<Account | undefined> {
   return map_query(useQuery(gql`
   query AccountByID($address: String!) {
     accountById(id: $address) {
@@ -253,7 +253,7 @@ export function get_account_by_native_address(address: string): Result<Account> 
 `, { variables: { address } }), y => y.accountById)
 }
 
-export function get_account_by_evmaddress(address: string): Result<Account> {
+export function get_account_by_evmaddress(address: string): Result<Account | undefined> {
   return map_query(useQuery(gql`
   query AccountByEVM($address: String!) {
     accounts(where: {evmAddress_eq: $address}) {
@@ -273,7 +273,7 @@ export function counts(): Refreshable<number> {
   `), (y) => y.itemsCounters[0].total)
 }
 
-export function block_by_hash(hash: string): Result<Block> {
+export function block_by_hash(hash: string): Result<Block | undefined> {
   return map_query(useQuery(gql`
     query BlockByHash($hash: String!) {
       blockById(id: $hash) {
@@ -284,7 +284,7 @@ export function block_by_hash(hash: string): Result<Block> {
 }
 
 
-export function block_by_height(height: number): Result<Block> {
+export function block_by_height(height: number): Result<Block | undefined> {
   return map_query(useQuery(gql`
     query BlockByHeight($height: Int!) {
       blocks(where: { height_eq: $height }) {
@@ -294,7 +294,7 @@ export function block_by_height(height: number): Result<Block> {
     (y) => y.blocks[0]);
 }
 
-export function evm_contract_by_id(id: string): Result<Contract> {
+export function evm_contract_by_id(id: string): Result<Contract | undefined> {
   return map_query(useQuery(gql`
     query evmContractById($id: String!) {
       evmContractById(id: $id) {
@@ -328,7 +328,7 @@ export function get_extrinsic_by_hash(hash: string): Result<Extrinsic | undefine
   ), x => x.extrinsics[0])
 }
 
-export function transfer_by_hash(hash: string): Result<Transfer> {
+export function transfer_by_hash(hash: string): Result<Transfer | undefined> {
   return map_query(
     useQuery(gql`
       query TransferByID($hash: String!) {

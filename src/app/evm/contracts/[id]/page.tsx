@@ -85,7 +85,10 @@ function EvmContractAccount({ id }: { id: string }): React.ReactElement {
   switch (result.state) {
     case "loading": return <p>loading</p>
     case "error": return <p>err</p>
-    case "ok": item = result.data;
+    case "ok": {
+      if (result.data) item = result.data
+      else return <p>invalid id</p>
+    }
   }
   console.log(item)
   return (
