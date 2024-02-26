@@ -29,6 +29,7 @@ from { ${ACCOUNT} }
 to { ${ACCOUNT} }
 timestamp
 id
+contract
 success
 symbol`;
 
@@ -302,6 +303,17 @@ export function evm_contract_by_id(id: string): Result<Contract> {
     }`,
     { variables: { id } }),
     y => y.evmContractById
+  )
+}
+
+export function evm_transfers_by_id(id: string): Result<Transfer[]> {
+  return map_query(useQuery(gql`
+    query EvmContractTransfers($id: String!) {
+      transfers(where: {contract_eq: $id}, orderBy: timestamp_DESC) {
+        ${TRANSFER}
+      }
+    }`, { variables: { id } }),
+    x => x.transfers
   )
 }
 

@@ -23,12 +23,15 @@ import {
   QrCode,
   Wallet,
 } from "lucide-react";
-import { evm_contract_by_id } from "@/graphql/queries";
+import { columns } from '../../../data/transfers'
+import { evm_contract_by_id, evm_transfers_by_id } from "@/graphql/queries";
 import { Contract } from "@/graphql/types";
 import ImportToken from "@/components/ImportToken";
 import QRCode from "react-qr-code";
 import Link from "next/link";
-function page() {
+import TransfersTable from "@/components/TransfersTable";
+function Page({ }): React.ReactElement {
+  const params: any = useParams().id;
   return (
     <div className="px-4 sm:px-20 md:px-60 lg:px-80 mt-6">
       <div className="flex items-center justify-between mb-6">
@@ -36,13 +39,22 @@ function page() {
         <></>
       </div>
 
-      <EvmContractAccount />
+      <EvmContractAccount id={params} />
 
       <Card className="mt-4">
         <CardBody>
           <Tabs aria-label="Options" variant="underlined" color="primary">
             <Tab key="evm" title="EVM Transactions">
-              {/* <ExplorerTable users={users} columns={columns}  /> */}
+              {
+                (() => {
+                  let txs = evm_transfers_by_id(params);
+                  switch (txs.state) {
+                    case "loading": return <p>loading</p>
+                    case "error": return <p>:(</p>
+                    case "ok": return <TransfersTable users={txs.data} columns={columns} />
+                  }
+                })()
+              }
             </Tab>
             <Tab key="wasm" title="WASM Transaction">
               {/* <ExplorerTable users={users} columns={columns}  /> */}
@@ -64,12 +76,11 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
 
-function EvmContractAccount({ }): React.ReactElement {
+function EvmContractAccount({ id }: { id: string }): React.ReactElement {
   let [qr, setQr] = useState(false);
-  const params: any = useParams().id;
-  const result = evm_contract_by_id(params);
+  const result = evm_contract_by_id(id);
   let item: Contract;
   switch (result.state) {
     case "loading": return <p>loading</p>

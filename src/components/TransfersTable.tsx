@@ -17,7 +17,7 @@ import {
   TableRow,
   User,
 } from "@nextui-org/react";
-import { ArrowRight, CheckCircle } from "lucide-react";
+import { ArrowRight, CheckCircle, XCircle } from "lucide-react";
 import { Transfer } from "@/graphql/types";
 
 // import { columns, users } from './data';
@@ -36,7 +36,7 @@ export default function TransfersTable({ users, columns }: BlocksTableProps) {
         case "from":
           return (
             <div className="relative flex items-center justify-between py-2 gap-2">
-              <Link href="" className="text-sel_blue">
+              <Link href={`/accounts/${user.from.id}`} className="text-sel_blue">
                 <p>{truncateMiddle(user.from.evmAddress, 20)}</p>
               </Link>
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
@@ -64,7 +64,10 @@ export default function TransfersTable({ users, columns }: BlocksTableProps) {
         case "value":
           return (
             <div className="flex items-center gap-2">
-              <p>{`${ConvertBigNumber(user.amount)} ${user.symbol}`} </p>
+              {ConvertBigNumber(user.amount)}
+              <Link href={`/evm/contracts/${user.contract}`} className="text-sel_blue">
+                {user.symbol}
+              </Link>
             </div>
           );
         case "eid":
@@ -81,7 +84,7 @@ export default function TransfersTable({ users, columns }: BlocksTableProps) {
           return (
             <div className="relative flex items-center justify-start gap-2">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                {user.success ? <CheckCircle color="green" size="16px" /> : "-"}
+                {user.success ? <CheckCircle color="green" size="24px" /> : <XCircle color="red" size="24px" />}
               </span>
             </div>
           );

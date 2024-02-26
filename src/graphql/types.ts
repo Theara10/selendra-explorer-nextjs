@@ -21,6 +21,7 @@ export type Transfer = {
     type: "Native" | "ERC20" | "ERC721" | "ERC1155" | "SRC20" | "SRC721" | "SRC1155";
     success: boolean;
     from: Account;
+    contract: string;
     to: Account;
 };
 
