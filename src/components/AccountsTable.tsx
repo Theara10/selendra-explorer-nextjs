@@ -18,6 +18,10 @@ import {
 } from "@nextui-org/react";
 import { CheckCircle } from "lucide-react";
 import { Account } from "@/graphql/types";
+import { blo } from "blo";
+import Image from "next/image"
+
+
 
 interface BlocksTableProps {
   users: Account[];
@@ -41,17 +45,19 @@ export default function AccountsTable({ users, columns }: BlocksTableProps) {
             href={`/accounts/${user.id}`}
             className="text-sel_blue flex items-center gap-2"
           >
+            <Image
+              src={blo(user.evmAddress as `0x${string}`)}
+              alt="pf"
+              width={500}
+              height={500}
+              className="w-6 h-6 rounded-md"
+            />
             <p>{truncateMiddle(user.evmAddress, 20)}</p>
           </Link>
         );
       case "balance":
         return (
-          <Link
-            href="/accounts/1"
-            className="text-sel_blue flex items-center gap-2"
-          >
-            <p>{ConvertBigNumber(user.totalBalance)}</p>
-          </Link>
+          <p>{ConvertBigNumber(user.totalBalance)} SEL</p>
         );
 
       default:

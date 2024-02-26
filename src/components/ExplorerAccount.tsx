@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { get_account } from "@/graphql/queries";
 import { Account } from "@/graphql/types";
+import { blo } from "blo";
 
 function ExplorerAccount({ }): React.ReactElement {
   const params: any = useParams().id;
@@ -46,7 +47,7 @@ function ExplorerAccount({ }): React.ReactElement {
       <Card className="w-full p-4">
         <CardBody className="flex flex-col gap-3">
           <div className="flex flex-row items-center gap-2">
-            <Image width={52} height={52} alt="profile" src="/profile.png" />
+            <Image width={52} height={52} alt="profile" className="rounded-full" src={blo(item.evmAddress as `0x${string}`)} />
             <p className="text-md overflow-hidden">
               <span className="font-semibold mr-2 text-xl">Address:</span>
               {item.evmAddress}

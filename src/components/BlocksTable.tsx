@@ -19,6 +19,7 @@ import { CheckCircle } from "lucide-react";
 import timeAgo from "../lib/ConvertTime";
 import { Block } from "@/graphql/types";
 import { HashLoader } from "react-spinners";
+import { blo } from "blo";
 
 interface BlocksTableProps {
   users: Block[];
@@ -104,11 +105,11 @@ export default function BlocksTable({
           <Link href="#">
             <div className="relative flex flex-row items-center justify-start gap-2 text-sel_blue">
               <Image
-                src="/profile.png"
+                src={blo(user.validator as `0x${string}`)}
                 alt="validator-pf"
                 width={500}
                 height={500}
-                className="w-6 h-6"
+                className="w-6 h-6 rounded-md"
               />
               <p>{truncateMiddle(user.validator, 52)}</p>
             </div>

@@ -30,6 +30,7 @@ import ImportToken from "@/components/ImportToken";
 import QRCode from "react-qr-code";
 import Link from "next/link";
 import TransfersTable from "@/components/TransfersTable";
+import { blo } from "blo";
 function Page({ }): React.ReactElement {
   const params: any = useParams().id;
   return (
@@ -96,7 +97,7 @@ function EvmContractAccount({ id }: { id: string }): React.ReactElement {
       <Card className="w-full p-4">
         <CardBody className="flex flex-col gap-3">
           <div className="flex flex-row items-center gap-2">
-            <Image width={52} height={52} alt="profile" src="/profile.png" />
+            <Image width={52} height={52} alt="profile" className="rounded-full w-6 h-6" src={blo(item.id as `0x${string}`)} />
             <p className="text-2xl">{item.name ? item.name : "Unknown"}</p>
             <p className="text-gray-900">{item.symbol ? `(${item.symbol})` : ""}</p>
           </div>

@@ -11,6 +11,7 @@ import { Card, CardBody } from "@nextui-org/react";
 import { CheckCircle, Copy } from "lucide-react";
 import { block_by_hash, block_by_height } from "@/graphql/queries";
 import { Block } from "@/graphql/types";
+import { blo } from "blo";
 
 /**
  * Interface for the props passed to the BlockPage component.
@@ -130,15 +131,15 @@ const BlockPage: React.FC<BlockPageProps> = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     Validator
                   </td>
-                  <td className="  text-sm text-sel_blue font-light px-6 py-4 whitespace-nowrap">
+                  <td className="  text-sm font-light px-6 py-4 whitespace-nowrap">
                     <Link href="#" className="flex items-center gap-2">
                       <span>
                         <Image
-                          src="/profile.png"
+                          src={blo(data.id as any)}
+                          className="rounded-full w-6 h-6"
                           alt="profile"
                           width={500}
                           height={500}
-                          className="w-6 h-6"
                         />
                       </span>
                       <span>{data.validator}</span>
