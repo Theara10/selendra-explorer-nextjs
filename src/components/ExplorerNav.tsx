@@ -28,6 +28,7 @@ import { SideNavItem } from "@/types";
 import Image from "next/image";
 import { cn } from "./cn";
 import SearchInput from "./SearchInput";
+import { Network, useNetState } from "@/graphql/apollo-client";
 
 const explorer_nav_items = [
   {
@@ -74,6 +75,7 @@ interface Colors {
 
 function ExplorerNav({ bgColor, textColor, logo, search, selIcon }: Colors) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [net, setNet] = useNetState();
   return (
     <section>
       <div
@@ -178,8 +180,9 @@ function ExplorerNav({ bgColor, textColor, logo, search, selIcon }: Colors) {
                     className="h-4 w-auto"
                   />
                 }
+                onClick={() => {setNet(net == Network.Main ? Network.Test : Network.Main)}}
               >
-                Mainnet
+                {net == Network.Main ? "Mainnet" : "Testnet"}
               </Button>
             </NavbarItem>
           </NavbarContent>
@@ -198,35 +201,6 @@ function ExplorerNav({ bgColor, textColor, logo, search, selIcon }: Colors) {
               },
             }}
           >
-            <NavbarMenuItem className="mb-4">
-              <Button
-                className={`border-${textColor} text-${textColor} font-medium border-1 w-full`}
-                color="secondary"
-                radius="md"
-                size="sm"
-                variant="bordered"
-                startContent={
-                  <Image
-                    width={24}
-                    height={24}
-                    src={selIcon}
-                    alt="sel-logo"
-                    className="h-4 w-auto"
-                  />
-                }
-              >
-                Mainnet
-              </Button>
-            </NavbarMenuItem>
-            <NavbarMenuItem>
-              <Link
-                className="text-medium text-gray-500 pl-[16px]"
-                href="#"
-                size="sm"
-              >
-                Home
-              </Link>
-            </NavbarMenuItem>
             {explorer_nav_items.map((data) => (
               <NavbarMenuItem key={data.id}>
                 <Link className="text-white" href="#">
