@@ -28,6 +28,8 @@ amount
 from { ${ACCOUNT} }
 to { ${ACCOUNT} }
 timestamp
+extrinsicHash
+type
 id
 contract
 success
