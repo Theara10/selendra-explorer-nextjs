@@ -1,5 +1,6 @@
 name: Auto Build Deploy Client
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -28,4 +29,4 @@ jobs:
             ssh \
               -o 'StrictHostKeyChecking no' \
               ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-              'cd /root/selendra-explorer-nextjs && git checkout main && git checkout . && git pull --rebase && npm i --force && npm run build && pm2 restart 4'
+              'bash /root/update.sh'
