@@ -51,6 +51,7 @@ function Account() {
                     case "loading": return <p>Loading</p>
                     case "error": return <p>Error {contracts.message}</p>
                     case "ok": return <ExplorerTable users={contracts.data} columns={[
+                      { name: 'Contract', uid: 'contract' },
                       { name: 'Name', uid: 'name' },
                       { name: 'Extrinsic Hash', uid: 'extrinsichash' },
                       { name: 'Block', uid: 'block' },

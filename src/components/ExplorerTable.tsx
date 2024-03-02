@@ -73,7 +73,9 @@ export default function ExplorerTable({ users, columns }: BlocksTableProps) {
       case "extrinsichash":
         return (
           <div className="relative flex items-center justify-start gap-2">
-            <p>{truncateMiddle(user.extrinsicHash, 50)} </p>
+            <Link href={`/extrinsics/${user.extrinsicHash}`} className="text-sel_blue">
+              <p>{truncateMiddle(user.extrinsicHash, 50)}</p>
+            </Link>
           </div>
         );
 
