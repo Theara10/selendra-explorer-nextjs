@@ -1,6 +1,6 @@
 const columns = [
   { name: 'Block', uid: 'name' },
-  { name: 'Extrinsics Hash', uid: 'extrinsichash' },
+  { name: 'Extrinsics', uid: 'extrinsichash' },
   { name: 'Time', uid: 'time' },
   { name: 'Result', uid: 'result' },
   { name: 'Fee', uid: 'fee' },

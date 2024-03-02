@@ -53,7 +53,7 @@ export default function ExtrinsicsTable({ users, columns }: BlocksTableProps) {
 
       case "time":
         return (
-          <div className="relative flex items-center justify-start gap-2">
+          <div className="relative flex items-center justify-start gap-2 text-foreground">
             <p>{timeAgo(user.timestamp)} </p>
           </div>
         );
@@ -73,7 +73,7 @@ export default function ExtrinsicsTable({ users, columns }: BlocksTableProps) {
         );
       case "fee":
         return (
-          <div className="relative flex items-center justify-start gap-2">
+          <div className="relative flex items-center justify-start gap-2 text-foreground">
             <p>{user.fee ? user.fee : "-"} </p>
           </div>
         );
