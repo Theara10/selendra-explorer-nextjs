@@ -45,7 +45,7 @@ export default function ExplorerTable({ users, columns }: BlocksTableProps) {
       case "name":
         return (
           <div className="relative flex items-center  gap-2">
-            <p>{user.name && user.symbol ? `${user.name} (${user.symbol})` : "-"}</p>
+            <p>{user.name ? (user.symbol ? `${user.name} (${user.symbol})` : user.name) : '-'}</p>
           </div>
         );
       case "block":
