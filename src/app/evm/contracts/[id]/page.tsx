@@ -1,5 +1,9 @@
 "use client";
-
+import "./hl.css"
+import styles from "../../../../components/code.module.css"
+import { init, hl } from './hl'
+init();
+import { Contract as Ctr } from 'sevm';
 import React, { useState } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -21,7 +25,9 @@ import {
   Fingerprint,
   Key,
   QrCode,
+  Recycle,
   Wallet,
+  XCircle,
 } from "lucide-react";
 import { columns } from '../../../data/transfers'
 import { evm_contract_by_id, evm_transfers_by_id } from "@/graphql/queries";
@@ -31,6 +37,7 @@ import QRCode from "react-qr-code";
 import Link from "next/link";
 import TransfersTable from "@/components/TransfersTable";
 import { blo } from "blo";
+import { map, map_or } from "@/lib/utils";
 function Page({ }): React.ReactElement {
   const params: any = useParams().id;
   return (
@@ -57,17 +64,17 @@ function Page({ }): React.ReactElement {
                 })()
               }
             </Tab>
-            <Tab key="wasm" title="WASM Transaction">
-              {/* <ExplorerTable users={users} columns={columns}  /> */}
+            {/* <Tab key="wasm" title="WASM Transaction">
+              <ExplorerTable users={users} columns={columns}  />
             </Tab>
             <Tab key="erc20" title="ERC-20 Transfers(32)">
-              {/* <ExplorerTable users={users} columns={columns}  /> */}
+              <ExplorerTable users={users} columns={columns}  />
             </Tab>
             <Tab key="erc721" title="ERC-721 Transfers(32)">
-              {/* <ExplorerTable users={users} columns={columns}  /> */}
-            </Tab>
+              <ExplorerTable users={users} columns={columns}  />
+            </Tab> */}
             <Tab key="contract" title="Contract">
-              {/* <ExplorerTable users={users} columns={columns}  /> */}
+              <ContractExplorer id={params} />
             </Tab>
           </Tabs>
           {/* <TransfersTable users={users} columns={columns} /> */}
@@ -78,6 +85,44 @@ function Page({ }): React.ReactElement {
 }
 
 export default Page;
+
+function ContractExplorer({ id }: { id: string }): React.ReactElement {
+  const result = evm_contract_by_id(id);
+  let item: Contract;
+  switch (result.state) {
+    case "loading": return <p>loading</p>
+    case "error": return <p>err</p>
+    case "ok": {
+      if (result.data) item = result.data
+      else return <p>invalid id</p>
+    }
+  }
+  const contract = new Ctr(item.bytecode!);
+  return <Tabs aria-label="code" variant="underlined" color="primary">
+    <Tab key="bytes" title="Bytecode">
+      <pre className={styles.code} style={{
+        fontSize: "0.8em",
+        whiteSpace: "pre-wrap",
+        wordWrap: "break-word"
+      }}>{item.bytecode}</pre>
+    </Tab>
+    <Tab key="ops" title="Opcodes">
+      <div className={styles.code} style={{ fontWeight: 550 }}>{
+        contract.opcodes().map((opcode, i) => <div key={opcode.mnemonic + i}>{<span className="hljs-symbol" >{opcode.mnemonic}</span>}
+          {map_or(
+            opcode.hexData(), <></>, x => <span className="hljs-section">{" 0x" + x.trimStart()}</span>
+          )}
+        </div>)
+      }</div>
+
+    </Tab>
+    <Tab key="source" title={<p className="flex items-center">Source Code <Recycle style={{ margin: "1ch", color: "green" }} size="24px" /></p>} >
+      <pre className={styles.code} style={{ fontWeight: 550 }} dangerouslySetInnerHTML={{
+        __html: hl(contract.solidify())
+      }}></pre>
+    </Tab>
+  </Tabs >
+}
 
 function EvmContractAccount({ id }: { id: string }): React.ReactElement {
   let [qr, setQr] = useState(false);

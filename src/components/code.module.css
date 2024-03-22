@@ -1,0 +1,18 @@
+.code {
+    background-color: #F8F9FA;
+    padding: 1rem;
+    height: 30pc;
+    border-radius: .5rem;
+    overflow: auto;
+    font-family: "Cascadia Code,monospace";
+    resize: vertical;
+    line-height: 1.25em;
+}
+
+.code>*::selection {
+    background: #55B4D450
+}
+
+.code::selection {
+    background: #55B4D450
+}

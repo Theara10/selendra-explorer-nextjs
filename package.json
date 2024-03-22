@@ -16,6 +16,8 @@
     "blo": "^1.1.1",
     "chart.js": "^4.4.1",
     "framer-motion": "^11.0.3",
+    "highlight.js": "^11.9.0",
+    "highlightjs-solidity": "^2.0.6",
     "lucide-react": "^0.321.0",
     "next": "14.1.0",
     "react": "^18",
@@ -23,7 +25,8 @@
     "react-cookie": "^7.1.0",
     "react-dom": "^18",
     "react-qr-code": "^2.0.12",
-    "react-spinners": "^0.13.8"
+    "react-spinners": "^0.13.8",
+    "sevm": "^0.6.15"
   },
   "devDependencies": {
     "@types/node": "^20",

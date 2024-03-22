@@ -301,6 +301,7 @@ export function evm_contract_by_id(id: string): Result<Contract | undefined> {
     query evmContractById($id: String!) {
       evmContractById(id: $id) {
         ${CONTRACT}
+        bytecode,
       }
     }`,
     { variables: { id } }),

@@ -46,6 +46,7 @@ export type Contract = {
     account: string;
     block: number;
     type: "Native" | "ERC20" | "ERC721" | "ERC1155" | "SRC20" | "SRC721" | "SRC1155";
+    bytecode?: string;
 };
 
 export type Extrinsic = {
