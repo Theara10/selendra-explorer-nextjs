@@ -40,7 +40,6 @@ export default function BlocksTable({
   }
 
   const renderCell = React.useCallback((user: Block, columnKey: React.Key) => {
-    console.log("time", timeAgo(user.timestamp));
     const cellValue = user[columnKey as keyof Block];
 
     switch (columnKey) {
@@ -135,11 +134,6 @@ export default function BlocksTable({
         aria-label="Example table with custom cells"
         className="pt-0"
         removeWrapper
-      // bottomContent={
-      //   <div className="flex justify-end">
-      //     <Pagination total={10} color="primary" size="sm" />
-      //   </div>
-      // }
       >
         <TableHeader columns={columns}>
           {(column) => (
@@ -155,7 +149,14 @@ export default function BlocksTable({
         <TableBody
           items={users}
           isLoading={!loading}
-          loadingContent={<HashLoader className="h-screen" size={150} style={{ alignContent: "center" }} color={"#00A3E4"} />}
+          loadingContent={
+            <HashLoader
+              className="h-screen"
+              size={150}
+              style={{ alignContent: "center" }}
+              color={"#00A3E4"}
+            />
+          }
           className="border-b-2"
         >
           {users.map((item) => (
