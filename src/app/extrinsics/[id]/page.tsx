@@ -8,17 +8,19 @@ import { useParams } from "next/navigation";
 import timeAgo from "@/lib/ConvertTime";
 import { Card, CardBody } from "@nextui-org/react";
 import { CheckCircle, Copy, XCircle } from "lucide-react";
-import { get_extrinsic_by_hash } from "@/graphql/queries";
+import { extrinsic_by_hash } from "@/graphql/queries";
 import { Extrinsic } from "@/graphql/types";
 import truncateMiddle from "@/lib/TruncateMiddle";
 
 export default function ExtrinsicPage() {
   const params: any = useParams().id;
-  const result = get_extrinsic_by_hash(params);
+  const result = extrinsic_by_hash(params);
   let extrinsic: Extrinsic;
   switch (result.state) {
-    case "loading": return <p>loading</p>
-    case "error": return <p>error</p>
+    case "loading":
+      return <p>loading</p>;
+    case "error":
+      return <p>error</p>;
     case "ok": {
       if (result.data) extrinsic = result.data;
       else return <p>incorrect id</p>;
@@ -28,10 +30,17 @@ export default function ExtrinsicPage() {
   return (
     <div className="px-4 sm:px-20 md:px-60 lg:px-80">
       <div className="flex items-center">
-        <span className="text-2xl w-[7ch]">Extrinsic</span><span className="text-sel_blue">
-          <Link href={`/blocks/${extrinsic.blockNumber}`}>#{extrinsic.blockNumber}</Link>
+        <span className="text-2xl w-[7ch]">Extrinsic</span>
+        <span className="text-sel_blue">
+          <Link href={`/blocks/${extrinsic.blockNumber}`}>
+            #{extrinsic.blockNumber}
+          </Link>
         </span>
-        {extrinsic.success ? (<CheckCircle className="m-2" color="green" size="32px" />) : (<XCircle className="m-2" color="red" size="32px" />)}
+        {extrinsic.success ? (
+          <CheckCircle className="m-2" color="green" size="32px" />
+        ) : (
+          <XCircle className="m-2" color="red" size="32px" />
+        )}
       </div>
       <Card>
         <CardBody>
@@ -60,9 +69,7 @@ export default function ExtrinsicPage() {
                         color="gray"
                         className="cursor-pointer"
                         onClick={() =>
-                          navigator.clipboard.writeText(
-                            extrinsic.extrinsicHash
-                          )
+                          navigator.clipboard.writeText(extrinsic.extrinsicHash)
                         }
                       />
                     </span>
@@ -96,22 +103,30 @@ export default function ExtrinsicPage() {
                     </td>
                   </tr> */}
 
-                {extrinsic.fee ? <tr className="bg-white border-b">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    Fee
-                  </td>
-                  <td className="  text-sm  font-light px-6 py-4 whitespace-nowrap">
-                    {extrinsic.fee}
-                  </td>
-                </tr> : <></>}
-                {extrinsic.tip ? <tr className="bg-white border-b">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    Tip
-                  </td>
-                  <td className="text-sm  font-light px-6 py-4 whitespace-nowrap">
-                    {extrinsic.tip}
-                  </td>
-                </tr> : <></>}
+                {extrinsic.fee ? (
+                  <tr className="bg-white border-b">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      Fee
+                    </td>
+                    <td className="  text-sm  font-light px-6 py-4 whitespace-nowrap">
+                      {extrinsic.fee}
+                    </td>
+                  </tr>
+                ) : (
+                  <></>
+                )}
+                {extrinsic.tip ? (
+                  <tr className="bg-white border-b">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      Tip
+                    </td>
+                    <td className="text-sm  font-light px-6 py-4 whitespace-nowrap">
+                      {extrinsic.tip}
+                    </td>
+                  </tr>
+                ) : (
+                  <></>
+                )}
                 {/* <tr className="bg-white border-b">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       Signer Public key

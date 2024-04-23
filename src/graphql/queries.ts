@@ -94,7 +94,7 @@ export type Errors = {
   error?: string;
 }
 
-function flatten<T>(t: Result<Result<T>>): Result<T> {
+export function flatten<T>(t: Result<Result<T>>): Result<T> {
   switch (t.state) {
     case "loading": return t
     case "error": return t
@@ -106,7 +106,30 @@ function flatten<T>(t: Result<Result<T>>): Result<T> {
   }
 }
 
-function and_then<T, U>(t: Result<T>, f: (x: T | undefined) => Result<U>): Result<U> {
+export function ok<T>(t: Result<T>): T | undefined {
+  switch (t.state) {
+    case "error":
+    case "loading": return undefined
+    case "ok": return t.data
+  }
+}
+
+
+/** selects the first loaded option */
+export function select<T>(data:[Result<T | undefined>]): Result<T> | undefined {
+  for (var x of data) {
+    switch (x.state) {
+      case "ok": if (x.data === undefined || x.data===null) continue
+      case "error": return x as any
+      case "loading": continue
+    }
+  }
+   return (data.every(x => x.state == "ok" && x.data == undefined))
+    ? undefined
+    : { state: "loading" }
+}
+
+export function and_then<T, U>(t: Result<T>, f: (x: T | undefined) => Result<U>): Result<U> {
   switch (t.state) {
     // hooks must be called
     case "loading": { f(undefined); return t };
@@ -116,7 +139,7 @@ function and_then<T, U>(t: Result<T>, f: (x: T | undefined) => Result<U>): Resul
 }
 
 
-type Result<T> = Ok<T> | Loading | Error;
+export type Result<T> = Ok<T> | Loading | Error;
 
 export type Refreshable<T> = {
   result: Result<T>,
@@ -320,7 +343,7 @@ export function evm_transfers_by_id(id: string): Result<Transfer[]> {
   )
 }
 
-export function get_extrinsic_by_hash(hash: string): Result<Extrinsic | undefined> {
+export function extrinsic_by_hash(hash: string): Result<Extrinsic | undefined> {
   return map_query(useQuery(gql`
     query ExtrinsicByHash($hash: String!) {
       extrinsics(where: {extrinsicHash_eq: $hash}) {
