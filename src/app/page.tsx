@@ -7,7 +7,7 @@
 // }
 
 "use client";
-
+import "./blocks/odo.css";
 import React, { useEffect, useState } from "react";
 import ExplorerNav from "@/components/ExplorerNav";
 import timeAgo from "@/lib/ConvertTime";
@@ -72,6 +72,11 @@ import {
 import { day } from "@/lib/millis";
 import { HashLoader } from "react-spinners";
 import { Block, Transfer } from "@/graphql/types";
+import dynamic from "next/dynamic";
+const Odometer = dynamic(() => import("react-odometerjs"), {
+  ssr: false,
+  loading: () => <div>0</div>,
+});
 
 function frequency(d: Date[]): number[] {
   let map = Array<number>(30).fill(0);
@@ -94,7 +99,7 @@ const Explorer = () => {
     {
       id: 1,
       title: "Finalized Blocks",
-      value: totalBlock.toLocaleString(),
+      value: totalBlock,
       icon: <Blocks size={30} color="#00A4E5" />,
     },
     // {
@@ -126,7 +131,7 @@ const Explorer = () => {
         search={true}
         selIcon="/sel-logo-blue.png"
       />
-      <div className="px-4 sm:px-20 lg:px-80 mt-6">
+      <div className="px-4 sm:px-20 lg:px-40 mt-6">
         <section className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-2">
           {data1.map((data) => {
             return (
@@ -135,7 +140,9 @@ const Explorer = () => {
                   {data.icon}
                   <div className="flex flex-col mt-6">
                     <p className="text-sm text-default-500">{data.title}</p>
-                    <p className="text-xl md:text-2xl ">{data.value}</p>
+                    <p className="text-xl md:text-2xl ">
+                      <Odometer value={data.value} />
+                    </p>
                   </div>
                 </CardBody>
               </Card>

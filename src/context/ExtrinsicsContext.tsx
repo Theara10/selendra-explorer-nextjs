@@ -3,9 +3,9 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 import { counts } from "@/graphql/queries";
 
 interface ExtrinsicContextType {
-  extrinsic: string;
-  setExtrinsic: (extrinsic: string) => void;
-  toggleExtrinsic: (extr: string) => void;
+  extrinsic: number;
+  setExtrinsic: (extrinsic: number) => void;
+  toggleExtrinsic: (extr: number) => void;
 }
 
 const ExtrinsicContext = createContext<ExtrinsicContextType | undefined>(
@@ -27,16 +27,18 @@ interface ExtrinsicProviderProps {
 export const ExtrinsicProvider: React.FC<ExtrinsicProviderProps> = ({
   children,
 }) => {
-  const [_, setExtrinsic] = useState("");
+  const [_, setExtrinsic] = useState(0);
   const { result, refresh } = counts();
-  let latestExtrinsic = 0
+  let latestExtrinsic = 0;
   switch (result.state) {
-    case "loading": return <div>Loading...</div>;
-    case "error": return <div>Error {result.message}</div>
-    case "ok": latestExtrinsic = result.data;
-  };
+    case "error":
+      return <div>Error {result.message}</div>;
+    case "ok":
+      latestExtrinsic = result.data;
+    case "loading":
+  }
 
-  const toggleExtrinsic = (extr: string) => {
+  const toggleExtrinsic = (extr: number) => {
     setExtrinsic(extr);
   };
   setInterval(() => {
@@ -45,7 +47,11 @@ export const ExtrinsicProvider: React.FC<ExtrinsicProviderProps> = ({
 
   return (
     <ExtrinsicContext.Provider
-      value={{ extrinsic: latestExtrinsic.toLocaleString(), setExtrinsic, toggleExtrinsic }}
+      value={{
+        extrinsic: latestExtrinsic,
+        setExtrinsic,
+        toggleExtrinsic,
+      }}
     >
       {children}
     </ExtrinsicContext.Provider>

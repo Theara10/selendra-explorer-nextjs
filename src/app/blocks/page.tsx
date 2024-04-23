@@ -16,7 +16,11 @@ import { Block } from "@/graphql/types";
 import { HashLoader } from "react-spinners";
 import { ArrowBigLeftDash, ArrowLeft, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import ReactOdometer from "react-odometerjs";
+import dynamic from "next/dynamic";
+const Odometer = dynamic(() => import("react-odometerjs"), {
+  ssr: false,
+  loading: () => <div>0</div>,
+});
 
 function Blocks() {
   const PAGE_SIZE = useSearchParams().get("page") ?? "1";
@@ -57,8 +61,7 @@ function Blocks() {
     <div className="px-4 sm:px-20 lg:px-40 mt-6">
       <div className="flex items-center justify-between mb-6">
         <p className="text-2xl">
-          Blocks{" "}
-          <ReactOdometer value={parseInt(extrinsic.replaceAll(",", ""))} />
+          Blocks <Odometer value={extrinsic} />
         </p>
         <SearchInput />
       </div>
