@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import Link from "next/link";
 
@@ -19,6 +19,7 @@ import {
 } from "@nextui-org/react";
 import { ArrowRight, CheckCircle, XCircle } from "lucide-react";
 import { Transfer } from "@/graphql/types";
+import PaginationControls from "./PaginationControls";
 
 // import { columns, users } from './data';
 
@@ -30,13 +31,17 @@ interface BlocksTableProps {
 }
 
 export default function TransfersTable({ users, columns }: BlocksTableProps) {
+  let [page, setPage] = useState(1);
   const renderCell = React.useCallback(
     (user: Transfer, columnKey: React.Key): React.ReactNode => {
       switch (columnKey) {
         case "from":
           return (
             <div className="relative flex items-center justify-between py-2 gap-2">
-              <Link href={`/accounts/${user.from.id}`} className="text-sel_blue">
+              <Link
+                href={`/accounts/${user.from.id}`}
+                className="text-sel_blue"
+              >
                 <p>{truncateMiddle(user.from.evmAddress, 20)}</p>
               </Link>
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
@@ -53,19 +58,23 @@ export default function TransfersTable({ users, columns }: BlocksTableProps) {
 
         case "block":
           return (
-            <Link href={`/blocks/${user.blockNumber}`} className="text-sel_blue">
+            <Link
+              href={`/blocks/${user.blockNumber}`}
+              className="text-sel_blue"
+            >
               <p>{user.blockNumber}</p>
             </Link>
           );
         case "time":
-          return (
-            <p>{timeAgo(user.timestamp)}</p>
-          );
+          return <p>{timeAgo(user.timestamp)}</p>;
         case "value":
           return (
             <div className="flex items-center gap-2">
               {ConvertBigNumber(user.amount)}
-              <Link href={`/evm/contracts/${user.contract}`} className="text-sel_blue">
+              <Link
+                href={`/evm/contracts/${user.contract}`}
+                className="text-sel_blue"
+              >
                 {user.symbol}
               </Link>
             </div>
@@ -84,7 +93,11 @@ export default function TransfersTable({ users, columns }: BlocksTableProps) {
           return (
             <div className="relative flex items-center justify-start gap-2">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                {user.success ? <CheckCircle color="green" size="24px" /> : <XCircle color="red" size="24px" />}
+                {user.success ? (
+                  <CheckCircle color="green" size="24px" />
+                ) : (
+                  <XCircle color="red" size="24px" />
+                )}
               </span>
             </div>
           );
@@ -161,15 +174,18 @@ export default function TransfersTable({ users, columns }: BlocksTableProps) {
   //   }
   // }, []);
 
+  let txs = users.slice((page - 1) * 20, page * 20);
   return (
     <Table
       aria-label="Example table with custom cells"
       className="pt-0"
       removeWrapper
       bottomContent={
-        <div className="flex justify-end">
-          <Pagination total={10} color="primary" size="sm" />
-        </div>
+        <PaginationControls
+          max={users.length / 20}
+          onPageChange={setPage}
+          currentPage={page}
+        />
       }
     >
       <TableHeader columns={columns}>
@@ -183,8 +199,8 @@ export default function TransfersTable({ users, columns }: BlocksTableProps) {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody items={users} className="border-b-2">
-        {users.map((item) => (
+      <TableBody items={txs} className="border-b-2">
+        {txs.map((item) => (
           <TableRow key={item.id} className=" border-b">
             {(columnKey) => (
               <TableCell>{renderCell(item, columnKey)}</TableCell>

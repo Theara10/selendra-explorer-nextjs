@@ -69,42 +69,12 @@ function Blocks() {
         <CardBody>
           <BlocksTable users={blocks} loading={loading} columns={columns} />
         </CardBody>
-        <CardFooter className="flex">
-          <Button
-            style={{ marginRight: "1em" }}
-            color="primary"
-            isDisabled={currentPage == 1}
-            isIconOnly
-            onPress={() => {
-              router.push("?page=1");
-              setCurrentPage(1);
-            }}
-          >
-            <ArrowBigLeftDash size="sm" color="white" />
-          </Button>
-          <Button
-            color="primary"
-            isDisabled={currentPage == 1}
-            isIconOnly
-            onPress={() => {
-              router.push(`?page=${currentPage - 1}`);
-              setCurrentPage(currentPage - 1);
-            }}
-          >
-            <ArrowLeft color="white" size="sm" />
-          </Button>
-          <div style={{ width: "100%" }} />
-          <Button
-            isIconOnly
-            color="primary"
-            style={{ justifySelf: "flex-end" }}
-            onPress={() => {
-              router.push(`?page=${currentPage + 1}`);
-              setCurrentPage(currentPage + 1);
-            }}
-          >
-            <ArrowRight size="sm" color="white" />
-          </Button>
+        <CardFooter>
+          <PaginationControls
+            persistent
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          />
         </CardFooter>
       </Card>
     </div>

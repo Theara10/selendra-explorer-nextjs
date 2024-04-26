@@ -25,8 +25,6 @@ interface BlocksTableProps {
 }
 
 export default function ExtrinsicsTable({ users, columns }: BlocksTableProps) {
-  console.log("extrin", users);
-
   const renderCell = React.useCallback((user: Extrinsic, columnKey: React.Key) => {
     const cellValue = user[columnKey as keyof Extrinsic];
 

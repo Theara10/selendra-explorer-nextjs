@@ -41,9 +41,7 @@ export const ExtrinsicProvider: React.FC<ExtrinsicProviderProps> = ({
   const toggleExtrinsic = (extr: number) => {
     setExtrinsic(extr);
   };
-  setInterval(() => {
-    refresh();
-  }, 1000);
+  setInterval(refresh, 1000);
 
   return (
     <ExtrinsicContext.Provider

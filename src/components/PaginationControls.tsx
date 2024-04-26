@@ -62,56 +62,62 @@ import React from "react";
 
 import { useRouter } from "next/navigation";
 import { Button } from "@nextui-org/react";
+import { ArrowBigLeftDash, ArrowLeft, ArrowRight } from "lucide-react";
 
 interface PaginationControlsProps {
   currentPage: number;
-  totalPages: number;
-  onPageChange: (newPage: number) => void;
+  persistent?: boolean;
+  max?: number;
+  onPageChange:
+    | ((newPage: number) => void)
+    | ((newPage: React.SetStateAction<number>) => void);
 }
 
 const PaginationControls: React.FC<PaginationControlsProps> = ({
   currentPage,
-  totalPages,
   onPageChange,
+  max,
+  persistent,
 }) => {
-  const handlePageChange = (newPage: number) => {
-    // if (newPage >= 1 && newPage <= totalPages) {
-    if (newPage >= 1) {
-      onPageChange(newPage);
-    }
-  };
-
   const router = useRouter();
 
   return (
-    <div>
+    <div className="flex w-full">
       <Button
-        size="sm"
+        style={{ marginRight: "0.25em" }}
         color="primary"
-        onClick={() => {
-          router.push(`?page=${currentPage - 1}&pageSize=20`);
-          handlePageChange(currentPage - 1);
+        isDisabled={currentPage == 1}
+        isIconOnly
+        onPress={() => {
+          if (persistent) router.push("?page=1");
+          onPageChange(1);
         }}
-        disabled={currentPage === 1}
       >
-        Previous
+        <ArrowBigLeftDash size="sm" color="white" />
       </Button>
-      <span className="px-4">
-        {/* Page {currentPage} of {totalPages}{" "} */}
-        {currentPage}
-        {/* Page {currentPage} of {totalPages}{" "} */}
-      </span>
       <Button
-        size="sm"
         color="primary"
-        onClick={() => {
-          router.push(`?page=${currentPage + 1}&pageSize=20`);
-          handlePageChange(currentPage + 1);
+        isDisabled={currentPage == 1}
+        isIconOnly
+        onPress={() => {
+          if (persistent) router.push(`?page=${currentPage - 1}`);
+          onPageChange(currentPage - 1);
         }}
-
-        // disabled={currentPage === totalPages}
       >
-        Next
+        <ArrowLeft color="white" size="sm" />
+      </Button>
+      <div style={{ width: "100%" }} />
+      <Button
+        isIconOnly
+        color="primary"
+        isDisabled={max ? currentPage >= Math.ceil(max) : false}
+        style={{ justifySelf: "flex-end" }}
+        onPress={() => {
+          if (persistent) router.push(`?page=${currentPage + 1}`);
+          onPageChange(currentPage + 1);
+        }}
+      >
+        <ArrowRight size="sm" color="white" />
       </Button>
     </div>
   );
