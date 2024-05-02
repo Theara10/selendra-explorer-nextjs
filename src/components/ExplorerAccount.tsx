@@ -104,7 +104,7 @@ function ExplorerAccount({ }): React.ReactElement {
                       </div>
                     </>)
                 } else {
-                  return <div className="flex flex-col inline-block">
+                  return <div className="flex-col inline-block">
                     <p className="text-gray-400">Total Balance</p>
                     <div>
                       <Image src="/sel.svg" className="float-left" alt="" width={32} height={32} />

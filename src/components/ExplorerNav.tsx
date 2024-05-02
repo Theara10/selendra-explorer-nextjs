@@ -23,7 +23,8 @@ import {
   NavbarProps,
   Divider,
 } from "@nextui-org/react";
-import { ChevronDown, Menu, MoonIcon, Search } from "lucide-react";
+import { Theme, invert, light, system, useThemeState } from "@/app/theme";
+import { ChevronDown, Menu, MoonIcon, Search, SunIcon } from "lucide-react";
 import { SideNavItem } from "@/types";
 import Image from "next/image";
 import { cn } from "./cn";
@@ -76,6 +77,7 @@ interface Colors {
 function ExplorerNav({ bgColor, textColor, logo, search, selIcon }: Colors) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [net, setNet] = useNetState();
+  const [theme, setTheme] = useThemeState();
   return (
     <section>
       <div
@@ -122,7 +124,7 @@ function ExplorerNav({ bgColor, textColor, logo, search, selIcon }: Colors) {
             {explorer_nav_items.map((data) => (
               <NavbarItem key={data.id}>
                 <Link className={`text-${textColor}`} href="#">
-                  <Dropdown placement="bottom-start">
+                  <Dropdown placement="bottom-start" className="bg-current">
                     <DropdownTrigger>
                       <p
                         className={`capitalize bg-transparent border-none text-medium text-${textColor} flex items-center gap-1`}
@@ -133,14 +135,16 @@ function ExplorerNav({ bgColor, textColor, logo, search, selIcon }: Colors) {
                         </span>
                       </p>
                     </DropdownTrigger>
-                    <DropdownMenu
-                      aria-label="Single selection example"
-                      variant="flat"
-                      disallowEmptySelection
-                    >
+                    <DropdownMenu variant="flat" disallowEmptySelection>
                       {data.dropdown.map((x) => (
                         <DropdownItem key="text">
-                          <Link href={x.link} className="text-gray-500">
+                          <Link
+                            href={x.link}
+                            // dark: was not working
+                            className={
+                              light(theme) ? "text-gray-500" : "text-gray-300"
+                            }
+                          >
                             {x.item}
                           </Link>
                         </DropdownItem>
@@ -157,16 +161,21 @@ function ExplorerNav({ bgColor, textColor, logo, search, selIcon }: Colors) {
             <NavbarItem className="ml-2 !flex gap-2">
               <Button
                 isIconOnly
-                className={`border-${textColor} font-medium border-1`}
+                className="font-medium border-1"
                 color="secondary"
                 radius="md"
                 size="sm"
                 variant="bordered"
+                onClick={() => setTheme(invert(theme))}
               >
-                <MoonIcon className="w-4 h-4" color={textColor} />
+                {light(theme) ? (
+                  <MoonIcon className="w-4 h-4" color={textColor} />
+                ) : (
+                  <SunIcon className="w-4 h-4" color={textColor} />
+                )}
               </Button>
               <Button
-                className={`border-${textColor} text-${textColor} font-medium border-1`}
+                className={`text-${textColor} font-medium border-1`}
                 color="secondary"
                 radius="md"
                 size="sm"
@@ -180,7 +189,9 @@ function ExplorerNav({ bgColor, textColor, logo, search, selIcon }: Colors) {
                     className="h-4 w-auto"
                   />
                 }
-                onClick={() => {setNet(net == Network.Main ? Network.Test : Network.Main)}}
+                onClick={() => {
+                  setNet(net == Network.Main ? Network.Test : Network.Main);
+                }}
               >
                 {net == Network.Main ? "Mainnet" : "Testnet"}
               </Button>
@@ -188,49 +199,6 @@ function ExplorerNav({ bgColor, textColor, logo, search, selIcon }: Colors) {
           </NavbarContent>
 
           <NavbarMenuToggle className=" text-gray md:hidden mx-2" />
-
-          <NavbarMenu
-            className="top-[calc(var(--navbar-height)_-_1px)] max-h-fit bg-white pb-6 pt-6 shadow-medium  "
-            motionProps={{
-              initial: { opacity: 0, y: -20 },
-              animate: { opacity: 1, y: 0 },
-              exit: { opacity: 0, y: -20 },
-              transition: {
-                ease: "easeInOut",
-                duration: 0.2,
-              },
-            }}
-          >
-            {explorer_nav_items.map((data) => (
-              <NavbarMenuItem key={data.id}>
-                <Link className="text-white" href="#">
-                  <Dropdown placement="bottom-start">
-                    <DropdownTrigger>
-                      <Button className="capitalize bg-transparent border-none text-medium text-gray-500">
-                        {data.name}
-                        <span>
-                          <ChevronDown />
-                        </span>
-                      </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu
-                      aria-label="Single selection example"
-                      variant="flat"
-                      disallowEmptySelection
-                    >
-                      {data.dropdown.map((x) => (
-                        <DropdownItem key="text">
-                          <Link href={x.link} className="text-gray-500">
-                            {x.item}
-                          </Link>
-                        </DropdownItem>
-                      ))}
-                    </DropdownMenu>
-                  </Dropdown>
-                </Link>
-              </NavbarMenuItem>
-            ))}
-          </NavbarMenu>
         </Navbar>
 
         <div className={search === true ? "flex flex-col" : "hidden"}>
@@ -246,61 +214,3 @@ function ExplorerNav({ bgColor, textColor, logo, search, selIcon }: Colors) {
 }
 
 export default ExplorerNav;
-
-const MenuItem = ({ item }: { item: SideNavItem }) => {
-  const pathname = usePathname();
-  const [subMenuOpen, setSubMenuOpen] = useState(false);
-  const toggleSubMenu = () => {
-    setSubMenuOpen(!subMenuOpen);
-  };
-
-  return (
-    <div className="">
-      {item.submenu ? (
-        <>
-          <button
-            onClick={toggleSubMenu}
-            className={`flex flex-row items-center p-2 rounded-lg hover-bg-zinc-100 w-full justify-between hover:bg-zinc-100 ${
-              pathname.includes(item.path) ? "bg-zinc-100" : ""
-            }`}
-          >
-            <div className="flex flex-row space-x-4 items-center">
-              <span className="font-semibold text-xl  flex">{item.title}</span>
-            </div>
-
-            <div className={`${subMenuOpen ? "rotate-180" : ""} flex`}>
-              <ChevronDown />
-            </div>
-          </button>
-
-          {subMenuOpen && (
-            <div className="my-2 ml-12 flex flex-col space-y-4">
-              {item.subMenuItems?.map((subItem, idx) => {
-                return (
-                  <Link
-                    key={idx}
-                    href={subItem.path}
-                    className={`${
-                      subItem.path === pathname ? "font-bold" : ""
-                    }`}
-                  >
-                    <span>{subItem.title}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </>
-      ) : (
-        <Link
-          href={item.path}
-          className={`flex flex-row space-x-4 items-center p-2 rounded-lg hover:bg-zinc-100 ${
-            item.path === pathname ? "bg-zinc-100" : ""
-          }`}
-        >
-          <span className="font-semibold text-xl flex">{item.title}</span>
-        </Link>
-      )}
-    </div>
-  );
-};

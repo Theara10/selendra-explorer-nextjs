@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+.dark {
+  --primary: "#00A4E5";
+}
+
+
+@layer base {
+  .border-dark {
+    border-color: #353535 !important;
+  }
+  *,
+  ::before,
+  ::after {
+    @apply dark:border-dark;
+  }
+}
+
+
 /* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;

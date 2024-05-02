@@ -4,7 +4,6 @@ import "./globals.css";
 import { Providers } from "@/graphql/apollo-client";
 import Footer from "@/components/footer";
 import { ExtrinsicProvider } from "@/context/ExtrinsicsContext";
-import ExplorerNav from "@/components/ExplorerNav";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,7 +33,7 @@ export default function RootLayout({
               search={true}
               selIcon="/sel-logo-blue.png"
             /> */}
-            <div className="min-h-[100dvh]"> {children}</div>
+            <div className="min-h-[100dvh]">{children}</div>
           </ExtrinsicProvider>
           <Footer />
         </Providers>

@@ -73,6 +73,7 @@ import { day } from "@/lib/millis";
 import { HashLoader } from "react-spinners";
 import { Block, Transfer } from "@/graphql/types";
 import dynamic from "next/dynamic";
+import { light, useThemeState } from "./theme";
 const Odometer = dynamic(() => import("react-odometerjs"), {
   ssr: false,
   loading: () => <div>0</div>,
@@ -125,9 +126,13 @@ const Explorer = () => {
   return (
     <>
       <ExplorerNav
-        bgColor={"bg-white"}
+        bgColor="bg-background"
         textColor="gray"
-        logo="/sel-logo-text.png"
+        logo={
+          light(useThemeState()[0])
+            ? "/sel-logo-text.png"
+            : "/sel-logo-text-white.png"
+        }
         search={true}
         selIcon="/sel-logo-blue.png"
       />
@@ -333,7 +338,7 @@ interface LatestBlocksProps {
 
 const LatestBlocks: React.FC<LatestBlocksProps> = ({ setTotalBlock }) => {
   const { result, refresh } = get_latest_blocks(10);
-
+  const [theme] = useThemeState();
   useEffect(() => {
     const intervalId = setInterval(() => {
       refresh();
@@ -393,7 +398,10 @@ const LatestBlocks: React.FC<LatestBlocksProps> = ({ setTotalBlock }) => {
                       className="text-primary font-semibold"
                     >
                       <User
-                        avatarProps={{ radius: "md", src: "/block.png" }}
+                        avatarProps={{
+                          radius: "md",
+                          src: light(theme) ? "/block.png" : "/block-dark.png",
+                        }}
                         description={
                           <p className=" font-light">
                             Include
@@ -433,6 +441,7 @@ interface LatestTokenTransferProps {
 const LatestTransactions: React.FC<LatestTokenTransferProps> = ({
   setTotalTokenTransfer,
 }) => {
+  const [theme] = useThemeState();
   const result = get_latest_transactions(10);
   let data: Transfer[];
   switch (result.state) {
@@ -489,7 +498,9 @@ const LatestTransactions: React.FC<LatestTokenTransferProps> = ({
                       <User
                         avatarProps={{
                           radius: "md",
-                          src: "/transaction.png",
+                          src: light(theme)
+                            ? "/transaction.png"
+                            : "/transaction-dark.png",
                         }}
                         description={
                           <p className="font-light">

@@ -38,6 +38,7 @@ import Link from "next/link";
 import TransfersTable from "@/components/TransfersTable";
 import { blo } from "blo";
 import { map, map_or } from "@/lib/utils";
+import { light, useThemeState } from "@/app/theme";
 function Page({ }): React.ReactElement {
   const params: any = useParams().id;
   return (
@@ -126,6 +127,7 @@ function ContractExplorer({ id }: { id: string }): React.ReactElement {
 
 function EvmContractAccount({ id }: { id: string }): React.ReactElement {
   let [qr, setQr] = useState(false);
+  const [theme] = useThemeState();
   const result = evm_contract_by_id(id);
   let item: Contract;
   switch (result.state) {
@@ -144,7 +146,7 @@ function EvmContractAccount({ id }: { id: string }): React.ReactElement {
           <div className="flex flex-row items-center gap-2">
             <Image width={52} height={52} alt="profile" className="rounded-full w-6 h-6" src={blo(item.id as `0x${string}`)} />
             <p className="text-2xl">{item.name ? item.name : "Unknown"}</p>
-            <p className="text-gray-900">{item.symbol ? `(${item.symbol})` : ""}</p>
+            <p className="text-gray-900 dark:text-gray-400">{item.symbol ? `(${item.symbol})` : ""}</p>
           </div>
           <div className="flex flex-row items-center gap-2">
             <p className="text-md overflow-hidden">
@@ -158,12 +160,9 @@ function EvmContractAccount({ id }: { id: string }): React.ReactElement {
             />
           </div>
           <div className="flex flex-row items-center gap-2">
-            <Link
-              href={`/accounts/${item.account}`}
-              className="flex items-center gap-2"
-            >
-              <p className="text-md overflow-hidden text-sel_blue">
-                <span className="font-semibold mr-2 text-xl text-black">Owner:</span>
+            <span className="font-semibold text-xl">Owner:</span>
+            <Link href={`/accounts/${item.account}`}>
+              <p className="text-md overflow-hide text-sel_blue">
                 {item.account}
               </p>
             </Link>
@@ -187,7 +186,7 @@ function EvmContractAccount({ id }: { id: string }): React.ReactElement {
               <ImportToken contract={item} color="#00A4E5" size="16px" />
             </div> : <></>}
           </div>
-          <QRCode value={item.id} style={qr ? {} : { display: "none" }} />
+          <QRCode fgColor={light(theme) ? undefined : "#18181B"} bgColor={light(theme)? undefined : "hsl(214, 11.6%, 85%)"} value={item.id} style={qr ? {} : { display: "none" }} />
         </CardBody>
       </Card>
     </div >
