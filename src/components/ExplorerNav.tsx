@@ -50,8 +50,8 @@ const explorer_nav_items = [
     dropdown: [
       // { item: "Transactions", link: "/evm/transactions" },
       { item: "Contracts", link: "/evm/contracts" },
-      // { item: "ERC-20 Tokens", link: "/evm/erc20" },
-      // { item: "ERC-721 Tokens", link: "/evm/erc721" },
+      { item: "ERC-20 Tokens", link: "/evm/contracts?filter=ERC20" },
+      { item: "ERC-721 Tokens", link: "/evm/contracts?filter=ERC721" },
     ],
   },
   {

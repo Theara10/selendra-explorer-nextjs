@@ -17,6 +17,7 @@ import { FileCheck2, FileBadge } from "lucide-react";
 import { get_evm_contracts } from "@/graphql/queries";
 import { Contract } from "@/graphql/types";
 import PaginationControls from "@/components/PaginationControls";
+import { useSearchParams } from "next/navigation";
 
 function EvmContracts() {
   const accounts = [
@@ -57,7 +58,6 @@ function EvmContracts() {
     //   img: <FileCheck2 size={30} color="#00A4E5" />,
     // },
   ];
-
   const result = get_evm_contracts();
   let [page, setPage] = useState(1);
   let data: Contract[];
@@ -71,11 +71,15 @@ function EvmContracts() {
     case "ok":
       data = result.data;
   }
+  let filter = useSearchParams().get("filter");
+  if (filter) {
+    data = data.filter((x) => x.type == filter);
+  }
   accounts[0].value = data.length;
   return (
     <div className="px-4 sm:px-20 md:px-40 lg:px-40 mt-6">
       <div className="flex items-center justify-between mb-6">
-        <p className="text-xl w-80">EVM Contracts</p>
+        <p className="text-xl w-80">{filter ?? "EVM"} Contracts</p>
         <></>
       </div>
       <section className="flex flex-wrap justify-between">
@@ -119,7 +123,6 @@ function EvmContracts() {
       <Card>
         <CardFooter>
           <PaginationControls
-            persistent
             max={data.length / 20}
             currentPage={page}
             onPageChange={setPage}
