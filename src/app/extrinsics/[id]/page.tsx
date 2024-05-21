@@ -28,7 +28,7 @@ export default function ExtrinsicPage() {
   }
 
   return (
-    <div className="px-4 sm:px-20 md:px-60 lg:px-80">
+    <div className="px-4 sm:px-20 md:px-60 lg:px-50">
       <div className="flex items-center">
         <span className="text-2xl w-[7ch]">Extrinsic</span>
         <span className="text-sel_blue">
@@ -48,20 +48,20 @@ export default function ExtrinsicPage() {
             <table className="min-w-full">
               <tbody>
                 <tr className="border-b">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     Timestamp
                   </td>
-                  <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                    {extrinsic.timestamp}
+                  <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
+                    {new Date(extrinsic.timestamp).toUTCString()}
                     {" | "}
                     {timeAgo(extrinsic.timestamp)}
                   </td>
                 </tr>
-                <tr className="bg-white border-b">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <tr className="border-b">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     Extrinsic Hash
                   </td>
-                  <td className="flex items-center gap-2 text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  <td className="flex items-center gap-2 text-sm font-light px-6 py-4 whitespace-nowrap">
                     {truncateMiddle(extrinsic.extrinsicHash, 40)}
                     <span>
                       <Copy
@@ -75,8 +75,8 @@ export default function ExtrinsicPage() {
                     </span>
                   </td>
                 </tr>
-                {/* <tr className="bg-white border-b">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                {/* <tr className="border-b">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       Parent Hash
                     </td>
                     <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
@@ -85,8 +85,8 @@ export default function ExtrinsicPage() {
                       </Link>
                     </td>
                   </tr>
-                  <tr className="bg-white border-b">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <tr className="border-b">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       Call
                     </td>
                     <td className="text-sm  font-light px-6 py-4 whitespace-nowrap">
@@ -104,8 +104,8 @@ export default function ExtrinsicPage() {
                   </tr> */}
 
                 {extrinsic.fee ? (
-                  <tr className="bg-white border-b">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <tr className="border-b">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       Fee
                     </td>
                     <td className="  text-sm  font-light px-6 py-4 whitespace-nowrap">
@@ -116,8 +116,8 @@ export default function ExtrinsicPage() {
                   <></>
                 )}
                 {extrinsic.tip ? (
-                  <tr className="bg-white border-b">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <tr className="border-b">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       Tip
                     </td>
                     <td className="text-sm  font-light px-6 py-4 whitespace-nowrap">
@@ -127,31 +127,31 @@ export default function ExtrinsicPage() {
                 ) : (
                   <></>
                 )}
-                {/* <tr className="bg-white border-b">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                {/* <tr className="border-b">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       Signer Public key
                     </td>
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                    <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
                       {extrinsic.signerPublicKey
                         ? extrinsic.signerPublicKey
                         : "-"}
                     </td>
                   </tr>
-                  <tr className="bg-white ">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <tr className="">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       Event
                     </td>
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                    <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
                       {extrinsic.events.eventName
                         ? extrinsic.events.eventName
                         : "-"}
                     </td>
                   </tr>
-                <tr className="bg-white ">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <tr className="">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     Version
                   </td>
-                  <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
                     {extrinsic.version}
                   </td>
                 </tr> */}

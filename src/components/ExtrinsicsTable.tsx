@@ -7,14 +7,12 @@ import Link from "next/link";
 import timeAgo from "@/lib/ConvertTime";
 import truncateMiddle from "@/lib/TruncateMiddle";
 import {
-  Pagination,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
-  User,
 } from "@nextui-org/react";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import { Extrinsic } from "@/graphql/types";

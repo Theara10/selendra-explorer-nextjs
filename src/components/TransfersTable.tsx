@@ -8,14 +8,12 @@ import ConvertBigNumber from "@/lib/ConvertBigNumber";
 import timeAgo from "@/lib/ConvertTime";
 import truncateMiddle from "@/lib/TruncateMiddle";
 import {
-  Pagination,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
-  User,
 } from "@nextui-org/react";
 import { ArrowRight, CheckCircle, XCircle } from "lucide-react";
 import { Transfer } from "@/graphql/types";

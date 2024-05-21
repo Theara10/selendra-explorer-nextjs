@@ -7,14 +7,12 @@ import Link from "next/link";
 import ConvertBigNumber from "@/lib/ConvertBigNumber";
 import truncateMiddle from "@/lib/TruncateMiddle";
 import {
-  Pagination,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
-  User,
 } from "@nextui-org/react";
 import { CheckCircle } from "lucide-react";
 import { Account } from "@/graphql/types";
