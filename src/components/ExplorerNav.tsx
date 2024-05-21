@@ -193,7 +193,7 @@ function ExplorerNav({ bgColor, textColor, logo, search, selIcon }: Colors) {
                   setNet(net == Network.Main ? Network.Test : Network.Main);
                 }}
               >
-                {net == Network.Main ? "Mainnet" : "Testnet"}
+                {net == Network.Main ? "Testnet" : "Mainnet"}
               </Button>
             </NavbarItem>
           </NavbarContent>

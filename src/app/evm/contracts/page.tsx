@@ -83,6 +83,7 @@ function EvmContracts() {
     // },
   ];
   const result = get_evm_contracts();
+  let filter = useSearchParams().get("filter");
   let [page, setPage] = useState(1);
   let [theme] = useThemeState();
   let data: Contract[];
@@ -96,7 +97,6 @@ function EvmContracts() {
     case "ok":
       data = result.data;
   }
-  let filter = useSearchParams().get("filter");
   if (filter) {
     data = data.filter((x) => x.type == filter);
   }

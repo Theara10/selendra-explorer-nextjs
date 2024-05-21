@@ -1,3 +1,4 @@
+import { Type } from "@/graphql/types";
 import { CheckCircle, Import, XCircle } from "lucide-react";
 import { useState } from "react";
 
@@ -8,7 +9,7 @@ declare global {
 }
 interface Contract {
     id: string,
-    type: "Native" | "ERC20" | "ERC721" | "ERC1155" | "SRC20" | "SRC721" | "SRC1155";
+    type: Type;
     symbol: string,
 }
 
