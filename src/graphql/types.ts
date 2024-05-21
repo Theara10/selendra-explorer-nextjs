@@ -10,6 +10,7 @@ export type Block = {
     parentHash: string;
 };
 
+export type Type = "Native" | "ERC20" | "ERC721" | "ERC1155" | "SRC20" | "SRC721" | "SRC1155" | "unknown";
 export type Transfer = {
     id: string;
     name: string;
@@ -18,7 +19,7 @@ export type Transfer = {
     timestamp: string;
     extrinsicHash: string,
     amount: number;
-    type: "Native" | "ERC20" | "ERC721" | "ERC1155" | "SRC20" | "SRC721" | "SRC1155";
+    type: Type;
     success: boolean;
     from: Account;
     contract: string;
@@ -45,7 +46,7 @@ export type Contract = {
     extrinsicHash: string;
     account: string;
     block: number;
-    type: "Native" | "ERC20" | "ERC721" | "ERC1155" | "SRC20" | "SRC721" | "SRC1155";
+    type: Type;
     bytecode?: string;
 };
 
