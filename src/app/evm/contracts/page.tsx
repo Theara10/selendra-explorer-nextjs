@@ -100,20 +100,24 @@ function EvmContracts() {
   if (filter) {
     data = data.filter((x) => x.type == filter);
   }
-  let count: Record<Type, number> = {} as any;
-  let m = 0;
+  let count: Record<"ERC20" | "ERC721" | "ERC1155", number> = {} as any;
   data.forEach((x) => {
-    count[x.type] ? (count[x.type] += 1) : (count[x.type] = 1);
-    m = Math.max(m, count[x.type]);
+    if (x.type == "ERC20" || x.type == "ERC721" || x.type == "ERC1155") {
+      count[x.type] ? (count[x.type] += 1) : (count[x.type] = 1);
+    }
   });
   accounts[0].value = data.length;
   let pal = ["#ed1576", "#f0c90a", "#03a9f4"]; //  #4609d6, #d65b09
-  function pick(hover: boolean, { parsed }: { parsed: number }): string {
-    if (!parsed) return pal[2];
-    let c = pal[Math.round(parsed / (m / (pal.length - 1)))];
-    return colorLib(c)
-      .alpha(hover ? 0.7 : 1 /*Math.abs(parsed / m)*/)
+  function pick(hover: boolean, { index }: { index: number }): string {
+    return colorLib(pal[index])
+      .alpha(hover ? 0.7 : 1)
       .rgbString();
+
+    // return pal["ERC20"];
+    // let c = pal[Math.round(x.parsed / (m / (pal.length - 1)))];
+    // return colorLib(c)
+    // .alpha(hover ? 0.7 : 1 /*Math.abs(parsed / m)*/)
+    // .rgbString();
   }
   return (
     <div className="px-4 sm:px-20 md:px-40 lg:px-40 mt-6">
@@ -146,18 +150,26 @@ function EvmContracts() {
           <></>
         ) : (
           <Card className="w-[49%] p-2" key="pie">
-            <CardBody className="flex flex-row gap-1 md:gap-3">
-              <div className="flex flex-col" style={{ maxWidth: 96 }}>
+            <CardBody className="flex flex-row gap-1 md:gap-3 w-full">
+              <div className="flex flex-col">
                 <p style={{ position: "absolute", float: "right" }}></p>
                 <Pie
+                  style={{ width: 400 }}
                   data={{
-                    labels: Object.keys(count),
                     datasets: [{ data: Object.values(count) }],
+                    labels: Object.entries(count).map(
+                      ([x, y]) => x + ": " + y.toLocaleString()
+                    ),
                   }}
                   options={{
                     maintainAspectRatio: false,
                     plugins: {
-                      legend: { display: false },
+                      legend: {
+                        position: "right",
+                        labels: {
+                          font: { family: "monospace", size: 20 },
+                        },
+                      },
                       tooltip: {
                         displayColors: false,
                         backgroundColor: light(theme)
@@ -183,8 +195,8 @@ function EvmContracts() {
                     borderColor: light(theme) ? "black" : "white",
                     elements: {
                       arc: {
-                        backgroundColor: pick.bind(false, false),
-                        hoverBackgroundColor: pick.bind(true, true),
+                        backgroundColor: (x) => pick(false, x as any),
+                        hoverBackgroundColor: (x) => pick(true, x as any),
                       },
                     },
                   }}
